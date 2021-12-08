@@ -17,7 +17,7 @@ public final class WordData {
     /**
      * The word's rank based on the frequency of occurrence. The more frequent the word the higher th rank
      */
-    @Setter private  int rank;
+    private  int rank;
     private final String partOfSpeech;
     /**
      * frequency - how many times the word appears in the corpus
