@@ -39,7 +39,39 @@ public class CorpusDictionary2 {
     }
 
     // we lose TreeSet methods
-    public SortedSet<DictionaryEntry2> getDictionaryAsc() {
-        return Collections.unmodifiableSortedSet(dictionary);
+    public NavigableSet<DictionaryEntry2> getDictionaryByRank(boolean reversed) {
+
+        return Collections.unmodifiableNavigableSet(new TreeSet<>(reversed ? dictionary.descendingSet() : dictionary));
     }
+
+    public NavigableSet<DictionaryEntry2> getDictionaryByWord(boolean reversed) {
+
+        ComparatorByWord byWord = new ComparatorByWord();
+        NavigableSet<DictionaryEntry2> sortedByWord = new TreeSet<>(reversed ? byWord.reversed() : byWord);
+        sortedByWord.addAll(dictionary);
+
+        return Collections.unmodifiableNavigableSet(sortedByWord);
+    }
+
+    static class ComparatorByWord implements Comparator<DictionaryEntry2> {
+
+        @Override
+        public int compare(DictionaryEntry2 e1, DictionaryEntry2 e2) {
+            int compareByWord = e1.getWord().toLowerCase().compareTo(e2.getWord().toLowerCase());
+            return compareByWord == 0 ?
+                    e1.getPartOfSpeech().compareTo(e2.getPartOfSpeech()) :
+                    compareByWord;
+        }
+    }
+
+
+    static class ComparatorByFrequency implements Comparator<DictionaryEntry2> {
+
+        @Override
+        public int compare(DictionaryEntry2 o1, DictionaryEntry2 o2) {
+            return o1.getFrequency() - o2.getFrequency();
+        }
+    }
+
+
 }
