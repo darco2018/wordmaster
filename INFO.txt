@@ -1,0 +1,2 @@
+Dictionary theory:
+ // https://martinweisser.org/corpora_site/word_lists.html
