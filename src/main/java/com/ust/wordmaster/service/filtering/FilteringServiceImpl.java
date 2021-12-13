@@ -50,6 +50,98 @@ public class FilteringServiceImpl implements FilteringService {
         return filteredHeadlinesList;
     }
 
+    private int[] getOutOfRangeWords(String[] words, int rangeStart, int rangeEnd) {
+
+        //todo rangeStart rangeEnd
+        List<Integer> outOfRangeWords = new ArrayList<>();
+
+        for (int i = 0; i < words.length; i++) {
+            String info = " is";
+            boolean contains = isInDictionary(words[i]);
+            if (!contains) {
+                info += " NOT";
+                outOfRangeWords.add(i);
+                wordsOutOfRangeStrings.add(words[i]);
+            }
+
+            log.info(words[i] + " [i]=" + i + info + " in range " + rangeStart + "-" + rangeEnd + ": ");
+        }
+
+        return outOfRangeWords.stream().mapToInt(i -> i).toArray();
+    }
+
+    private boolean isInDictionary(String word) {
+        //log.info("Testing: " + word);
+        word = word.toLowerCase();
+        boolean isIn = dictionary.containsWord(word);
+
+        ////////////////// -(e)d //////////////////////////////
+        if (!isIn) {
+            // try if removing -d helps
+            if (word.substring(word.length() - 1).equals("d")) {
+                String withoutD = word.substring(0, word.length() - 1);
+                isIn = dictionary.containsWord(withoutD);
+
+                // try if removing -ed helps
+                if (!isIn && word.length() >= 3 && word.substring(word.length() - 2).equals("ed")) {
+                    String withoutED = word.substring(0, word.length() - 2);
+                    isIn = dictionary.containsWord(withoutED);
+                }
+                // try if removing -ied helps
+                if (!isIn && word.length() >= 4 && word.substring(word.length() - 3).equals("ied")) {
+                    String withoutIES = word.substring(0, word.length() - 3) + "y";
+                    isIn = dictionary.containsWord(withoutIES);
+                }
+            }
+
+            //////////// -s /////////////////////////////////////////
+            // try if removing -s helps
+            if (!isIn && word.charAt(word.length() - 1) == 's') {
+                String withoutS = word.substring(0, word.length() - 1);
+                isIn = dictionary.containsWord(withoutS);
+
+                // try if removing -ed helps
+                if (!isIn && word.length() >= 3 && word.substring(word.length() - 2).equals("es")) {
+                    String withoutES = word.substring(0, word.length() - 2);
+                    isIn = dictionary.containsWord(withoutES);
+                }
+
+                // try if removing -ies helps
+                if (!isIn && word.length() >= 4 && word.substring(word.length() - 3).equals("ies")) {
+                    String withoutIES = word.substring(0, word.length() - 3) + "y";
+                    isIn = dictionary.containsWord(withoutIES);
+                }
+            }
+
+            //////////// -ING ////////////////////
+            // try if removing -ing helps
+            if (!isIn && word.length() >= 4 && word.substring(word.length() - 3).equals("ing")) {
+                String withoutING = word.substring(0, word.length() - 3);
+                isIn = dictionary.containsWord(withoutING);
+
+                if (!isIn) {  // taking
+                    withoutING += "e";
+                    isIn = dictionary.containsWord(withoutING);
+                }
+
+                if (!isIn) {  // sitting
+                    withoutING = withoutING = word.substring(0, word.length() - 4); // ting
+                    isIn = dictionary.containsWord(withoutING);
+                }
+
+            }
+
+            // try if removing -est helps
+            if (!isIn && word.length() >= 4 && word.substring(word.length() - 3).equals("est")) {
+                String withoutEST = word.substring(0, word.length() - 3);
+                isIn = dictionary.containsWord(withoutEST);
+            }
+
+        }
+
+        return isIn;
+    }
+
     private String[] cleanUp(final String[] words) {
 
         char[] unwantedChars = new char[]{'/', '\\', '\'', '.', ',', ':', ';', '"', '?', '!', '@', '#', '$', '*',
@@ -62,7 +154,7 @@ public class FilteringServiceImpl implements FilteringService {
             if (!word.isEmpty() && !word.isBlank()) {
 
                 //todo
-                if(word.equals("I'd"))
+                if (word.equals("I'd"))
                     continue;
 
                 if (word.length() == 1) {
@@ -84,12 +176,12 @@ public class FilteringServiceImpl implements FilteringService {
 
     private String removeShortForm(String word) {
 
-        if(word.contains("'d") || word.contains("'s")){
-            return word.substring(0, word.length() -2);
+        if (word.contains("'d") || word.contains("'s")) {
+            return word.substring(0, word.length() - 2);
         }
 
-        if(word.contains("'ll")){
-            return word.substring(0, word.length() -3);
+        if (word.contains("'ll")) {
+            return word.substring(0, word.length() - 3);
         }
 
         return word;
@@ -139,94 +231,5 @@ public class FilteringServiceImpl implements FilteringService {
         return word;
     }
 
-    private int[] getOutOfRangeWords(String[] words, int rangeStart, int rangeEnd) {
 
-        //todo rangeStart rangeEnd
-        List<Integer> outOfRangeWords = new ArrayList<>();
-
-        for (int i = 0; i < words.length; i++) {
-            String info = " is";
-            boolean contains = isInDictionary(words[i]);
-            if (!contains) {
-                info += " NOT";
-                outOfRangeWords.add(i);
-                wordsOutOfRangeStrings.add(words[i]);
-            }
-
-            log.info(words[i] + " [i]=" + i + info + " in range " + rangeStart + "-" + rangeEnd + ": ");
-        }
-
-        return outOfRangeWords.stream().mapToInt(i -> i).toArray();
-    }
-
-    private boolean isInDictionary(String word) {
-        //log.info("Testing: " + word);
-        word = word.toLowerCase();
-        boolean isIn = dictionary.containsWord(word);
-        if (!isIn) {
-            // try if removing -d helps
-            if (word.substring(word.length() - 1).equals("d")) {
-                String withoutD = word.substring(0, word.length() - 1);
-                isIn = dictionary.containsWord(withoutD);
-            }
-
-            // try if removing -ed helps
-            if (!isIn && word.length() >= 3 && word.substring(word.length() - 2).equals("ed")) {
-                String withoutED = word.substring(0, word.length() - 2);
-                isIn = dictionary.containsWord(withoutED);
-            }
-            // try if removing -ied helps
-            if (!isIn && word.length() >= 4 && word.substring(word.length() - 3).equals("ied")) {
-                String withoutIES = word.substring(0, word.length() - 3) + "y";
-                isIn = dictionary.containsWord(withoutIES);
-            }
-
-            // try if removing -s helps
-            if (!isIn && word.charAt(word.length() - 1) == 's') {
-                String withoutS = word.substring(0, word.length() - 1);
-                isIn = dictionary.containsWord(withoutS);
-            }
-
-            // try if removing -ed helps
-            if (!isIn && word.length() >= 3 && word.substring(word.length() - 2).equals("es")) {
-                String withoutES = word.substring(0, word.length() - 2);
-                isIn = dictionary.containsWord(withoutES);
-            }
-
-            // try if removing -ies helps
-            if (!isIn && word.length() >= 4 && word.substring(word.length() - 3).equals("ies")) {
-                String withoutIES = word.substring(0, word.length() - 3) + "y";
-                isIn = dictionary.containsWord(withoutIES);
-            }
-
-            // try if removing -ing helps
-            if (!isIn && word.length() >= 4 && word.substring(word.length() - 3).equals("ing")) {
-                String withoutING = word.substring(0, word.length() - 3);
-                isIn = dictionary.containsWord(withoutING);
-
-                if(!isIn){  // taking
-                    withoutING += "e";
-                    isIn = dictionary.containsWord(withoutING);
-                }
-
-                if(!isIn){  // sitting
-                    withoutING = withoutING = word.substring(0, word.length() - 4); // ting
-                    isIn = dictionary.containsWord(withoutING);
-                }
-
-            }
-
-            // try if removing -est helps
-            if (!isIn && word.length() >= 4 && word.substring(word.length() - 3).equals("est")) {
-                String withoutEST= word.substring(0, word.length() - 3);
-                isIn = dictionary.containsWord(withoutEST);
-            }
-
-
-
-
-        }
-
-        return isIn;
-    }
 }
