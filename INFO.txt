@@ -1,2 +1,12 @@
 Dictionary theory:
  // https://martinweisser.org/corpora_site/word_lists.html
+ -------------
+
+ FOR TESTING HEADLINE FILTERING
+ //"apples are red fruits",
+ //"Hospital hospital protein has a knack for food");
+ //"Jerome will develop an inkling for romance !  ");   // is, an, !
+ //"Starbucks be kiepski business ");
+
+ ---------------
+

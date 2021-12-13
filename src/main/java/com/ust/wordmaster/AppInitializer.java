@@ -22,7 +22,7 @@ public class AppInitializer {
     public static final String BBC_URL = "https://www.bbc.com/";
     public static final String BBC_HEADLINES_ATTRIBUTE = "data-bbc-title";
 
-     public static void main(String[] args) {
+    public static void main(String[] args) {
 
         // create dictionary
         List<DictionaryEntry2> entriesFromFile = CSVParser2.parse(DICTIONARY_FILE);
@@ -37,24 +37,19 @@ public class AppInitializer {
         HTMLParser htmlParser = new HTMLParserImpl();
         List<String> headlineStrings = htmlParser.parse(bbcHomepageHtml, BBC_HEADLINES_ATTRIBUTE);
 //headlineStrings = List.of("Don't lied? (kisses] copy: copies!! ((copied?! \"tries\"? tried injure injured is an artists smiles likes surprise surprised rushed"); //
-    // headlineStrings = List.of("((copied", "*!copied","copied))", "copied?!", "#@copied?!", "boy's");
+        // headlineStrings = List.of("((copied", "*!copied","copied))", "copied?!", "#@copied?!", "boy's");
         //headlineStrings = List.of("taking", "crying", "lying", "sitting" );
-         //headlineStrings = List.of("he's", "she'd", "boy's", "I'd"); // "I'll",
+        //headlineStrings = List.of("he's", "she'd", "boy's", "I'd"); // "I'll",
 
 
-         log.info("-------- Filtering the string headlines for a range eg (1000 - 2000) --------------");
+        log.info("-------- Filtering the string headlines for a range eg (1000 - 2000) --------------");
         FilteringService filteringService = new FilteringServiceImpl(corpusDictionary2);
         List<FilteredHeadline> filteredHeadlines = filteringService.filter(headlineStrings, 1, 5000);
         filteredHeadlines.stream().limit(3).forEach(System.out::println); // each FilteredHeadline has String[] words, int[] indexesOutOfRange, rangeInfo
-        List<String> outOfRangeWords = ((FilteringServiceImpl)filteringService).getWordsOutOfRangeStrings();
+        List<String> outOfRangeWords = ((FilteringServiceImpl) filteringService).getWordsOutOfRangeStrings();
         outOfRangeWords.stream().forEach(System.out::println);
 
         log.info("-------- ?!!! --------------");
         // HeadlinesDTO headlinesDTO = toHeadlinesDTOMapper.map(filteredWords);
     }
 }
-
-//"apples are red fruits",
-//"Hospital hospital protein has a knack for food");
-//"Jerome will develop an inkling for romance !  ");   // is, an, !
-//"Starbucks be kiepski business ");
