@@ -53,12 +53,12 @@ public class FilteringServiceImpl implements FilteringService {
 
     private int[] getOutOfRangeWords(String[] words, int rangeStart, int rangeEnd) {
 
-        //todo rangeStart rangeEnd
+        //PRECONDITION: String[] words doesn't to contain smpty or blank strings. Otherwise test will fail
         List<Integer> outOfRangeWords = new ArrayList<>();
 
         for (int i = 0; i < words.length; i++) {
             String info = " is";
-            boolean contains = isInDictionary(words[i]);
+            boolean contains = isInDictionary(words[i], rangeStart, rangeEnd);
             if (!contains) {
                 info += " NOT";
                 outOfRangeWords.add(i);
@@ -71,46 +71,50 @@ public class FilteringServiceImpl implements FilteringService {
         return outOfRangeWords.stream().mapToInt(i -> i).toArray();
     }
 
-    private boolean isInDictionary(String word) {
+    private boolean isInDictionary(String word, int rangeStart, int rangeEnd) {
         //log.info("Testing: " + word);
         word = word.toLowerCase();
-        boolean isIn = dictionary.containsWord(word);
+
+
+        // from here on CorpusDictionary will create many times the same range of subdictionaries (NavigableSet views)
+        // solution: set range only once in constructor & use a view, not a whole CorpusDictionary
+        boolean isIn = dictionary.containsWord(word, rangeStart, rangeEnd);
 
         ////////////////// -(e)d //////////////////////////////
         if (!isIn) {
             // try if removing -d helps
-            if (word.substring(word.length() - 1).equals("d")) {
+            if (word.length() >= 4 && word.substring(word.length() - 1).equals("d")) {
                 String withoutD = word.substring(0, word.length() - 1);
-                isIn = dictionary.containsWord(withoutD);
+                isIn = dictionary.containsWord(withoutD, rangeStart, rangeEnd);
 
                 // try if removing -ed helps
                 if (!isIn && word.length() >= 3 && word.substring(word.length() - 2).equals("ed")) {
                     String withoutED = word.substring(0, word.length() - 2);
-                    isIn = dictionary.containsWord(withoutED);
+                    isIn = dictionary.containsWord(withoutED, rangeStart, rangeEnd);
                 }
                 // try if removing -ied helps
                 if (!isIn && word.length() >= 4 && word.substring(word.length() - 3).equals("ied")) {
                     String withoutIES = word.substring(0, word.length() - 3) + "y";
-                    isIn = dictionary.containsWord(withoutIES);
+                    isIn = dictionary.containsWord(withoutIES, rangeStart, rangeEnd);
                 }
             }
 
             //////////// -s /////////////////////////////////////////
             // try if removing -s helps
-            if (!isIn && word.charAt(word.length() - 1) == 's') {
+            if (!isIn && word.length() >= 3 && word.charAt(word.length() - 1) == 's') {
                 String withoutS = word.substring(0, word.length() - 1);
-                isIn = dictionary.containsWord(withoutS);
+                isIn = dictionary.containsWord(withoutS, rangeStart, rangeEnd);
 
                 // try if removing -ed helps
                 if (!isIn && word.length() >= 3 && word.substring(word.length() - 2).equals("es")) {
                     String withoutES = word.substring(0, word.length() - 2);
-                    isIn = dictionary.containsWord(withoutES);
+                    isIn = dictionary.containsWord(withoutES, rangeStart, rangeEnd);
                 }
 
                 // try if removing -ies helps
                 if (!isIn && word.length() >= 4 && word.substring(word.length() - 3).equals("ies")) {
                     String withoutIES = word.substring(0, word.length() - 3) + "y";
-                    isIn = dictionary.containsWord(withoutIES);
+                    isIn = dictionary.containsWord(withoutIES, rangeStart, rangeEnd);
                 }
             }
 
@@ -118,16 +122,16 @@ public class FilteringServiceImpl implements FilteringService {
             // try if removing -ing helps
             if (!isIn && word.length() >= 4 && word.substring(word.length() - 3).equals("ing")) {
                 String withoutING = word.substring(0, word.length() - 3);
-                isIn = dictionary.containsWord(withoutING);
+                isIn = dictionary.containsWord(withoutING, rangeStart, rangeEnd);
 
                 if (!isIn) {  // taking
                     withoutING += "e";
-                    isIn = dictionary.containsWord(withoutING);
+                    isIn = dictionary.containsWord(withoutING, rangeStart, rangeEnd);
                 }
 
                 if (!isIn) {  // sitting
                     withoutING = withoutING = word.substring(0, word.length() - 4); // ting
-                    isIn = dictionary.containsWord(withoutING);
+                    isIn = dictionary.containsWord(withoutING, rangeStart, rangeEnd);
                 }
 
             }
@@ -135,17 +139,17 @@ public class FilteringServiceImpl implements FilteringService {
             // try if removing -est helps
             if (!isIn && word.length() >= 4 && word.substring(word.length() - 3).equals("est")) {
                 String withoutEST = word.substring(0, word.length() - 3);
-                isIn = dictionary.containsWord(withoutEST);
+                isIn = dictionary.containsWord(withoutEST, rangeStart, rangeEnd);
             }
 
             // all short forms with 'd (would/had)  & 's (has/is)  & 'm (am) & 're (are) will be considered as present
             // in each range, so effectively in range 0-1
-            if (!isIn && word.contains("'")){
-                Set shortForms = Set.of("i'd", "he'd", "she'd","we'd", "you'd", "they'd",
-                        "i'm", "he's", "she's","we're", "you're", "they're",
+            if (!isIn && word.contains("'")) {
+                Set shortForms = Set.of("i'd", "he'd", "she'd", "we'd", "you'd", "they'd",
+                        "i'm", "he's", "she's", "we're", "you're", "they're",
                         "there's", "there're",
                         "ain't", "gonna");
-                if(shortForms.contains(word)){
+                if (shortForms.contains(word)) {
                     isIn = true;
                 }
             }
@@ -243,11 +247,5 @@ public class FilteringServiceImpl implements FilteringService {
 
         return word;
     }
-
-    private String dealWithShortenedForm(String word){
-       // String[] shortForms = {"I"}
-        return word;
-    }
-
 
 }

@@ -55,14 +55,48 @@ public class CorpusDictionary2 {
 
     // checks if contains word but maybe it's a word, maybe it's a noun
     // we don't have O(1) for word lookup
-    public boolean containsWord(final String word) {
+    public boolean containsWord(final String word, int rangeStart, int rangeEnd) {
+
+        //rangeStart = rangeStart == 0? 1 : rangeStart;
+        //rangeEnd = rangeEnd == 5001? 5001 : rangeEnd;
+
+        if (rangeStart < 1 || rangeStart > 4999) {
+            throw new IllegalArgumentException("Range start must be in the range 1-4999");
+        }
+        if (rangeEnd < 2 || rangeEnd > 5000) {
+            throw new IllegalArgumentException("Range start must be in the range 2-5000");
+        }
+        if (rangeStart > rangeEnd) {
+            throw new IllegalArgumentException("Range start cannot be greater than rangeEnd");
+        }
 
         String wordImproved = quickFix(word.toLowerCase());
-       for(DictionaryEntry2 entry : this.dictionary){
-           if(entry.getWord().equalsIgnoreCase(wordImproved)) {
-               return true;
-           }
-       }
+
+        // get subset of TreeSet
+        DictionaryEntry2 startEntry = null; // 1
+        DictionaryEntry2 endEntry = null; // 1000
+        for (DictionaryEntry2 entry : this.dictionary) {
+            if (entry.getRank() == rangeStart) {
+                startEntry = entry;
+            } else if (entry.getRank() == rangeEnd) {
+                endEntry = entry;
+            }
+
+            if (startEntry != null && endEntry != null) {
+                break;
+            }
+        }
+
+        //assert startEntry != null;
+        assert endEntry != null;
+
+        NavigableSet<DictionaryEntry2> rangeDictionary = this.dictionary.subSet(startEntry, true, endEntry, true);
+
+        for (DictionaryEntry2 entry : rangeDictionary) {
+            if (entry.getWord().equalsIgnoreCase(wordImproved)) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -112,7 +146,7 @@ public class CorpusDictionary2 {
         replacementMap.put("metre", "meter");
         replacementMap.put("theatre", "theater");
 
-        return  replacementMap.getOrDefault(word, word);
+        return replacementMap.getOrDefault(word, word);
     }
 
     static class ComparatorByWord implements Comparator<DictionaryEntry2> {

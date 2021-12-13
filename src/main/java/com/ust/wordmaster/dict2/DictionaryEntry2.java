@@ -13,11 +13,6 @@ import java.util.Objects;
  * Represents the data connected with the word itself
  */
 public final class DictionaryEntry2 implements Comparable<DictionaryEntry2> {
-    /**
-     * The word's rank based on the frequency of occurrence. The more frequent the word the higher th rank
-     */
-    private int rank;
-    private String word;
     private final String partOfSpeech;
     /**
      * frequency - how many times the word appears in the corpus
@@ -28,6 +23,11 @@ public final class DictionaryEntry2 implements Comparable<DictionaryEntry2> {
      * https://www.researchgate.net/publication/332120488_Analyzing_dispersion
      */
     private final double dispersion;
+    /**
+     * The word's rank based on the frequency of occurrence. The more frequent the word the higher th rank
+     */
+    private int rank;
+    private String word;
 
     public DictionaryEntry2(final String word,
                             final int rank,
