@@ -24,7 +24,7 @@ class FilteringServiceImplTest {
 
     // testing a private method
     @Test
-    void getWordsOutOfRangeStrings() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    void getWordsOutOfRangeStrings_considersShortenedFormsAsPresentInEachRange() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         List<DictionaryEntry2> entriesFromFile = CSVParser2.parse(DICTIONARY_FILE);
         CorpusDictionary2 corpusDictionary2 = new CorpusDictionary2("Corpus Dictionary from file", entriesFromFile);
         FilteringServiceImpl filteringService = new FilteringServiceImpl(corpusDictionary2);
@@ -32,13 +32,14 @@ class FilteringServiceImplTest {
         Method method = FilteringServiceImpl.class.getDeclaredMethod("getOutOfRangeWords", String[].class, int.class, int.class);
         method.setAccessible(true);
 
-        String str = "I'd like bananas and dinosaurs";
-        String[] words = str.split(" ");
-
+        String oddOneOut = "dinosaurs";
+        String[] words = ("I'd eat " + oddOneOut +" He's stupid We're ok she's crazy").split(" ");
         //invoke() returns Object
-        int[] indexes = (int[])method.invoke(filteringService, words, 0, 5000);
+        int[] notInRange = (int[])method.invoke(filteringService, words, 0, 5000);
+        assertArrayEquals(new int[] {2}, notInRange);
 
-        assertArrayEquals(new int[] {0,4}, indexes);
+        notInRange = (int[])method.invoke(filteringService, words, 0, 1000);
+        assertArrayEquals(new int[] {2}, notInRange);
     }
 
 

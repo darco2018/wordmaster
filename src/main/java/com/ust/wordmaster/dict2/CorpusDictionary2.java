@@ -112,9 +112,6 @@ public class CorpusDictionary2 {
         replacementMap.put("metre", "meter");
         replacementMap.put("theatre", "theater");
 
-        /*replacementMap.put("I'll", "I");
-        replacementMap.put("I'd", "I");*/
-
         return  replacementMap.getOrDefault(word, word);
     }
 

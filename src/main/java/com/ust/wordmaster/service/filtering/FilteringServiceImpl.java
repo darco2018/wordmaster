@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -137,6 +138,18 @@ public class FilteringServiceImpl implements FilteringService {
                 isIn = dictionary.containsWord(withoutEST);
             }
 
+            // all short forms with 'd (would/had)  & 's (has/is)  & 'm (am) & 're (are) will be considered as present
+            // in each range, so effectively in range 0-1
+            if (!isIn && word.contains("'")){
+                Set shortForms = Set.of("i'd", "he'd", "she'd","we'd", "you'd", "they'd",
+                        "i'm", "he's", "she's","we're", "you're", "they're",
+                        "there's", "there're",
+                        "ain't", "gonna");
+                if(shortForms.contains(word)){
+                    isIn = true;
+                }
+            }
+
         }
 
         return isIn;
@@ -228,6 +241,11 @@ public class FilteringServiceImpl implements FilteringService {
             }
         } while (removedLetter);
 
+        return word;
+    }
+
+    private String dealWithShortenedForm(String word){
+       // String[] shortForms = {"I"}
         return word;
     }
 
