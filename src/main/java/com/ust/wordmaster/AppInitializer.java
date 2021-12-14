@@ -41,7 +41,7 @@ public class AppInitializer {
 
         log.info("-------- Filtering the string headlines for a range eg (1000 - 2000) --------------");
         FilteringService filteringService = new FilteringServiceImpl(corpusDictionary2);
-        List<FilteredHeadline> filteredHeadlines = filteringService.filter(headlineStrings, 1, 5000);
+        List<FilteredHeadline> filteredHeadlines = filteringService.createFilteredHeadlines(headlineStrings, 1, 5000);
         filteredHeadlines.stream().limit(3).forEach(System.out::println); // each FilteredHeadline has String[] words, int[] indexesOutOfRange, rangeInfo
         List<String> outOfRangeWords = ((FilteringServiceImpl) filteringService).getWordsOutOfRangeStrings();
         outOfRangeWords.stream().forEach(System.out::println);

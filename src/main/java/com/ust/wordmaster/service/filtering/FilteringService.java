@@ -8,5 +8,5 @@ import java.util.List;
 @Service
 public interface FilteringService {
 
-    List<FilteredHeadline> filter(List<String> headlines, int rangeStart, int rangeEnd);
+    List<FilteredHeadline> createFilteredHeadlines(List<String> headlines, int rangeStart, int rangeEnd);
 }

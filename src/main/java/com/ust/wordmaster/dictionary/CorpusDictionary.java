@@ -17,10 +17,10 @@ public class CorpusDictionary {
     @Getter
     private String dictionaryName;
 
-    @Getter  //  The map is sorted according to the natural ordering of its keys,
+    @Getter
     private TreeSet<DictionaryEntry> dictionary;
 
-    public CorpusDictionary(String name, Collection<DictionaryEntry> entries) {
+    public CorpusDictionary(final String name, final Collection<DictionaryEntry> entries) {
         Objects.requireNonNull(name, "Dictionary name cannot be null");
         if (name.isEmpty() || name.isBlank()) {
             throw new IllegalArgumentException("Dictionary name cannot be empty or blank");
@@ -38,6 +38,70 @@ public class CorpusDictionary {
         }
     }
 
+    public static void validateRange(final int rangeStart, final int rangeEnd) {
+
+        if (rangeStart < 1 || rangeStart > 4999) {
+            throw new IllegalArgumentException("Range start must be in the range 1-4999");
+        }
+        if (rangeEnd < 2 || rangeEnd > 5000) {
+            throw new IllegalArgumentException("Range start must be in the range 2-5000");
+        }
+        if (rangeStart > rangeEnd) {
+            throw new IllegalArgumentException("Range start cannot be greater than rangeEnd");
+        }
+    }
+
+    /**
+     * Searches the subset of the dictionary. The search doesn't differentiate between parts of speech,
+     * so it will return the first matching word.
+     * The search also ignores case.
+     */
+
+
+    public boolean containsWord(final String word, final int rangeStart, final int rangeEnd) {
+
+        Objects.requireNonNull(word, "Word cannot be null");
+
+        validateRange(rangeStart, rangeEnd);
+
+        String key = word.toLowerCase();
+        // optimalisation
+        //key = replace(key);
+
+        NavigableSet<DictionaryEntry> dictionarySubset = getDictionarySubset(rangeStart, rangeEnd);
+        // we don't have O(1) for word lookup. Multimap better
+        for (DictionaryEntry entry : dictionarySubset) {
+            if (entry.getWord().equalsIgnoreCase(key)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private NavigableSet<DictionaryEntry> getDictionarySubset(final int rangeStart, final int rangeEnd) {
+
+        validateRange(rangeStart, rangeEnd);
+
+        DictionaryEntry startEntry = null, endEntry = null;
+
+        for (DictionaryEntry entry : this.dictionary) {
+            if (entry.getRank() == rangeStart)
+                startEntry = entry;
+
+            if (entry.getRank() == rangeEnd)
+                endEntry = entry;
+
+            if (startEntry != null && endEntry != null)
+                break;
+        }
+
+        return Collections.unmodifiableNavigableSet(
+                new TreeSet<>(this.dictionary.subSet(startEntry, true, endEntry, true)));
+    }
+
+    ///////////////////// Sorting options /////////////////////////////////
+
     public NavigableSet<DictionaryEntry> getDictionaryByRank(boolean reversed) {
 
         return Collections.unmodifiableNavigableSet(new TreeSet<>(reversed ? dictionary.descendingSet() : dictionary));
@@ -52,62 +116,27 @@ public class CorpusDictionary {
         return Collections.unmodifiableNavigableSet(sortedByWord);
     }
 
-    // checks if contains word but maybe it's a word, maybe it's a noun
-    // we don't have O(1) for word lookup
-    public boolean containsWord(final String word, final int rangeStart, final int rangeEnd) {
+    static class ComparatorByWord implements Comparator<DictionaryEntry> {
 
-        validate(word, rangeStart, rangeEnd);
-
-        String wordFixed = word.toLowerCase();
-        wordFixed = replace(wordFixed);
-
-        NavigableSet<DictionaryEntry> rangeDictionary = getDictionarySubset(rangeStart, rangeEnd);
-
-        for (DictionaryEntry entry : rangeDictionary) {
-            if (entry.getWord().equalsIgnoreCase(wordFixed)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private void validate(String word, int rangeStart, int rangeEnd) {
-        if(word == null){
-            throw new NullPointerException("Word cannot be null");
-        }
-
-        if (rangeStart < 1 || rangeStart > 4999) {
-            throw new IllegalArgumentException("Range start must be in the range 1-4999");
-        }
-        if (rangeEnd < 2 || rangeEnd > 5000) {
-            throw new IllegalArgumentException("Range start must be in the range 2-5000");
-        }
-        if (rangeStart > rangeEnd) {
-            throw new IllegalArgumentException("Range start cannot be greater than rangeEnd");
+        @Override
+        public int compare(DictionaryEntry e1, DictionaryEntry e2) {
+            int compareByWord = e1.getWord().toLowerCase().compareTo(e2.getWord().toLowerCase());
+            return compareByWord == 0 ?
+                    e1.getPartOfSpeech().compareTo(e2.getPartOfSpeech()) :
+                    compareByWord;
         }
     }
 
-    private NavigableSet<DictionaryEntry> getDictionarySubset(int rangeStart, int rangeEnd) {
+    static class ComparatorByFrequency implements Comparator<DictionaryEntry> {
 
-        DictionaryEntry startEntry = null;
-        DictionaryEntry endEntry = null;
-        for (DictionaryEntry entry : this.dictionary) {
-            if (entry.getRank() == rangeStart) {
-                startEntry = entry;
-            } else if (entry.getRank() == rangeEnd) {
-                endEntry = entry;
-            }
-
-            if (startEntry != null && endEntry != null) {
-                break;
-            }
+        @Override
+        public int compare(DictionaryEntry o1, DictionaryEntry o2) {
+            return o1.getFrequency() - o2.getFrequency();
         }
-
-        NavigableSet<DictionaryEntry> rangeDictionary = this.dictionary.subSet(
-                startEntry, true, endEntry, true);
-        return rangeDictionary;
     }
+
+
+    /*
 
     private String replace(String word) {
         word = word.toLowerCase();
@@ -157,24 +186,6 @@ public class CorpusDictionary {
 
         return replacementMap.getOrDefault(word, word);
     }
-
-    static class ComparatorByWord implements Comparator<DictionaryEntry> {
-
-        @Override
-        public int compare(DictionaryEntry e1, DictionaryEntry e2) {
-            int compareByWord = e1.getWord().toLowerCase().compareTo(e2.getWord().toLowerCase());
-            return compareByWord == 0 ?
-                    e1.getPartOfSpeech().compareTo(e2.getPartOfSpeech()) :
-                    compareByWord;
-        }
-    }
-
-    static class ComparatorByFrequency implements Comparator<DictionaryEntry> {
-
-        @Override
-        public int compare(DictionaryEntry o1, DictionaryEntry o2) {
-            return o1.getFrequency() - o2.getFrequency();
-        }
-    }
+*/
 
 }
