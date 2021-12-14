@@ -1,6 +1,8 @@
 package com.ust.wordmaster.service.filtering;
 
-import com.ust.wordmaster.dictionary.CorpusDictionary;
+import com.ust.wordmaster.dictionary.CorpusDictionary5000;
+import com.ust.wordmaster.dictionary.CorpusDictionaryInt;
+import com.ust.wordmaster.dictionary.DictionaryEntry;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,7 +13,7 @@ import static java.util.Map.entry;
 
 @Slf4j
 @Service
-public class FilteringServiceImpl implements FilteringService {
+public class FilteringService5000 implements FilteringService {
 
     private static final Set<String> SHORT_FORMS = Set.of("i'd", "he'd", "she'd", "we'd", "you'd", "they'd",
             "i'm", "he's", "she's", "it's", "we're", "you're", "they're",
@@ -23,7 +25,7 @@ public class FilteringServiceImpl implements FilteringService {
             '#', '$', '*', '(', ')', '{', '}', '[', ']', '…', '-'};
 
     private static final Map<String, String> SEARCH_REPLACEMENTS = Map.ofEntries(
-            entry("am", "be"), entry("are", "be"),
+            entry("am", "be"),
             entry("is", "be"),
             entry("was", "be"),
             entry("were", "be"),
@@ -65,22 +67,24 @@ public class FilteringServiceImpl implements FilteringService {
             entry("metre", "meter"),
             entry("theatre", "theater")
     );
-    private final CorpusDictionary dictionary;
+    private final CorpusDictionaryInt corpusDictionary;
     //todo remove later?!
     @Getter
-    private List<String> wordsOutOfRangeStrings = new ArrayList<>();
+    private final List<String> wordsOutOfRangeStrings = new ArrayList<>();
 
-    public FilteringServiceImpl(CorpusDictionary dictionary) {
-        this.dictionary = dictionary;
+    public FilteringService5000(CorpusDictionaryInt dictionary) {
+        this.corpusDictionary = dictionary;
     }
 
     @Override
     public List<FilteredHeadline> createFilteredHeadlines(List<String> headlinesList, int rangeStart, int rangeEnd) {
-        CorpusDictionary.validateRange(rangeStart, rangeEnd);
+        CorpusDictionary5000.validateRange(rangeStart, rangeEnd);
         Objects.requireNonNull(headlinesList, "List of headlines cannot be null");
+
         log.info("Filtering " + headlinesList.size() + " headlines; range " + rangeStart + "-" + rangeEnd);
 
         List<FilteredHeadline> filteredHeadlines = new ArrayList<>();
+        NavigableSet<DictionaryEntry> subsetDictionary = corpusDictionary.getDictionarySubset(rangeStart, rangeEnd);
 
         for (String headlineAsString : headlinesList) {
             //create HEadline
@@ -89,7 +93,7 @@ public class FilteringServiceImpl implements FilteringService {
             Headline headline = new Headline(headlineAsString, words);
 
             // create FilteredHeadline
-            int[] wordIndexes = getOutOfRangeWords(words, rangeStart, rangeEnd);
+            int[] wordIndexes = getOutOfRangeWords(words, subsetDictionary);
             FilteredHeadline filteredHeadline = new FilteredHeadline(headline, wordIndexes, new int[]{rangeStart, rangeEnd});
             filteredHeadlines.add(filteredHeadline);
 
@@ -109,11 +113,7 @@ public class FilteringServiceImpl implements FilteringService {
 
     }
 
-    private int[] getOutOfRangeWords(String[] words, int rangeStart, int rangeEnd) {
-
-        //PRECONDITION: String[] words doesn't to contain smpty or blank strings. Otherwise test will fail
-
-        CorpusDictionary.validateRange(rangeStart, rangeEnd);
+    private int[] getOutOfRangeWords(String[] words, NavigableSet<DictionaryEntry> subsetDictionary) {
 
         List<Integer> outOfRangeWordIndexes = new ArrayList<>();
 
@@ -124,7 +124,7 @@ public class FilteringServiceImpl implements FilteringService {
                 throw new IllegalArgumentException("The word cannot be blank or empty.");
             }
 
-            if (!isInDictionary(word, rangeStart, rangeEnd)) {
+            if (!isInDictionary(word, subsetDictionary)) {
                 outOfRangeWordIndexes.add(i);
                 info += " NOT";
 
@@ -132,7 +132,7 @@ public class FilteringServiceImpl implements FilteringService {
                 wordsOutOfRangeStrings.add(words[i]);
             }
 
-            log.info(words[i] + " [i]=" + i + info + " in range " + rangeStart + "-" + rangeEnd + ": ");
+            log.info(words[i] + " [i]=" + i + info + " in the given range.");
         }
 
         return outOfRangeWordIndexes.stream().mapToInt(i -> i).toArray();
@@ -143,31 +143,32 @@ public class FilteringServiceImpl implements FilteringService {
      * This methods is heavily dependent on Corpus Dictionary's structure and contents.
      * these are my search optimalisations and simplifications
      */
-    private boolean isInDictionary(String word, int rangeStart, int rangeEnd) {
+    private boolean isInDictionary(String word, NavigableSet<DictionaryEntry> subsetDictionary) {
 
         String key = word.toLowerCase();
         // for each word, the replacement hashmap is created - not effective!
         key = replaceForSearch(key);
 
         // getSubset Dictionary
-        boolean isIn = dictionary.containsWord(key, rangeStart, rangeEnd);
+        // HERE in Dictionary class the subset dictionary is created lots of times
+        boolean isIn = corpusDictionary.containsWord(key, subsetDictionary);
 
         ////////////////// -(e)d //////////////////////////////
         if (!isIn) {
             // try if removing -d helps
-            if (key.length() >= 4 && key.substring(key.length() - 1).equals("d")) {
+            if (key.length() >= 4 && key.endsWith("d")) {
                 String withoutD = key.substring(0, key.length() - 1);
-                isIn = dictionary.containsWord(withoutD, rangeStart, rangeEnd);
+                isIn = corpusDictionary.containsWord(withoutD, subsetDictionary);
 
                 // try if removing -ed helps
-                if (!isIn && key.length() >= 3 && key.substring(key.length() - 2).equals("ed")) {
+                if (!isIn && key.endsWith("ed")) {
                     String withoutED = key.substring(0, key.length() - 2);
-                    isIn = dictionary.containsWord(withoutED, rangeStart, rangeEnd);
+                    isIn = corpusDictionary.containsWord(withoutED, subsetDictionary);
                 }
                 // try if removing -ied helps
-                if (!isIn && key.length() >= 4 && key.substring(key.length() - 3).equals("ied")) {
+                if (!isIn && key.endsWith("ied")) {
                     String withoutIES = key.substring(0, key.length() - 3) + "y";
-                    isIn = dictionary.containsWord(withoutIES, rangeStart, rangeEnd);
+                    isIn = corpusDictionary.containsWord(withoutIES, subsetDictionary);
                 }
             }
 
@@ -175,43 +176,43 @@ public class FilteringServiceImpl implements FilteringService {
             // try if removing -s helps
             if (!isIn && key.length() >= 3 && key.charAt(key.length() - 1) == 's') {
                 String withoutS = key.substring(0, key.length() - 1);
-                isIn = dictionary.containsWord(withoutS, rangeStart, rangeEnd);
+                isIn = corpusDictionary.containsWord(withoutS, subsetDictionary);
 
                 // try if removing -ed helps
-                if (!isIn && key.length() >= 3 && key.substring(key.length() - 2).equals("es")) {
+                if (!isIn && key.endsWith("es")) {
                     String withoutES = key.substring(0, key.length() - 2);
-                    isIn = dictionary.containsWord(withoutES, rangeStart, rangeEnd);
+                    isIn = corpusDictionary.containsWord(withoutES, subsetDictionary);
                 }
 
                 // try if removing -ies helps
-                if (!isIn && key.length() >= 4 && key.substring(key.length() - 3).equals("ies")) {
+                if (!isIn && key.length() >= 4 && key.endsWith("ies")) {
                     String withoutIES = key.substring(0, key.length() - 3) + "y";
-                    isIn = dictionary.containsWord(withoutIES, rangeStart, rangeEnd);
+                    isIn = corpusDictionary.containsWord(withoutIES, subsetDictionary);
                 }
             }
 
             //////////// -ING ////////////////////
             // try if removing -ing helps
-            if (!isIn && key.length() >= 4 && key.substring(key.length() - 3).equals("ing")) {
+            if (!isIn && key.length() >= 4 && key.endsWith("ing")) {
                 String withoutING = key.substring(0, key.length() - 3);
-                isIn = dictionary.containsWord(withoutING, rangeStart, rangeEnd);
+                isIn = corpusDictionary.containsWord(withoutING, subsetDictionary);
 
                 if (!isIn) {  // taking
                     withoutING += "e";
-                    isIn = dictionary.containsWord(withoutING, rangeStart, rangeEnd);
+                    isIn = corpusDictionary.containsWord(withoutING, subsetDictionary);
                 }
 
                 if (!isIn) {  // sitting
-                    withoutING = withoutING = key.substring(0, key.length() - 4); // ting
-                    isIn = dictionary.containsWord(withoutING, rangeStart, rangeEnd);
+                    withoutING = key.substring(0, key.length() - 4); // ting
+                    isIn = corpusDictionary.containsWord(withoutING, subsetDictionary);
                 }
 
             }
 
             // try if removing -est helps
-            if (!isIn && key.length() >= 4 && key.substring(key.length() - 3).equals("est")) {
+            if (!isIn && key.length() >= 4 && key.endsWith("est")) {
                 String withoutEST = key.substring(0, key.length() - 3);
-                isIn = dictionary.containsWord(withoutEST, rangeStart, rangeEnd);
+                isIn = corpusDictionary.containsWord(withoutEST, subsetDictionary);
             }
 
             // all short forms with 'd (would/had)  & 's (has/is)  & 'm (am) & 're (are) will be considered as present

@@ -12,7 +12,7 @@ import java.util.*;
  */
 @Slf4j
 @AllArgsConstructor
-public class CorpusDictionary {
+public class CorpusDictionary5000 implements CorpusDictionaryInt {
 
     @Getter
     private String dictionaryName;
@@ -20,7 +20,7 @@ public class CorpusDictionary {
     @Getter
     private TreeSet<DictionaryEntry> dictionary;
 
-    public CorpusDictionary(final String name, final Collection<DictionaryEntry> entries) {
+    public CorpusDictionary5000(final String name, final Collection<DictionaryEntry> entries) {
         Objects.requireNonNull(name, "Dictionary name cannot be null");
         if (name.isEmpty() || name.isBlank()) {
             throw new IllegalArgumentException("Dictionary name cannot be empty or blank");
@@ -38,19 +38,6 @@ public class CorpusDictionary {
         }
     }
 
-    public static void validateRange(final int rangeStart, final int rangeEnd) {
-
-        if (rangeStart < 1 || rangeStart > 4999) {
-            throw new IllegalArgumentException("Range start must be in the range 1-4999");
-        }
-        if (rangeEnd < 2 || rangeEnd > 5000) {
-            throw new IllegalArgumentException("Range start must be in the range 2-5000");
-        }
-        if (rangeStart > rangeEnd) {
-            throw new IllegalArgumentException("Range start cannot be greater than rangeEnd");
-        }
-    }
-
     /**
      * Searches the subset of the dictionary. The search doesn't differentiate between parts of speech,
      * so it will return the first matching word.
@@ -58,17 +45,18 @@ public class CorpusDictionary {
      */
 
 
-    public boolean containsWord(final String word, final int rangeStart, final int rangeEnd) {
+    @Override
+    public boolean containsWord(final String word, NavigableSet<DictionaryEntry> entries) {
 
         Objects.requireNonNull(word, "Word cannot be null");
 
-        validateRange(rangeStart, rangeEnd);
+       // validateRange(rangeStart, rangeEnd);
 
         String key = word.toLowerCase();
         // optimalisation
         //key = replace(key);
 
-        NavigableSet<DictionaryEntry> dictionarySubset = getDictionarySubset(rangeStart, rangeEnd);
+        NavigableSet<DictionaryEntry> dictionarySubset = entries;
         // we don't have O(1) for word lookup. Multimap better
         for (DictionaryEntry entry : dictionarySubset) {
             if (entry.getWord().equalsIgnoreCase(key)) {
@@ -79,9 +67,10 @@ public class CorpusDictionary {
         return false;
     }
 
-    private NavigableSet<DictionaryEntry> getDictionarySubset(final int rangeStart, final int rangeEnd) {
+    @Override
+    public NavigableSet<DictionaryEntry> getDictionarySubset(final int rangeStart, final int rangeEnd) {
 
-        validateRange(rangeStart, rangeEnd);
+       validateRange(rangeStart, rangeEnd);
 
         DictionaryEntry startEntry = null, endEntry = null;
 
@@ -100,13 +89,28 @@ public class CorpusDictionary {
                 new TreeSet<>(this.dictionary.subSet(startEntry, true, endEntry, true)));
     }
 
+    public static void validateRange(int rangeStart, int rangeEnd) {
+
+        if (rangeStart < 1 || rangeStart > 4999) {
+            throw new IllegalArgumentException("Range start must be in the range 1-4999");
+        }
+        if (rangeEnd < 2 || rangeEnd > 5000) {
+            throw new IllegalArgumentException("Range start must be in the range 2-5000");
+        }
+        if (rangeStart > rangeEnd) {
+            throw new IllegalArgumentException("Range start cannot be greater than rangeEnd");
+        }
+    }
+
     ///////////////////// Sorting options /////////////////////////////////
 
+    @Override
     public NavigableSet<DictionaryEntry> getDictionaryByRank(boolean reversed) {
 
         return Collections.unmodifiableNavigableSet(new TreeSet<>(reversed ? dictionary.descendingSet() : dictionary));
     }
 
+    @Override
     public NavigableSet<DictionaryEntry> getDictionaryByWord(boolean reversed) {
 
         ComparatorByWord byWord = new ComparatorByWord();
@@ -135,57 +139,5 @@ public class CorpusDictionary {
         }
     }
 
-
-    /*
-
-    private String replace(String word) {
-        word = word.toLowerCase();
-        HashMap<String, String> replacementMap = new HashMap<>();
-        replacementMap.put("am", "be");
-        replacementMap.put("are", "be");
-        replacementMap.put("is", "be");
-        replacementMap.put("was", "be");
-        replacementMap.put("were", "be");
-        replacementMap.put("has", "have");
-        replacementMap.put("had", "have");
-
-        replacementMap.put("an", "a");
-
-        replacementMap.put("aren't", "n't");
-        replacementMap.put("isn't", "n't");
-        replacementMap.put("don't", "n't");
-        replacementMap.put("doesn't", "n't");
-        replacementMap.put("wasn't", "n't");
-        replacementMap.put("weren't", "n't");
-        replacementMap.put("haven't", "n't");
-        replacementMap.put("hasn't", "n't");
-        replacementMap.put("hadn't", "n't");
-        replacementMap.put("won't", "n't");
-        replacementMap.put("wouldn't", "n't");
-        replacementMap.put("can't", "n't");
-        replacementMap.put("couldn't", "n't");
-        replacementMap.put("shan't", "n't");
-        replacementMap.put("shouldn't", "n't");
-
-        replacementMap.put("children", "child");
-        replacementMap.put("grandchildren", "grandchild");
-        replacementMap.put("mice", "mouse");
-        replacementMap.put("wives", "wife");
-        replacementMap.put("wolves", "wolf");
-        replacementMap.put("knives", "knife");
-        replacementMap.put("halves", "half");
-        replacementMap.put("selves", "self");
-        replacementMap.put("feet", "foot");
-        replacementMap.put("teeth", "tooth");
-        replacementMap.put("men", "man");
-        replacementMap.put("women", "woman");
-        replacementMap.put("lying", "lie");
-
-        replacementMap.put("metre", "meter");
-        replacementMap.put("theatre", "theater");
-
-        return replacementMap.getOrDefault(word, word);
-    }
-*/
 
 }

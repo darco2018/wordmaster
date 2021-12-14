@@ -25,7 +25,7 @@ public class DictionaryMain {
 
         ////////////////------TESTING LOADING DATA FROM FILE-------////////////////////////
         List<DictionaryEntry> entriesFromFile = CSVParser.parse("dictionary5000.csv");
-        CorpusDictionary corpusDict2FromFile = new CorpusDictionary("Dictionary from file", entriesFromFile);
+        CorpusDictionary5000 corpusDict2FromFile = new CorpusDictionary5000("Dictionary from file", entriesFromFile);
 
         System.out.println("----------Printing dictionary from file --------------");
         //System.out.println(corpusDict2FromFile.getDictionary().size());
