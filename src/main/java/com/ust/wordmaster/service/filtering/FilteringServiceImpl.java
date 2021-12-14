@@ -1,6 +1,6 @@
 package com.ust.wordmaster.service.filtering;
 
-import com.ust.wordmaster.dict2.CorpusDictionary2;
+import com.ust.wordmaster.dictionary.CorpusDictionary;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,12 +14,12 @@ import java.util.Set;
 @Service
 public class FilteringServiceImpl implements FilteringService {
 
-    private final CorpusDictionary2 dictionary;
+    private final CorpusDictionary dictionary;
 
     @Getter
     private List<String> wordsOutOfRangeStrings = new ArrayList<>();
 
-    public FilteringServiceImpl(CorpusDictionary2 dictionary) {
+    public FilteringServiceImpl(CorpusDictionary dictionary) {
         this.dictionary = dictionary;
     }
 

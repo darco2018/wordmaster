@@ -1,8 +1,7 @@
-package com.ust.wordmaster.dictionary;
+package com.ust.wordmaster.dictionary1;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 import java.util.Objects;
@@ -13,7 +12,7 @@ import java.util.Objects;
 /**
  * Represents the data connected with the word itself
  */
-public final class WordData {
+public final class WordData1 {
     /**
      * The word's rank based on the frequency of occurrence. The more frequent the word the higher th rank
      */
@@ -29,10 +28,10 @@ public final class WordData {
      */
     private final double dispersion;
 
-    public WordData(final int rank,
-                    final String partOfSpeech,
-                    final int frequency,
-                    final double dispersion) {
+    public WordData1(final int rank,
+                     final String partOfSpeech,
+                     final int frequency,
+                     final double dispersion) {
         Objects.requireNonNull(partOfSpeech, "Part of speech cannot be null");
         if (rank < 1)
             throw new IllegalArgumentException("Rank cannot be less than 1");

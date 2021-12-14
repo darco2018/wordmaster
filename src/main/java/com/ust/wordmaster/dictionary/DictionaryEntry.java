@@ -1,57 +1,64 @@
 package com.ust.wordmaster.dictionary;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
 import java.util.Objects;
 
-/**
- * Immutable dictionary created only once to store words from corpus data with word data such as
- * rank, frequency, etc
- */
 @Getter
+@EqualsAndHashCode
 @ToString
+/**
+ * Represents the data connected with the word itself
+ */
 public final class DictionaryEntry implements Comparable<DictionaryEntry> {
-
-    private final WordRoot wordRoot;
-    private final WordData wordData;
-
-    public DictionaryEntry(final WordRoot wordRoot, final WordData wordData) {
-        Objects.requireNonNull(wordRoot, "WordRoot cannot be null");
-        Objects.requireNonNull(wordData, "WordData cannot be null");
-
-        this.wordRoot = wordRoot;
-        this.wordData = wordData;
-    }
-
+    private final String partOfSpeech;
     /**
-     * Two entries are equal if they have the same root and the same part of speech
+     * frequency - how many times the word appears in the corpus
      */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DictionaryEntry entry = (DictionaryEntry) o;
-        return Objects.equals(wordRoot, entry.wordRoot) &&
-                Objects.equals(wordData.getPartOfSpeech(), entry.wordData.getPartOfSpeech());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(wordRoot, wordData.getPartOfSpeech());
-    }
-
+    private final int frequency;
     /**
-     * This object is greater if it has a greater root (eg 'dance' goes before 'eat'). If the roots are equal,
-     * the psrt of speech is compared, so that 'dance' 'n' goes before 'dance' 'v'
+     * dispersion -the degree to which occurrences of a word are distributed throughout a corpus evenly or unevenly/clumpily
+     * https://www.researchgate.net/publication/332120488_Analyzing_dispersion
      */
+    private final double dispersion;
+    /**
+     * The word's rank based on the frequency of occurrence. The more frequent the word the higher th rank
+     */
+    private int rank;
+    private String word;
+
+    public DictionaryEntry(final String word,
+                           final int rank,
+                           final String partOfSpeech,
+                           final int frequency,
+                           final double dispersion) {
+
+        Objects.requireNonNull(word, "Word cannot be null");
+        if (word.isBlank() || word.isEmpty()) {
+            throw new IllegalArgumentException("Word cannot be empty or blank");
+        }
+
+        Objects.requireNonNull(partOfSpeech, "Part of speech cannot be null");
+        if (rank < 1)
+            throw new IllegalArgumentException("Rank cannot be less than 1");
+
+        if (frequency < 1)
+            throw new IllegalArgumentException("Frequency cannot be less than 1");
+
+        if (dispersion < 0 || dispersion > 100)
+            throw new IllegalArgumentException("Dispersion must be int the range 0-100");
+
+        this.word = word;
+        this.rank = rank;
+        this.partOfSpeech = partOfSpeech;
+        this.frequency = frequency;
+        this.dispersion = dispersion;
+    }
+
     @Override
     public int compareTo(DictionaryEntry o) {
-        int rootComparison = this.wordRoot.getWord().compareTo(o.wordRoot.getWord());
-        return rootComparison == 0 ?
-                this.wordData.getPartOfSpeech().compareTo(o.wordData.getPartOfSpeech()) :
-                rootComparison;
+        return this.rank - o.rank;
     }
-
-
 }

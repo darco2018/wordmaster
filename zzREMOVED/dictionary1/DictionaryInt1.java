@@ -1,8 +1,8 @@
-package com.ust.wordmaster.dictionary;
+package com.ust.wordmaster.dictionary1;
 
 import java.util.List;
 
-public interface DictionaryInt<DictionaryEntry> {
+public interface DictionaryInt1<DictionaryEntry> {
 
     DictionaryEntry add(DictionaryEntry entry);
     DictionaryEntry delete(DictionaryEntry entry);

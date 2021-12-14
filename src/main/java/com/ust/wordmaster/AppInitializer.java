@@ -1,8 +1,8 @@
 package com.ust.wordmaster;
 
-import com.ust.wordmaster.dict2.CSVParser2;
-import com.ust.wordmaster.dict2.CorpusDictionary2;
-import com.ust.wordmaster.dict2.DictionaryEntry2;
+import com.ust.wordmaster.dictionary.CSVParser;
+import com.ust.wordmaster.dictionary.CorpusDictionary;
+import com.ust.wordmaster.dictionary.DictionaryEntry;
 import com.ust.wordmaster.service.fetching.HttpClient;
 import com.ust.wordmaster.service.fetching.HttpClientImpl;
 import com.ust.wordmaster.service.filtering.FilteredHeadline;
@@ -25,8 +25,8 @@ public class AppInitializer {
     public static void main(String[] args) {
 
         // create dictionary
-        List<DictionaryEntry2> entriesFromFile = CSVParser2.parse(DICTIONARY_FILE);
-        CorpusDictionary2 corpusDictionary2 = new CorpusDictionary2("Corpus Dictionary from file", entriesFromFile);
+        List<DictionaryEntry> entriesFromFile = CSVParser.parse(DICTIONARY_FILE);
+        CorpusDictionary corpusDictionary2 = new CorpusDictionary("Corpus Dictionary from file", entriesFromFile);
 
         //fetch html from bbc
         log.info("-------- Loading Corpus Dictionary & fetching BBC html --------------");
@@ -36,10 +36,7 @@ public class AppInitializer {
         log.info("-------- Parsing BBC html into a List<String> of headlines --------------");
         HTMLParser htmlParser = new HTMLParserImpl();
         List<String> headlineStrings = htmlParser.parse(bbcHomepageHtml, BBC_HEADLINES_ATTRIBUTE);
-//headlineStrings = List.of("Don't lied? (kisses] copy: copies!! ((copied?! \"tries\"? tried injure injured is an artists smiles likes surprise surprised rushed"); //
-        // headlineStrings = List.of("((copied", "*!copied","copied))", "copied?!", "#@copied?!", "boy's");
-        //headlineStrings = List.of("taking", "crying", "lying", "sitting" );
-        //headlineStrings = List.of("he's", "she'd", "boy's", "I'd"); // "I'll",
+
 
 
         log.info("-------- Filtering the string headlines for a range eg (1000 - 2000) --------------");

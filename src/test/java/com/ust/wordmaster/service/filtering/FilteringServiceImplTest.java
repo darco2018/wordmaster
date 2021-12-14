@@ -1,8 +1,8 @@
 package com.ust.wordmaster.service.filtering;
 
-import com.ust.wordmaster.dict2.CSVParser2;
-import com.ust.wordmaster.dict2.CorpusDictionary2;
-import com.ust.wordmaster.dict2.DictionaryEntry2;
+import com.ust.wordmaster.dictionary.CSVParser;
+import com.ust.wordmaster.dictionary.CorpusDictionary;
+import com.ust.wordmaster.dictionary.DictionaryEntry;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -25,8 +25,8 @@ class FilteringServiceImplTest {
     // testing a private method
     @Test
     void getWordsOutOfRangeStrings_considersShortenedFormsAsPresentInEachRange() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        List<DictionaryEntry2> entriesFromFile = CSVParser2.parse(DICTIONARY_FILE);
-        CorpusDictionary2 corpusDictionary2 = new CorpusDictionary2("Corpus Dictionary from file", entriesFromFile);
+        List<DictionaryEntry> entriesFromFile = CSVParser.parse(DICTIONARY_FILE);
+        CorpusDictionary corpusDictionary2 = new CorpusDictionary("Corpus Dictionary from file", entriesFromFile);
         FilteringServiceImpl filteringService = new FilteringServiceImpl(corpusDictionary2);
 
         Method method = FilteringServiceImpl.class.getDeclaredMethod("getOutOfRangeWords", String[].class, int.class, int.class);
@@ -48,8 +48,8 @@ class FilteringServiceImplTest {
     // make you you don't test for words that appear more than once in the dictionary, eg in,feel, dance
     @Test
     void getWordsOutOfRangeStrings_worksOKwithDifferentRanges() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        List<DictionaryEntry2> entriesFromFile = CSVParser2.parse(DICTIONARY_FILE);
-        CorpusDictionary2 corpusDictionary2 = new CorpusDictionary2("Corpus Dictionary from file", entriesFromFile);
+        List<DictionaryEntry> entriesFromFile = CSVParser.parse(DICTIONARY_FILE);
+        CorpusDictionary corpusDictionary2 = new CorpusDictionary("Corpus Dictionary from file", entriesFromFile);
         FilteringServiceImpl filteringService = new FilteringServiceImpl(corpusDictionary2);
 
         Method method = FilteringServiceImpl.class.getDeclaredMethod("getOutOfRangeWords", String[].class, int.class, int.class);

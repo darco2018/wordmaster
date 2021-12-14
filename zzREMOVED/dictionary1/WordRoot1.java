@@ -1,4 +1,4 @@
-package com.ust.wordmaster.dictionary;
+package com.ust.wordmaster.dictionary1;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -10,12 +10,12 @@ import java.util.Objects;
 //@ToString, @EqualsAndHashCode, @Getter / @Setter and @RequiredArgsConstructor t
 @EqualsAndHashCode
 @ToString
-public final class WordRoot {
+public final class WordRoot1 {
 
     @Getter
     private final String word;
 
-    public WordRoot(final String word) {
+    public WordRoot1(final String word) {
         Objects.requireNonNull(word, "Word cannot be null");
 
         if (word.isBlank() || word.isEmpty()) {

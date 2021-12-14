@@ -1,5 +1,6 @@
 package com.ust.wordmaster.dictionary;
 
+
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -18,7 +19,7 @@ public class CSVParser {
         try (Stream<String> lines = Files.lines(Paths.get(filePath))) {
             lines.forEach(line -> {
                 String[] words = line.split(",");
-                DictionaryEntry entry = createDictionaryEntry(words);
+                DictionaryEntry entry = createDictionaryEntry2(words);
                 entries.add(entry);
             });
         } catch (IOException e) {
@@ -28,13 +29,14 @@ public class CSVParser {
         return entries;
     }
 
-    private static DictionaryEntry createDictionaryEntry(String[] entryData) {
+    private static DictionaryEntry createDictionaryEntry2(String[] entryData) {
 
-        DictionaryEntry entry = new DictionaryEntry(new WordRoot(entryData[1]),
-                new WordData(Integer.parseInt(entryData[0]),
-                        entryData[2],
-                        Integer.parseInt(entryData[3]),
-                        Double.parseDouble(entryData[4])));
+        DictionaryEntry entry = new DictionaryEntry(
+                entryData[1],
+                Integer.parseInt(entryData[0]),
+                entryData[2],
+                Integer.parseInt(entryData[3]),
+                Double.parseDouble(entryData[4]));
 
         if (Integer.parseInt(entryData[0]) == 1) {
             log.info("Started loading the dictionary with the first entry: \n\t" + entryData[0] + ". " + entry);
