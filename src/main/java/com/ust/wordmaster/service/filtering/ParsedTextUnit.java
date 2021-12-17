@@ -2,20 +2,19 @@ package com.ust.wordmaster.service.filtering;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.Arrays;
 
 @Getter
 @Setter
-public class FilteredHeadline extends Headline implements Serializable {
+public class ParsedTextUnit extends TextUnit implements Serializable {
 
     private int[] outOfRangeWords;
     private int[] range;
 
-    public FilteredHeadline(Headline headline, int[] indexes, int[] range){
-        super(headline);
+    public ParsedTextUnit(TextUnit textUnit, int[] indexes, int[] range){
+        super(textUnit);
         this.outOfRangeWords = indexes;
         this.range = range;
     }

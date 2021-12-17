@@ -7,13 +7,13 @@ import lombok.ToString;
 @Getter
 @AllArgsConstructor
 @ToString
-public class Headline {
+public class TextUnit {
 
-    private String headline;
+    private String text;
     private String[] words;
 
-    public Headline(Headline headline) {
-        this.headline = headline.getHeadline();
+    public TextUnit(TextUnit headline) {
+        this.text = headline.getText();
         this.words = headline.getWords();
     }
 }

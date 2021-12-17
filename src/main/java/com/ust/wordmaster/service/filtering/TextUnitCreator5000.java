@@ -13,7 +13,7 @@ import static java.util.Map.entry;
 
 @Slf4j
 @Service
-public class FilteringService5000 implements FilteringService {
+public class TextUnitCreator5000 implements TextUnitsCreator {
 
     private static final Set<String> SHORT_FORMS = Set.of("i'd", "he'd", "she'd", "we'd", "you'd", "they'd",
             "i'm", "he's", "she's", "it's", "we're", "you're", "they're",
@@ -72,44 +72,44 @@ public class FilteringService5000 implements FilteringService {
     @Getter
     private final List<String> wordsOutOfRangeStrings = new ArrayList<>();
 
-    public FilteringService5000(CorpusDictionaryInt dictionary) {
+    public TextUnitCreator5000(CorpusDictionaryInt dictionary) {
         this.corpusDictionary = dictionary;
     }
 
     @Override
-    public List<FilteredHeadline> createFilteredHeadlines(List<String> headlinesList, int rangeStart, int rangeEnd) {
+    public List<ParsedTextUnit> parseIntoTextUnits(List<String> textUnits, int rangeStart, int rangeEnd) {
         CorpusDictionary5000.validateRange(rangeStart, rangeEnd);
-        Objects.requireNonNull(headlinesList, "List of headlines cannot be null");
+        Objects.requireNonNull(textUnits, "List of textUnits cannot be null");
 
-        log.info("Filtering " + headlinesList.size() + " headlines; range " + rangeStart + "-" + rangeEnd);
+        log.info("Filtering " + textUnits.size() + " textUnits; range " + rangeStart + "-" + rangeEnd);
 
-        List<FilteredHeadline> filteredHeadlines = new ArrayList<>();
+        List<ParsedTextUnit> filteredTextUnits = new ArrayList<>();
         NavigableSet<DictionaryEntry> subsetDictionary = corpusDictionary.getDictionarySubset(rangeStart, rangeEnd);
 
-        for (String headlineAsString : headlinesList) {
-            //create HEadline
-            String[] words = splitHeadlineIntoWords(headlineAsString);
-            words = cleanUpHeadlineWordsToCreateValidHeadlineObj(words);
-            Headline headline = new Headline(headlineAsString, words);
+        for (String str : textUnits) {
+            //create textUnits
+            String[] words = splitOnSpaces(str);
+            words = cleanUpWordsToCreateValidTextUnitObjs(words);
+            TextUnit textUnit = new TextUnit(str, words);
 
-            // create FilteredHeadline
+            // create FilteredTextUnit
             int[] wordIndexes = getOutOfRangeWords(words, subsetDictionary);
-            FilteredHeadline filteredHeadline = new FilteredHeadline(headline, wordIndexes, new int[]{rangeStart, rangeEnd});
-            filteredHeadlines.add(filteredHeadline);
+            ParsedTextUnit filteredTextUnit = new ParsedTextUnit(textUnit, wordIndexes, new int[]{rangeStart, rangeEnd});
+            filteredTextUnits.add(filteredTextUnit);
 
-            log.info(wordIndexes.length + " out of range words (" + Arrays.toString(wordIndexes) + ") in: " + headlineAsString);
+            log.info(wordIndexes.length + " out of range words (" + Arrays.toString(wordIndexes) + ") in: " + str);
         }
 
-        return filteredHeadlines;
+        return filteredTextUnits;
     }
 
-    private String[] splitHeadlineIntoWords(final String headlineStr) {
-        log.info("Splitting headline: " + headlineStr);
+    private String[] splitOnSpaces(final String str) {
+        log.info("Splitting: " + str);
 
-        if (headlineStr == null || headlineStr.isBlank() || headlineStr.isEmpty())
+        if (str == null || str.isBlank() || str.isEmpty())
             return new String[0];
         else
-            return headlineStr.split(" ");
+            return str.split(" ");
 
     }
 
@@ -145,92 +145,114 @@ public class FilteringService5000 implements FilteringService {
      */
     private boolean isInDictionary(String word, NavigableSet<DictionaryEntry> subsetDictionary) {
 
+        /////////////// SEARCH ALGORITHM STARTS HERE ////////////////////////
         String key = word.toLowerCase();
-        // for each word, the replacement hashmap is created - not effective!
-        key = replaceForSearch(key);
+        key = replaceWithBaseForm(key);
 
-        // getSubset Dictionary
-        // HERE in Dictionary class the subset dictionary is created lots of times
-        boolean isIn = corpusDictionary.containsWord(key, subsetDictionary);
+        // initial search
+        boolean found = corpusDictionary.containsWord(key, subsetDictionary);
 
-        ////////////////// -(e)d //////////////////////////////
-        if (!isIn) {
-            // try if removing -d helps
-            if (key.length() >= 4 && key.endsWith("d")) {
-                String withoutD = key.substring(0, key.length() - 1);
-                isIn = corpusDictionary.containsWord(withoutD, subsetDictionary);
-
-                // try if removing -ed helps
-                if (!isIn && key.endsWith("ed")) {
-                    String withoutED = key.substring(0, key.length() - 2);
-                    isIn = corpusDictionary.containsWord(withoutED, subsetDictionary);
-                }
-                // try if removing -ied helps
-                if (!isIn && key.endsWith("ied")) {
-                    String withoutIES = key.substring(0, key.length() - 3) + "y";
-                    isIn = corpusDictionary.containsWord(withoutIES, subsetDictionary);
-                }
-            }
-
-            //////////// -s /////////////////////////////////////////
-            // try if removing -s helps
-            if (!isIn && key.length() >= 3 && key.charAt(key.length() - 1) == 's') {
-                String withoutS = key.substring(0, key.length() - 1);
-                isIn = corpusDictionary.containsWord(withoutS, subsetDictionary);
-
-                // try if removing -ed helps
-                if (!isIn && key.endsWith("es")) {
-                    String withoutES = key.substring(0, key.length() - 2);
-                    isIn = corpusDictionary.containsWord(withoutES, subsetDictionary);
-                }
-
-                // try if removing -ies helps
-                if (!isIn && key.length() >= 4 && key.endsWith("ies")) {
-                    String withoutIES = key.substring(0, key.length() - 3) + "y";
-                    isIn = corpusDictionary.containsWord(withoutIES, subsetDictionary);
-                }
-            }
-
-            //////////// -ING ////////////////////
-            // try if removing -ing helps
-            if (!isIn && key.length() >= 4 && key.endsWith("ing")) {
-                String withoutING = key.substring(0, key.length() - 3);
-                isIn = corpusDictionary.containsWord(withoutING, subsetDictionary);
-
-                if (!isIn) {  // taking
-                    withoutING += "e";
-                    isIn = corpusDictionary.containsWord(withoutING, subsetDictionary);
-                }
-
-                if (!isIn) {  // sitting
-                    withoutING = key.substring(0, key.length() - 4); // ting
-                    isIn = corpusDictionary.containsWord(withoutING, subsetDictionary);
-                }
-
-            }
-
-            // try if removing -est helps
-            if (!isIn && key.length() >= 4 && key.endsWith("est")) {
-                String withoutEST = key.substring(0, key.length() - 3);
-                isIn = corpusDictionary.containsWord(withoutEST, subsetDictionary);
-            }
-
+        // apply further rules to find the key
+        if (!found) {
             // all short forms with 'd (would/had)  & 's (has/is)  & 'm (am) & 're (are) will be considered as present
             // in each range, so effectively in range 0-1
-            if (!isIn && key.contains("'")) {
+            found = searchInShortForms(key);
 
-                if (SHORT_FORMS.contains(key)) {
-                    isIn = true;
-                }
-            }
+            if (!found)
+                found = searchWithout_S_suffix(subsetDictionary, key);
+
+            if (!found)
+                found = searchWithout_ED_suffix(subsetDictionary, key);
+
+            if (!found)
+                found = searchWithout_ING_suffix(subsetDictionary, key);
+
+            if (!found)
+                found = searchWithout_EST_suffix(subsetDictionary, key);
 
         }
 
-        return isIn;
+        return found;
+    }
+
+    private boolean searchInShortForms(String key) {
+        return key.contains("'") && SHORT_FORMS.contains(key);
+    }
+
+    private boolean searchWithout_EST_suffix(NavigableSet<DictionaryEntry> subsetDictionary, String key) {
+        boolean found = false;
+        if (key.length() >= 4 && key.endsWith("est")) {
+            String withoutEST = key.substring(0, key.length() - 3);
+            found = corpusDictionary.containsWord(withoutEST, subsetDictionary);
+        }
+        return found;
+    }
+
+    private boolean searchWithout_ING_suffix(NavigableSet<DictionaryEntry> subsetDictionary, String key) {
+        boolean found = false;
+        if (key.length() >= 4 && key.endsWith("ing")) {
+            String withoutING = key.substring(0, key.length() - 3);
+            found = corpusDictionary.containsWord(withoutING, subsetDictionary);
+
+            if (!found) {  // taking
+                withoutING += "e";
+                found = corpusDictionary.containsWord(withoutING, subsetDictionary);
+            }
+
+            if (!found) {  // sitting
+                withoutING = key.substring(0, key.length() - 4); // ting
+                found = corpusDictionary.containsWord(withoutING, subsetDictionary);
+            }
+
+        }
+        return found;
+    }
+
+    private boolean searchWithout_S_suffix(NavigableSet<DictionaryEntry> subsetDictionary, String key) {
+
+        boolean found = false;
+        if (key.length() >= 3 && key.endsWith("s")) {
+            String withoutS = key.substring(0, key.length() - 1);
+            found = corpusDictionary.containsWord(withoutS, subsetDictionary);
+
+            // try if removing -ed helps
+            if (!found && key.endsWith("es")) {
+                String withoutES = key.substring(0, key.length() - 2);
+                found = corpusDictionary.containsWord(withoutES, subsetDictionary);
+            }
+
+            // try if removing -ies helps
+            if (!found && key.length() >= 4 && key.endsWith("ies")) {
+                String withoutIES = key.substring(0, key.length() - 3) + "y";
+                found = corpusDictionary.containsWord(withoutIES, subsetDictionary);
+            }
+        }
+        return found;
+    }
+
+    private boolean searchWithout_ED_suffix(NavigableSet<DictionaryEntry> subsetDictionary, String key) {
+        // try if removing -d helps
+        boolean found = false;
+        if (key.length() >= 4 && key.endsWith("d")) {
+            String withoutD = key.substring(0, key.length() - 1);
+            found = corpusDictionary.containsWord(withoutD, subsetDictionary);
+
+            // try if removing -ed helps
+            if (!found && key.endsWith("ed")) {
+                String withoutED = key.substring(0, key.length() - 2);
+                found = corpusDictionary.containsWord(withoutED, subsetDictionary);
+            }
+            // try if removing -ied helps
+            if (!found && key.endsWith("ied")) {
+                String withoutIES = key.substring(0, key.length() - 3) + "y";
+                found = corpusDictionary.containsWord(withoutIES, subsetDictionary);
+            }
+        }
+        return found;
     }
 
 
-    private String replaceForSearch(final String word) {
+    private String replaceWithBaseForm(final String word) {
         return SEARCH_REPLACEMENTS.getOrDefault(word.toLowerCase(), word);
     }
 
@@ -241,10 +263,10 @@ public class FilteringService5000 implements FilteringService {
      * Makes some cleanup operations to create valid elements of a Haadline
      * (removes blanks, empty strings, trims, removes special characters glued to the words
      */
-    private String[] cleanUpHeadlineWordsToCreateValidHeadlineObj(final String[] words) {
+    private String[] cleanUpWordsToCreateValidTextUnitObjs(final String[] words) {
 
         // we actually create NEW List/array
-        List<String> cleanedUpHeadline = new ArrayList<>();
+        List<String> cleanedUpTextUnit = new ArrayList<>();
         for (String word : words) {
 
             if (word == null || word.isEmpty() || word.isBlank())
@@ -253,7 +275,7 @@ public class FilteringService5000 implements FilteringService {
             word = word.trim();
 
             if (SHORT_FORMS.contains(word) || word.length() == 1) {
-                cleanedUpHeadline.add(word);
+                cleanedUpTextUnit.add(word);
                 continue;
             }
 
@@ -269,9 +291,9 @@ public class FilteringService5000 implements FilteringService {
             word = removeLeadingSpecialChars(word);
             word = removeTrailingSpecialChars(word);
 
-            cleanedUpHeadline.add(word);
+            cleanedUpTextUnit.add(word);
         }
-        return cleanedUpHeadline.toArray(new String[0]);
+        return cleanedUpTextUnit.toArray(new String[0]);
     }
 
     private String removeShortFormSuffixesAndPossesive(String word) {

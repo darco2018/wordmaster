@@ -27,9 +27,9 @@ class FilteringServiceImplTest {
     void getWordsOutOfRangeStrings_considersShortenedFormsAsPresentInEachRange() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         List<DictionaryEntry> entriesFromFile = CSVParser.parse(DICTIONARY_FILE);
         CorpusDictionary5000 corpusDictionary2 = new CorpusDictionary5000("Corpus Dictionary from file", entriesFromFile);
-        FilteringService5000 filteringService = new FilteringService5000(corpusDictionary2);
+        TextUnitCreator5000 filteringService = new TextUnitCreator5000(corpusDictionary2);
 
-        Method method = FilteringService5000.class.getDeclaredMethod("getOutOfRangeWords", String[].class, int.class, int.class);
+        Method method = TextUnitCreator5000.class.getDeclaredMethod("getOutOfRangeWords", String[].class, int.class, int.class);
         method.setAccessible(true);
 
         String oddOneOut = "dinosaurs";
@@ -50,9 +50,9 @@ class FilteringServiceImplTest {
     void getWordsOutOfRangeStrings_worksOKwithDifferentRanges() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         List<DictionaryEntry> entriesFromFile = CSVParser.parse(DICTIONARY_FILE);
         CorpusDictionary5000 corpusDictionary2 = new CorpusDictionary5000("Corpus Dictionary from file", entriesFromFile);
-        FilteringService5000 filteringService = new FilteringService5000(corpusDictionary2);
+        TextUnitCreator5000 filteringService = new TextUnitCreator5000(corpusDictionary2);
 
-        Method method = FilteringService5000.class.getDeclaredMethod("getOutOfRangeWords", String[].class, int.class, int.class);
+        Method method = TextUnitCreator5000.class.getDeclaredMethod("getOutOfRangeWords", String[].class, int.class, int.class);
         method.setAccessible(true);
 
         String rank_1001 = "method";
