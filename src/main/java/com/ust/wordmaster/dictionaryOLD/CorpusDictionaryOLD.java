@@ -1,4 +1,4 @@
-package com.ust.wordmaster.dictionary;
+package com.ust.wordmaster.dictionaryOLD;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,15 +12,15 @@ import java.util.*;
  */
 @Slf4j
 @AllArgsConstructor
-public class CorpusDictionary5000 implements CorpusDictionaryInt {
+public class CorpusDictionaryOLD implements CorpusDictionaryIntOLD {
 
     @Getter
     private String dictionaryName;
 
     @Getter
-    private TreeSet<DictionaryEntry> dictionary;
+    private TreeSet<DictionaryEntryOLD> dictionary;
 
-    public CorpusDictionary5000(final String name, final Collection<DictionaryEntry> entries) {
+    public CorpusDictionaryOLD(final String name, final Collection<DictionaryEntryOLD> entries) {
         Objects.requireNonNull(name, "Dictionary name cannot be null");
         if (name.isEmpty() || name.isBlank()) {
             throw new IllegalArgumentException("Dictionary name cannot be empty or blank");
@@ -31,9 +31,9 @@ public class CorpusDictionary5000 implements CorpusDictionaryInt {
         this.dictionaryName = name;
 
         this.dictionary = new TreeSet<>();
-        for (DictionaryEntry e : entries) {
+        for (DictionaryEntryOLD e : entries) {
             this.dictionary.add(
-                    new DictionaryEntry(e.getWord(), e.getRank(), e.getPartOfSpeech(), e.getFrequency(), e.getDispersion())
+                    new DictionaryEntryOLD(e.getWord(), e.getRank(), e.getPartOfSpeech(), e.getFrequency(), e.getDispersion())
             );
         }
     }
@@ -46,7 +46,7 @@ public class CorpusDictionary5000 implements CorpusDictionaryInt {
 
 
     @Override
-    public boolean containsWord(final String word, NavigableSet<DictionaryEntry> entries) {
+    public boolean containsWord(final String word, NavigableSet<DictionaryEntryOLD> entries) {
 
         Objects.requireNonNull(word, "Word cannot be null");
 
@@ -56,9 +56,9 @@ public class CorpusDictionary5000 implements CorpusDictionaryInt {
         // optimalisation
         //key = replace(key);
 
-        NavigableSet<DictionaryEntry> dictionarySubset = entries;
+        NavigableSet<DictionaryEntryOLD> dictionarySubset = entries;
         // we don't have O(1) for word lookup. Multimap better
-        for (DictionaryEntry entry : dictionarySubset) {
+        for (DictionaryEntryOLD entry : dictionarySubset) {
             if (entry.getWord().equalsIgnoreCase(key)) {
                 return true;
             }
@@ -68,13 +68,13 @@ public class CorpusDictionary5000 implements CorpusDictionaryInt {
     }
 
     @Override
-    public NavigableSet<DictionaryEntry> getDictionarySubset(final int rangeStart, final int rangeEnd) {
+    public NavigableSet<DictionaryEntryOLD> getDictionarySubset(final int rangeStart, final int rangeEnd) {
 
        validateRange(rangeStart, rangeEnd);
 
-        DictionaryEntry startEntry = null, endEntry = null;
+        DictionaryEntryOLD startEntry = null, endEntry = null;
 
-        for (DictionaryEntry entry : this.dictionary) {
+        for (DictionaryEntryOLD entry : this.dictionary) {
             if (entry.getRank() == rangeStart)
                 startEntry = entry;
 
@@ -105,25 +105,25 @@ public class CorpusDictionary5000 implements CorpusDictionaryInt {
     ///////////////////// Sorting options /////////////////////////////////
 
     @Override
-    public NavigableSet<DictionaryEntry> getDictionaryByRank(boolean reversed) {
+    public NavigableSet<DictionaryEntryOLD> getDictionaryByRank(boolean reversed) {
 
         return Collections.unmodifiableNavigableSet(new TreeSet<>(reversed ? dictionary.descendingSet() : dictionary));
     }
 
     @Override
-    public NavigableSet<DictionaryEntry> getDictionaryByWord(boolean reversed) {
+    public NavigableSet<DictionaryEntryOLD> getDictionaryByWord(boolean reversed) {
 
         ComparatorByWord byWord = new ComparatorByWord();
-        NavigableSet<DictionaryEntry> sortedByWord = new TreeSet<>(reversed ? byWord.reversed() : byWord);
+        NavigableSet<DictionaryEntryOLD> sortedByWord = new TreeSet<>(reversed ? byWord.reversed() : byWord);
         sortedByWord.addAll(dictionary);
 
         return Collections.unmodifiableNavigableSet(sortedByWord);
     }
 
-    static class ComparatorByWord implements Comparator<DictionaryEntry> {
+    static class ComparatorByWord implements Comparator<DictionaryEntryOLD> {
 
         @Override
-        public int compare(DictionaryEntry e1, DictionaryEntry e2) {
+        public int compare(DictionaryEntryOLD e1, DictionaryEntryOLD e2) {
             int compareByWord = e1.getWord().toLowerCase().compareTo(e2.getWord().toLowerCase());
             return compareByWord == 0 ?
                     e1.getPartOfSpeech().compareTo(e2.getPartOfSpeech()) :
@@ -131,10 +131,10 @@ public class CorpusDictionary5000 implements CorpusDictionaryInt {
         }
     }
 
-    static class ComparatorByFrequency implements Comparator<DictionaryEntry> {
+    static class ComparatorByFrequency implements Comparator<DictionaryEntryOLD> {
 
         @Override
-        public int compare(DictionaryEntry o1, DictionaryEntry o2) {
+        public int compare(DictionaryEntryOLD o1, DictionaryEntryOLD o2) {
             return o1.getFrequency() - o2.getFrequency();
         }
     }

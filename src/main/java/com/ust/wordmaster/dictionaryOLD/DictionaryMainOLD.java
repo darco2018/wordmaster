@@ -1,17 +1,17 @@
-package com.ust.wordmaster.dictionary;
+package com.ust.wordmaster.dictionaryOLD;
 
 import java.util.*;
 
-public class DictionaryMain {
+public class DictionaryMainOLD {
 
     public static void main(String[] args) {
 
-        DictionaryEntry the = new DictionaryEntry("the", 1, "a", 22038615, 0.98);
-        DictionaryEntry danceNoun = new DictionaryEntry("dance", 1682, "n", 21799, 0.95);
-        DictionaryEntry danceVerb = new DictionaryEntry("dance", 1978, "v", 18263, 0.94);
-        DictionaryEntry standVerb = new DictionaryEntry("stand", 282, "v", 140937, 0.92);
-        DictionaryEntry till = new DictionaryEntry("till", 5000, "i", 5079, 0.92);
-        DictionaryEntry till_copy = new DictionaryEntry("till", 5000, "i", 5079, 0.92);
+        DictionaryEntryOLD the = new DictionaryEntryOLD("the", 1, "a", 22038615, 0.98);
+        DictionaryEntryOLD danceNoun = new DictionaryEntryOLD("dance", 1682, "n", 21799, 0.95);
+        DictionaryEntryOLD danceVerb = new DictionaryEntryOLD("dance", 1978, "v", 18263, 0.94);
+        DictionaryEntryOLD standVerb = new DictionaryEntryOLD("stand", 282, "v", 140937, 0.92);
+        DictionaryEntryOLD till = new DictionaryEntryOLD("till", 5000, "i", 5079, 0.92);
+        DictionaryEntryOLD till_copy = new DictionaryEntryOLD("till", 5000, "i", 5079, 0.92);
 
     /*    List<DictionaryEntry2> entries = new ArrayList<>(Arrays.asList(till_copy, the, danceNoun, danceVerb, standVerb, till));
 
@@ -24,8 +24,8 @@ public class DictionaryMain {
 */
 
         ////////////////------TESTING LOADING DATA FROM FILE-------////////////////////////
-        List<DictionaryEntry> entriesFromFile = CSVParser.parse("dictionary5000.csv");
-        CorpusDictionary5000 corpusDict2FromFile = new CorpusDictionary5000("Dictionary from file", entriesFromFile);
+        List<DictionaryEntryOLD> entriesFromFile = CSVParserOLD.parse("dictionary5000.csv");
+        CorpusDictionaryOLD corpusDict2FromFile = new CorpusDictionaryOLD("Dictionary from file", entriesFromFile);
 
         System.out.println("----------Printing dictionary from file --------------");
         //System.out.println(corpusDict2FromFile.getDictionary().size());
@@ -35,7 +35,7 @@ public class DictionaryMain {
 
 */
         /////// - test alphabetically
-        NavigableSet<DictionaryEntry> orderedByWord = corpusDict2FromFile.getDictionaryByWord(false);
+        NavigableSet<DictionaryEntryOLD> orderedByWord = corpusDict2FromFile.getDictionaryByWord(false);
         orderedByWord.stream().limit(200).forEach(System.out::println);
         //orderedByWord.
 

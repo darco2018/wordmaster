@@ -1,4 +1,4 @@
-package com.ust.wordmaster.dictionary;
+package com.ust.wordmaster.dictionaryOLD;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -11,15 +11,15 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @Slf4j
-public class CSVParser {
+public class CSVParserOLD {
 
-    public static List<DictionaryEntry> parse(String filePath) {
+    public static List<DictionaryEntryOLD> parse(String filePath) {
 
-        List<DictionaryEntry> entries = new ArrayList<>();
+        List<DictionaryEntryOLD> entries = new ArrayList<>();
         try (Stream<String> lines = Files.lines(Paths.get(filePath))) {
             lines.forEach(line -> {
                 String[] words = line.split(",");
-                DictionaryEntry entry = createDictionaryEntry2(words);
+                DictionaryEntryOLD entry = createDictionaryEntry2(words);
                 entries.add(entry);
             });
         } catch (IOException e) {
@@ -29,9 +29,9 @@ public class CSVParser {
         return entries;
     }
 
-    private static DictionaryEntry createDictionaryEntry2(String[] entryData) {
+    private static DictionaryEntryOLD createDictionaryEntry2(String[] entryData) {
 
-        DictionaryEntry entry = new DictionaryEntry(
+        DictionaryEntryOLD entry = new DictionaryEntryOLD(
                 entryData[1],
                 Integer.parseInt(entryData[0]),
                 entryData[2],

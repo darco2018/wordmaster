@@ -1,8 +1,9 @@
 package com.ust.wordmaster.service.filtering;
 
-import com.ust.wordmaster.dictionary.CSVParser;
-import com.ust.wordmaster.dictionary.CorpusDictionary5000;
-import com.ust.wordmaster.dictionary.DictionaryEntry;
+import com.ust.wordmaster.dictionaryOLD.CSVParserOLD;
+import com.ust.wordmaster.dictionaryOLD.CorpusDictionaryOLD;
+import com.ust.wordmaster.dictionaryOLD.DictionaryEntryOLD;
+import com.ust.wordmaster.service.filteringOLD.TextUnitCreator5000OLD;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -25,11 +26,11 @@ class FilteringServiceImplTest {
     // testing a private method
     @Test
     void getWordsOutOfRangeStrings_considersShortenedFormsAsPresentInEachRange() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        List<DictionaryEntry> entriesFromFile = CSVParser.parse(DICTIONARY_FILE);
-        CorpusDictionary5000 corpusDictionary2 = new CorpusDictionary5000("Corpus Dictionary from file", entriesFromFile);
-        TextUnitCreator5000 filteringService = new TextUnitCreator5000(corpusDictionary2);
+        List<DictionaryEntryOLD> entriesFromFile = CSVParserOLD.parse(DICTIONARY_FILE);
+        CorpusDictionaryOLD corpusDictionary2 = new CorpusDictionaryOLD("Corpus Dictionary from file", entriesFromFile);
+        TextUnitCreator5000OLD filteringService = new TextUnitCreator5000OLD(corpusDictionary2);
 
-        Method method = TextUnitCreator5000.class.getDeclaredMethod("getOutOfRangeWords", String[].class, int.class, int.class);
+        Method method = TextUnitCreator5000OLD.class.getDeclaredMethod("getOutOfRangeWords", String[].class, int.class, int.class);
         method.setAccessible(true);
 
         String oddOneOut = "dinosaurs";
@@ -48,11 +49,11 @@ class FilteringServiceImplTest {
     // make you you don't test for words that appear more than once in the dictionary, eg in,feel, dance
     @Test
     void getWordsOutOfRangeStrings_worksOKwithDifferentRanges() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        List<DictionaryEntry> entriesFromFile = CSVParser.parse(DICTIONARY_FILE);
-        CorpusDictionary5000 corpusDictionary2 = new CorpusDictionary5000("Corpus Dictionary from file", entriesFromFile);
-        TextUnitCreator5000 filteringService = new TextUnitCreator5000(corpusDictionary2);
+        List<DictionaryEntryOLD> entriesFromFile = CSVParserOLD.parse(DICTIONARY_FILE);
+        CorpusDictionaryOLD corpusDictionary2 = new CorpusDictionaryOLD("Corpus Dictionary from file", entriesFromFile);
+        TextUnitCreator5000OLD filteringService = new TextUnitCreator5000OLD(corpusDictionary2);
 
-        Method method = TextUnitCreator5000.class.getDeclaredMethod("getOutOfRangeWords", String[].class, int.class, int.class);
+        Method method = TextUnitCreator5000OLD.class.getDeclaredMethod("getOutOfRangeWords", String[].class, int.class, int.class);
         method.setAccessible(true);
 
         String rank_1001 = "method";

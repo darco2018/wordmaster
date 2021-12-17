@@ -1,8 +1,8 @@
-package com.ust.wordmaster.service.filtering;
+package com.ust.wordmaster.service.filteringOLD;
 
-import com.ust.wordmaster.dictionary.CorpusDictionary5000;
-import com.ust.wordmaster.dictionary.CorpusDictionaryInt;
-import com.ust.wordmaster.dictionary.DictionaryEntry;
+import com.ust.wordmaster.dictionaryOLD.CorpusDictionaryOLD;
+import com.ust.wordmaster.dictionaryOLD.CorpusDictionaryIntOLD;
+import com.ust.wordmaster.dictionaryOLD.DictionaryEntryOLD;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,7 @@ import static java.util.Map.entry;
 
 @Slf4j
 @Service
-public class TextUnitCreator5000 implements TextUnitsCreator {
+public class TextUnitCreator5000OLD implements TextUnitsCreatorOLD {
 
     private static final Set<String> SHORT_FORMS = Set.of("i'd", "he'd", "she'd", "we'd", "you'd", "they'd",
             "i'm", "he's", "she's", "it's", "we're", "you're", "they're",
@@ -67,34 +67,34 @@ public class TextUnitCreator5000 implements TextUnitsCreator {
             entry("metre", "meter"),
             entry("theatre", "theater")
     );
-    private final CorpusDictionaryInt corpusDictionary;
+    private final CorpusDictionaryIntOLD corpusDictionary;
     //todo remove later?!
     @Getter
     private final List<String> wordsOutOfRangeStrings = new ArrayList<>();
 
-    public TextUnitCreator5000(CorpusDictionaryInt dictionary) {
+    public TextUnitCreator5000OLD(CorpusDictionaryIntOLD dictionary) {
         this.corpusDictionary = dictionary;
     }
 
     @Override
-    public List<ParsedTextUnit> parseIntoTextUnits(List<String> textUnits, int rangeStart, int rangeEnd) {
-        CorpusDictionary5000.validateRange(rangeStart, rangeEnd);
+    public List<ParsedTextUnitOLD> parseIntoTextUnits(List<String> textUnits, int rangeStart, int rangeEnd) {
+        CorpusDictionaryOLD.validateRange(rangeStart, rangeEnd);
         Objects.requireNonNull(textUnits, "List of textUnits cannot be null");
 
         log.info("Filtering " + textUnits.size() + " textUnits; range " + rangeStart + "-" + rangeEnd);
 
-        List<ParsedTextUnit> filteredTextUnits = new ArrayList<>();
-        NavigableSet<DictionaryEntry> subsetDictionary = corpusDictionary.getDictionarySubset(rangeStart, rangeEnd);
+        List<ParsedTextUnitOLD> filteredTextUnits = new ArrayList<>();
+        NavigableSet<DictionaryEntryOLD> subsetDictionary = corpusDictionary.getDictionarySubset(rangeStart, rangeEnd);
 
         for (String str : textUnits) {
             //create textUnits
             String[] words = splitOnSpaces(str);
             words = cleanUpWordsToCreateValidTextUnitObjs(words);
-            TextUnit textUnit = new TextUnit(str, words);
+            TextUnitOLD textUnit = new TextUnitOLD(str, words);
 
             // create FilteredTextUnit
             int[] wordIndexes = getOutOfRangeWords(words, subsetDictionary);
-            ParsedTextUnit filteredTextUnit = new ParsedTextUnit(textUnit, wordIndexes, new int[]{rangeStart, rangeEnd});
+            ParsedTextUnitOLD filteredTextUnit = new ParsedTextUnitOLD(textUnit, wordIndexes, new int[]{rangeStart, rangeEnd});
             filteredTextUnits.add(filteredTextUnit);
 
             log.info(wordIndexes.length + " out of range words (" + Arrays.toString(wordIndexes) + ") in: " + str);
@@ -113,7 +113,7 @@ public class TextUnitCreator5000 implements TextUnitsCreator {
 
     }
 
-    private int[] getOutOfRangeWords(String[] words, NavigableSet<DictionaryEntry> subsetDictionary) {
+    private int[] getOutOfRangeWords(String[] words, NavigableSet<DictionaryEntryOLD> subsetDictionary) {
 
         List<Integer> outOfRangeWordIndexes = new ArrayList<>();
 
@@ -143,7 +143,7 @@ public class TextUnitCreator5000 implements TextUnitsCreator {
      * This methods is heavily dependent on Corpus Dictionary's structure and contents.
      * these are my search optimalisations and simplifications
      */
-    private boolean isInDictionary(String word, NavigableSet<DictionaryEntry> subsetDictionary) {
+    private boolean isInDictionary(String word, NavigableSet<DictionaryEntryOLD> subsetDictionary) {
 
         /////////////// SEARCH ALGORITHM STARTS HERE ////////////////////////
         String key = word.toLowerCase();
@@ -179,7 +179,7 @@ public class TextUnitCreator5000 implements TextUnitsCreator {
         return key.contains("'") && SHORT_FORMS.contains(key);
     }
 
-    private boolean searchWithout_EST_suffix(NavigableSet<DictionaryEntry> subsetDictionary, String key) {
+    private boolean searchWithout_EST_suffix(NavigableSet<DictionaryEntryOLD> subsetDictionary, String key) {
         boolean found = false;
         if (key.length() >= 4 && key.endsWith("est")) {
             String withoutEST = key.substring(0, key.length() - 3);
@@ -188,7 +188,7 @@ public class TextUnitCreator5000 implements TextUnitsCreator {
         return found;
     }
 
-    private boolean searchWithout_ING_suffix(NavigableSet<DictionaryEntry> subsetDictionary, String key) {
+    private boolean searchWithout_ING_suffix(NavigableSet<DictionaryEntryOLD> subsetDictionary, String key) {
         boolean found = false;
         if (key.length() >= 4 && key.endsWith("ing")) {
             String withoutING = key.substring(0, key.length() - 3);
@@ -208,7 +208,7 @@ public class TextUnitCreator5000 implements TextUnitsCreator {
         return found;
     }
 
-    private boolean searchWithout_S_suffix(NavigableSet<DictionaryEntry> subsetDictionary, String key) {
+    private boolean searchWithout_S_suffix(NavigableSet<DictionaryEntryOLD> subsetDictionary, String key) {
 
         boolean found = false;
         if (key.length() >= 3 && key.endsWith("s")) {
@@ -230,7 +230,7 @@ public class TextUnitCreator5000 implements TextUnitsCreator {
         return found;
     }
 
-    private boolean searchWithout_ED_suffix(NavigableSet<DictionaryEntry> subsetDictionary, String key) {
+    private boolean searchWithout_ED_suffix(NavigableSet<DictionaryEntryOLD> subsetDictionary, String key) {
         // try if removing -d helps
         boolean found = false;
         if (key.length() >= 4 && key.endsWith("d")) {

@@ -1,4 +1,4 @@
-package com.ust.wordmaster.dictionary;
+package com.ust.wordmaster.dictionaryOLD;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -12,7 +12,7 @@ import java.util.Objects;
 /**
  * Represents the data connected with the word itself
  */
-public final class DictionaryEntry implements Comparable<DictionaryEntry> {
+public final class DictionaryEntryOLD implements Comparable<DictionaryEntryOLD> {
     private final String partOfSpeech;
     /**
      * frequency - how many times the word appears in the corpus
@@ -29,11 +29,11 @@ public final class DictionaryEntry implements Comparable<DictionaryEntry> {
     private int rank;
     private String word;
 
-    public DictionaryEntry(final String word,
-                           final int rank,
-                           final String partOfSpeech,
-                           final int frequency,
-                           final double dispersion) {
+    public DictionaryEntryOLD(final String word,
+                              final int rank,
+                              final String partOfSpeech,
+                              final int frequency,
+                              final double dispersion) {
 
         Objects.requireNonNull(word, "Word cannot be null");
         if (word.isBlank() || word.isEmpty()) {
@@ -58,7 +58,7 @@ public final class DictionaryEntry implements Comparable<DictionaryEntry> {
     }
 
     @Override
-    public int compareTo(DictionaryEntry o) {
+    public int compareTo(DictionaryEntryOLD o) {
         return this.rank - o.rank;
     }
 }
