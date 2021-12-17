@@ -25,7 +25,7 @@ public abstract class DictionaryEntry implements Comparable<DictionaryEntry> {
     }
 
     public void setWordData(WordData wordData) {
-        Objects.requireNonNull(word, "The word cannot be null.");
+        Objects.requireNonNull(wordData, "The word cannot be null.");
         this.wordData = wordData;
     }
 
