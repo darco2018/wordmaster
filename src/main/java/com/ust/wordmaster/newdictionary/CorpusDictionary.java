@@ -5,13 +5,19 @@ import java.util.Map;
 
 public interface CorpusDictionary {
 
-    Map<String, List<DictionaryEntry>> getDictionary();
+    void addEntry(DictionaryEntry entry);
 
-    Map<String, List<DictionaryEntry>> getDictionarySubset(int rangeStart, int rangeEnd);
+    Map<String, List<DictionaryEntry>> getDictionaryAsMap();
 
-    boolean containsEntry(String word);
+    //Map<String, List<DictionaryEntry>> getDictionarySubsetAsMap(int rangeStart, int rangeEnd);
 
-    DictionaryEntry getDictionaryEntry(String word);
+    boolean containsHeadword(String headword);
+
+    boolean containsEntry(String headword, String partOfSpeach);
+
+    List<DictionaryEntry> getEntriesByHeadword(String headword);
+
+    DictionaryEntry getEntry(String headword, String partOfSpeech);
 
     int getNoOfEntries();
 

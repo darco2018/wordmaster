@@ -6,9 +6,12 @@ import lombok.ToString;
 
 import java.util.Objects;
 
-@Getter @Setter
+@Getter
+@Setter
 @ToString
 public class WordData5000 implements WordData {
+
+    private String word;
 
     private String partOfSpeech;
     /**
@@ -29,10 +32,15 @@ public class WordData5000 implements WordData {
     }
 
     public WordData5000(
+            final String word,
             final int rank,
             final String partOfSpeech,
             final int frequency,
             final double dispersion) {
+
+        Objects.requireNonNull(word, "The word cannot be null.");
+        if (word.isEmpty() || word.isBlank())
+            throw new IllegalArgumentException("The word cannot be empty or blank");
 
         Objects.requireNonNull(partOfSpeech, "Part of speech cannot be null");
         if (rank < 1)
@@ -44,6 +52,7 @@ public class WordData5000 implements WordData {
         if (dispersion < 0 || dispersion > 100)
             throw new IllegalArgumentException("Dispersion must be int the range 0-100");
 
+        this.word = word;
         this.rank = rank;
         this.partOfSpeech = partOfSpeech;
         this.frequency = frequency;
@@ -51,7 +60,17 @@ public class WordData5000 implements WordData {
     }
 
     @Override
-    public WordData getWordData() {
-        return this;
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        WordData5000 that = (WordData5000) o;
+        return word.equals(that.word) && partOfSpeech.equals(that.partOfSpeech);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(word, partOfSpeech);
     }
 }

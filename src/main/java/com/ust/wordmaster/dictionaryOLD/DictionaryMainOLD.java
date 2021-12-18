@@ -28,7 +28,7 @@ public class DictionaryMainOLD {
         CorpusDictionaryOLD corpusDict2FromFile = new CorpusDictionaryOLD("Dictionary from file", entriesFromFile);
 
         System.out.println("----------Printing dictionary from file --------------");
-        //System.out.println(corpusDict2FromFile.getDictionary().size());
+        //System.out.println(corpusDict2FromFile.getDictionaryAsMap().size());
   /*      NavigableSet<DictionaryEntry2> byRankAsc = corpusDict2FromFile.getDictionaryByRank(true);
         System.out.println("--------- By rank asc: ");
         byRankAsc.stream().limit(10).forEach(System.out::println);

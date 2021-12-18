@@ -17,7 +17,7 @@ class CorpusDictionary5000Test {
         assertEquals(5000, entries.size());
         CorpusDictionary corpus = new CorpusDictionary5000("Dictionary", entries);
 
-        Map<String, List<DictionaryEntry>> dictionary = corpus.getDictionary();
+        Map<String, List<DictionaryEntry>> dictionary = corpus.getDictionaryAsMap();
 
         assertNotEquals(0, dictionary.size());
         System.out.println(dictionary.get("in")); // null

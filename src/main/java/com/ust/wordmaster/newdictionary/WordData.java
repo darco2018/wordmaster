@@ -1,5 +1,9 @@
 package com.ust.wordmaster.newdictionary;
 
 public interface WordData {
-    WordData getWordData();
+
+    String getWord();
+    String getPartOfSpeech();
+    // getRank() ? I need to get it anyway
+
 }
