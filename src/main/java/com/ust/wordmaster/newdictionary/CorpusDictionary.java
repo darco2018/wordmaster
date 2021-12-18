@@ -13,5 +13,7 @@ public interface CorpusDictionary {
 
     DictionaryEntry getDictionaryEntry(String word);
 
+    int getNoOfEntries();
+
 
 }

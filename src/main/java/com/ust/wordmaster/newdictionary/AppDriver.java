@@ -16,7 +16,8 @@ public class AppDriver {
         // create dictionary
         // change to NewDicitonaryEntry
         List<DictionaryEntry> entriesFromFile = CSVParser.parse(DICTIONARY_FILE);
-        //CorpusDictionaryInt corpusDictionary = new CorpusDictionary5000("Corpus Dictionary from file", entriesFromFile);
+        CorpusDictionary corpusDictionary5000 = new CorpusDictionary5000("Dictionary 5000 from file", entriesFromFile);
+        //CorpusDictionary corpusDictionary = new CorpusDictionary5000("Corpus Dictionary from file", entriesFromFile);
 
 
     }

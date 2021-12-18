@@ -17,8 +17,8 @@ public class CSVParser {
         List<DictionaryEntry> entries = new ArrayList<>();
         try (Stream<String> lines = Files.lines(Paths.get(filePath))) {
             lines.forEach(line -> {
-                String[] words = line.split(",");
-                DictionaryEntry entry = createDictionaryEntry2(words);
+                String[] items = line.split(",");
+                DictionaryEntry entry = createDictionaryEntry2(items);
                 entries.add(entry);
             });
         } catch (IOException e) {
@@ -29,24 +29,35 @@ public class CSVParser {
     }
 
     private static DictionaryEntry createDictionaryEntry2(String[] entryData) {
-/*
-        DictionaryEntry entry = new DictionaryEntry(
-                entryData[1],
-                Integer.parseInt(entryData[0]),
-                entryData[2],
-                Integer.parseInt(entryData[3]),
-                Double.parseDouble(entryData[4]));
 
-        if (Integer.parseInt(entryData[0]) == 1) {
-            log.info("Started loading the dictionary with the first entry: \n\t" + entryData[0] + ". " + entry);
+        final String partOfSpeech = entryData[2];
+        final int rank;
+        final int frequency;
+        final double dispersion;
+        try {
+            rank = Integer.parseInt(entryData[0]);
+            frequency = Integer.parseInt(entryData[3]);
+            dispersion = Double.parseDouble(entryData[4]);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Rank or frequency or dispersion cannot be parset into an int/double", e);
         }
 
-        if (Integer.parseInt(entryData[0]) == 5000) {
-            log.info("Finished loading the dictionary with last entry: \n\t" + entryData[0] + ". " + entry);
+        WordData wordData = new WordData5000(rank, partOfSpeech, frequency, dispersion);
+
+        if (rank == 1) {
+            log.info("Started loading the dictionary with the first entry: \n\t[word=" + entryData[1] + ", wordData=" + wordData);
         }
 
-        return entry;*/
+        if (rank == 5000) {
+            log.info("Finished loading the dictionary with last entry: \n\t[word=" + entryData[1] + ", wordData=" + wordData);
+        }
 
-        return new DictionaryEntry5000("someword");
+        final String word = entryData[1];
+        DictionaryEntry entry = new DictionaryEntry5000(word);
+        entry.setWordData(wordData);
+
+        return entry;
+
+        //return new DictionaryEntry5000("someword");
     }
 }
