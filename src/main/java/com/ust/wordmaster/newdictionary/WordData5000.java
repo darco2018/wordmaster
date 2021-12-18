@@ -9,7 +9,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-public class WordData5000 implements WordData {
+public class WordData5000 implements WordData, Comparable<WordData5000> {
 
     private String word;
 
@@ -72,5 +72,11 @@ public class WordData5000 implements WordData {
     @Override
     public int hashCode() {
         return Objects.hash(word, partOfSpeech);
+    }
+
+    @Override
+    public int compareTo(WordData5000 o) {
+        int byWord = this.word.compareTo(o.word);
+        return byWord == 0 ? ((Integer)this.rank).compareTo(o.rank) : byWord;
     }
 }

@@ -7,9 +7,7 @@ public interface CorpusDictionary {
 
     void addEntry(DictionaryEntry entry);
 
-    Map<String, List<DictionaryEntry>> getDictionaryAsMap();
-
-    //Map<String, List<DictionaryEntry>> getDictionarySubsetAsMap(int rangeStart, int rangeEnd);
+    Map<String, List<DictionaryEntry>> asMap();
 
     boolean containsHeadword(String headword);
 

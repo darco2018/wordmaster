@@ -34,15 +34,9 @@ public class CorpusDictionary5000 implements CorpusDictionary {
     }
 
     @Override
-    public Map<String, List<DictionaryEntry>> getDictionaryAsMap() {
-        return this.dictionary;
+    public Map<String, List<DictionaryEntry>> asMap() {
+        return Collections.unmodifiableMap(this.dictionary);
     }
-
-   /* @Override
-    public Map<String, List<DictionaryEntry>> getDictionarySubsetAsMap(int rangeStart, int rangeEnd) {
-
-        return null;
-    }*/
 
     @Override
     public boolean containsHeadword(String headword) {
