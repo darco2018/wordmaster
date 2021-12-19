@@ -7,6 +7,6 @@ import java.util.List;
 @Service
 public interface HTMLParser {
 
-    List<String> parse(String html, String selector);
+    List<String> parseHTML(String html, String selector);
 
 }

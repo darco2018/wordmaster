@@ -36,7 +36,7 @@ public class AppInitializer {
 
         log.info("-------- Parsing BBC html into a List<String> of headlines --------------");
         HTMLParser htmlParser = new HTMLParserImpl();
-        List<String> headlineStrings = htmlParser.parse(bbcHomepageHtml, BBC_HEADLINES_ATTRIBUTE);
+        List<String> headlineStrings = htmlParser.parseHTML(bbcHomepageHtml, BBC_HEADLINES_ATTRIBUTE);
 
         log.info("-------- Filtering the string headlines for a range eg (1000 - 2000) --------------");
         TextUnitsCreatorOLD textUnitCreator5000 = new TextUnitCreator5000OLD(corpusDictionary); // without the COrpusDictionary,
