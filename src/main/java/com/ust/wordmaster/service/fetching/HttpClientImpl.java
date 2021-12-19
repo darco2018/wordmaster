@@ -5,24 +5,25 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
+
 @Slf4j
 @Service
 public class HttpClientImpl implements HttpClient {
 
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    public HttpClientImpl(RestTemplateBuilder builder){
+    public HttpClientImpl(RestTemplateBuilder builder) {
         restTemplate = builder.build();
     }
 
     @Override
-    public String fetchHtml(String url) {
+    public String fetchHtml(URI url) {
         log.info("Starting fetching from " + url);
 
-        String html = "";
         try {
-            html = restTemplate.getForObject(url, String.class);
-            log.info("Fetched " + html.length() + " characters from " + url);
+            String html = restTemplate.getForObject(url, String.class);
+            log.info("Fetched " + (html != null ? html.length() : 0) + " characters from " + url);
 
             return html;
         } catch (Exception e) {

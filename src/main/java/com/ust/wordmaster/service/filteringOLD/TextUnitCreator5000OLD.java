@@ -76,17 +76,36 @@ public class TextUnitCreator5000OLD implements TextUnitsCreatorOLD {
         this.corpusDictionary = dictionary;
     }
 
+    /**
+     *
+     * This class is must cooperate with some dictionary to provide info whether words are in/out of some range
+     *
+     * splits headline on spaces into words, then analyzes the words using CorpusDictionary, rangestart, rangeEnd,
+     * then adds some the obtained info to each headline (eg words out of range).
+     * the original headline + the array of out of range words + info about range  create TextUnit
+     * Other possible names for this class: SentenceSplitter IntoWordsSplitter
+     * or
+     * WORD ANALYSER, WORD EXAMINER   RANGE ANALYSER
+     *
+     * I could also send here SENTENCES from an ordinary TEXT for analysis
+     *
+     * A TextUnit is a SENTENCE(headline) with INFO on its WORDS
+     * INFORMED SENTENCE    RANGED SENTENCE    EXAMINED TEXTLINE    EXAMINED SENTENCE   RANGED TEXTLINE
+     *
+     * A RANGE ANALYZER producing RANGED SENTENCE
+     *
+     */
     @Override
-    public List<ParsedTextUnitOLD> parseIntoTextUnits(List<String> textUnits, int rangeStart, int rangeEnd) {
+    public List<ParsedTextUnitOLD> parseIntoTextUnits(List<String> charSequences, int rangeStart, int rangeEnd) {
         CorpusDictionaryOLD.validateRange(rangeStart, rangeEnd);
-        Objects.requireNonNull(textUnits, "List of textUnits cannot be null");
+        Objects.requireNonNull(charSequences, "List of charSequences cannot be null");
 
-        log.info("Filtering " + textUnits.size() + " textUnits; range " + rangeStart + "-" + rangeEnd);
+        log.info("Filtering " + charSequences.size() + " charSequences; range " + rangeStart + "-" + rangeEnd);
 
-        List<ParsedTextUnitOLD> filteredTextUnits = new ArrayList<>();
+        List<ParsedTextUnitOLD> parsedTextUnits = new ArrayList<>();
         NavigableSet<DictionaryEntryOLD> subsetDictionary = corpusDictionary.getDictionarySubset(rangeStart, rangeEnd);
 
-        for (String str : textUnits) {
+        for (String str : charSequences) {
             //create textUnits
             String[] words = splitOnSpaces(str);
             words = cleanUpWordsToCreateValidTextUnitObjs(words);
@@ -95,12 +114,12 @@ public class TextUnitCreator5000OLD implements TextUnitsCreatorOLD {
             // create FilteredTextUnit
             int[] wordIndexes = getOutOfRangeWords(words, subsetDictionary);
             ParsedTextUnitOLD filteredTextUnit = new ParsedTextUnitOLD(textUnit, wordIndexes, new int[]{rangeStart, rangeEnd});
-            filteredTextUnits.add(filteredTextUnit);
+            parsedTextUnits.add(filteredTextUnit);
 
             log.info(wordIndexes.length + " out of range words (" + Arrays.toString(wordIndexes) + ") in: " + str);
         }
 
-        return filteredTextUnits;
+        return parsedTextUnits;
     }
 
     private String[] splitOnSpaces(final String str) {

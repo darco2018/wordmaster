@@ -14,6 +14,9 @@ import com.ust.wordmaster.service.parsing.HTMLParserImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 
 @Slf4j
@@ -32,7 +35,12 @@ public class AppInitializer {
         //fetch html from bbc
         log.info("-------- Loading Corpus Dictionary & fetching BBC html --------------");
         HttpClient fetchingService = new HttpClientImpl(new RestTemplateBuilder());
-        String bbcHomepageHtml = fetchingService.fetchHtml(BBC_URL);
+        String bbcHomepageHtml = null;
+        try {
+            bbcHomepageHtml = fetchingService.fetchHtml(new URL(BBC_URL).toURI());
+        } catch (URISyntaxException | MalformedURLException e) {
+            e.printStackTrace();
+        }
 
         log.info("-------- Parsing BBC html into a List<String> of headlines --------------");
         HTMLParser htmlParser = new HTMLParserImpl();
