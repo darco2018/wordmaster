@@ -4,10 +4,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+// test only for range 0-5000 and  List<String> charSequences = List.of(inputText) containing a single item
 class RangeAnalyser5000Test_1 {
 
     public static final String DICTIONARY_FILE = "dictionary5000.csv";
@@ -28,17 +28,15 @@ class RangeAnalyser5000Test_1 {
     }
 
     @Test
-    void givenShortFormsAnd0_5000Range_analyseRange_findsThemInRange() {
+    void givenShortFormsAnd0_5000Range_findOutOfRangeWords_findsThemInRange() {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
         String inputText = "they'll smile he's she's outofrangeword I'm anotherNotInDictionary";
 
         actAndAssert(rangeAnalyser5000, inputText);
     }
 
-
-
     @Test
-    void givenSNegationsAnd0_5000Range_analyseRange_findsThemInRange() {
+    void givenSNegationsAnd0_5000Range_findOutOfRangeWords_findsThemInRange() {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
         String inputText = "outofrangeword don't isn't aren't anotherNotInDictionary hasn't ";
 
@@ -46,7 +44,7 @@ class RangeAnalyser5000Test_1 {
     }
 
     @Test
-    void givenInflectedFormsAnd0_5000Range_analyseRange_findsThemInRange() {
+    void givenInflectedFormsAnd0_5000Range_findOutOfRangeWords_findsThemInRange() {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
         String inputText = "am is was outofrangeword had an anotherNotInDictionary";
 
@@ -54,7 +52,7 @@ class RangeAnalyser5000Test_1 {
     }
 
     @Test
-    void givenIrreglarPluralFormsAnd0_5000Range_analyseRange_findsThemInRange() {
+    void givenIrreglarPluralFormsAnd0_5000Range_findOutOfRangeWords_findsThemInRange() {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
         String inputText = "women men outofrangeword children  mice anotherNotInDictionary feet teeth ";
 
@@ -62,7 +60,7 @@ class RangeAnalyser5000Test_1 {
     }
 
     @Test
-    void givenRegularPluralAndPossesivesAnd0_5000Range_analyseRange_findsThemInRange() {
+    void givenRegularPluralAndPossesivesAnd0_5000Range_findOutOfRangeWords_findsThemInRange() {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
         String inputText = "boy's boys outofrangeword cats  cat's cats' anotherNotInDictionary children's animals ";
 
@@ -70,7 +68,7 @@ class RangeAnalyser5000Test_1 {
     }
 
     @Test
-    void givenPastSimpleAndINGandPresentSimpleS_And0_5000Range_analyseRange_findsThemInRange() {
+    void givenPastSimpleAndINGandPresentSimpleS_And0_5000Range_findOutOfRangeWords_findsThemInRange() {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
         String inputText = "smiled walked tried plays cries ties outofrangeword  anotherNotInDictionary trying liking talking";
 
@@ -78,16 +76,41 @@ class RangeAnalyser5000Test_1 {
     }
 
     @Test
-    void givenSuperlatives_And0_5000Range_analyseRange_findsThemInRange() {
+    void givenSuperlatives_And0_5000Range_findOutOfRangeWords_findsThemInRange() {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
-        String inputText = "smallest largest worst best outofrangeword  anotherNotInDictionary";
+        String inputText = "smallest largest biggest worst best outofrangeword  anotherNotInDictionary";
 
         actAndAssert(rangeAnalyser5000, inputText);
     }
 
+    @Test
+    void givenComparatives_And0_5000Range_findOutOfRangeWords_findsWordsInRange() {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        String inputText = "smaller larger crazier older bigger outofrangeword  anotherNotInDictionary";
+
+        actAndAssert(rangeAnalyser5000, inputText);
+    }
+
+    @Test
+    void givenleadingAndTrailingSpaces_And0_5000Range_findOutOfRangeWords_findsWordsInRange() {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        String inputText = "    old outofrangeword      anotherNotInDictionary  out    ";
+
+        actAndAssert(rangeAnalyser5000, inputText);
+    }
+
+    @Test
+    void givenGluedSpecialCharacters_And0_5000Range_findOutOfRangeWords_findsWordsInRange() {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        String inputText = "  (person) [boy] \"time\"  love? what?!  [(time)] !time  outofrangeword      anotherNotInDictionary ";
+
+        actAndAssert(rangeAnalyser5000, inputText);
+    }
+
+
     private void actAndAssert(RangeAnalyser5000 rangeAnalyser5000, String inputText) {
         List<String> charSequences = List.of(inputText);
-        List<RangedText> rangedTextList = rangeAnalyser5000.findOutOfRange(charSequences, 0, 5000);
+        List<RangedText> rangedTextList = rangeAnalyser5000.findOutOfRangeWords(charSequences, 0, 5000);
 
         assertEquals(1, rangedTextList.size());
 

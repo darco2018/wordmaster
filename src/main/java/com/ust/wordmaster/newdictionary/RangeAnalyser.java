@@ -6,5 +6,5 @@ import java.util.List;
  * given a list of texts(paragraphs, headlines, sentences)
  */
 public interface RangeAnalyser {
-    List<RangedText> findOutOfRange(List<String> charSequences, int dictionaryRangeStart, int dictionaryRangeEnd);
+    List<RangedText> findOutOfRangeWords(List<String> charSequences, int dictionaryRangeStart, int dictionaryRangeEnd);
 }

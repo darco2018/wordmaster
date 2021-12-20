@@ -53,7 +53,7 @@ public class AppDriver {
         TextUnitsCreatorOLD textUnitCreator5000 = new TextUnitCreator5000OLD(corpusDictionary);
 
         // this is a bulk operation that will call containsWord() lots of times
-        List<ParsedTextUnitOLD> filteredHeadlines = textUnitCreator5000.findOutOfRange(headlineStrings, 1, 5000);
+        List<ParsedTextUnitOLD> filteredHeadlines = textUnitCreator5000.findOutOfRangeWords(headlineStrings, 1, 5000);
         filteredHeadlines.stream().limit(3).forEach(System.out::println); // each FilteredHeadline has String[] words, int[] indexesOutOfRange, rangeInfo
         List<String> outOfRangeWords = ((TextUnitCreator5000OLD) textUnitCreator5000).getWordsOutOfRangeStrings();
         outOfRangeWords.forEach(System.out::println);
