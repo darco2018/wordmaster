@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 // test only for range 0-5000 and  List<String> charSequences = List.of(inputText) containing a single item
@@ -121,6 +122,40 @@ class RangeAnalyser5000Test_1 {
         assertEquals(2, rangedText.getOutOfRangeWords().length);
         assertEquals("outofrangeword", rangedText.getOutOfRangeWords()[0]);
         assertEquals("anotherNotInDictionary", rangedText.getOutOfRangeWords()[1]);
+    }
+
+    @Test
+    void givenEmptyString_findOutOfRangeWords_throwsNoException() {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        String inputText = "       ";
+
+        List<String> charSequences = List.of(inputText);
+        List<RangedText> rangedTextList = rangeAnalyser5000.findOutOfRangeWords(charSequences, 0, 5000);
+
+        assertEquals(1, rangedTextList.size());
+
+        RangedText rangedText = rangedTextList.get(0);
+        assertEquals(inputText, rangedText.getText());
+        assertEquals(0, rangedText.getRangeStart());
+        assertEquals(5000, rangedText.getRangeEnd());
+        assertEquals(0, rangedText.getOutOfRangeWords().length);
+    }
+
+    @Test
+    void givenNoWordsInRange_findOutOfRangeWords_throwsNoException() {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        String inputText = "  (dr) 8 --  ulspr  z ";
+
+        List<String> charSequences = List.of(inputText);
+        List<RangedText> rangedTextList = rangeAnalyser5000.findOutOfRangeWords(charSequences, 0, 5000);
+
+        assertEquals(1, rangedTextList.size());
+
+        RangedText rangedText = rangedTextList.get(0);
+        assertEquals(inputText, rangedText.getText());
+        assertEquals(0, rangedText.getRangeStart());
+        assertEquals(5000, rangedText.getRangeEnd());
+       //assertTrue(rangedText.getOutOfRangeWords().length);
     }
 
 

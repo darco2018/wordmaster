@@ -52,24 +52,52 @@ class RangeAnalyser5000Test_2 {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
         String volume_1931rank = "volume";
         String concede_4232 = "concede";
-        String inputText = " mind " + volume_1931rank + " face " +  concede_4232 + " fight ";
+        String inputText = " mind " + volume_1931rank + " face " + concede_4232 + " fight ";
+        int[] range = new int[]{0, 1000};
 
-        actAndAssert(rangeAnalyser5000, inputText, volume_1931rank, concede_4232);
+        actAndAssert(rangeAnalyser5000, inputText, range, volume_1931rank, concede_4232);
     }
 
-    private void actAndAssert(RangeAnalyser5000 rangeAnalyser5000, String inputText, String... outOfRange ) {
+    @Test
+    void given1700_4500Range_findOutOfRangeWords_findsOutOfRangeWords() {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        String volume_1931rank = "volume";
+        String concede_4232 = "concede";
+        // voice = 466 rank,  vehicle 1300  ,influential 4334
+        String inputText = " voice " + volume_1931rank + " vehicle " + concede_4232 + " influential ";
+        int[] range = new int[]{1700, 4500};
+
+        actAndAssert(rangeAnalyser5000, inputText, range, "voice", "vehicle", "influential");
+    }
+
+    @Test
+    void given0_4000Range_findOutOfRangeWords_findsOutOfRangeWords() {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        String volume_1931rank = "volume";
+        String concede_4232 = "concede";
+        // voice = 466 rank,  vehicle 1300  ,influential 4334
+        String inputText = " voice " + volume_1931rank + " vehicle " + concede_4232 + " influential ";
+        int[] range = new int[]{0, 4000};
+
+        actAndAssert(rangeAnalyser5000, inputText, range, concede_4232, "influential");
+    }
+
+    private void actAndAssert(RangeAnalyser5000 rangeAnalyser5000, String inputText, int[] range, String... outOfRange) {
         List<String> charSequences = List.of(inputText);
-        List<RangedText> rangedTextList = rangeAnalyser5000.findOutOfRangeWords(charSequences, 0, 1000);
+        int rangeStart = range[0];
+        int rangeEnd = range[1];
+        List<RangedText> rangedTextList = rangeAnalyser5000.findOutOfRangeWords(charSequences, rangeStart, rangeEnd);
 
         assertEquals(1, rangedTextList.size());
 
+
         RangedText rangedText = rangedTextList.get(0);
         assertEquals(inputText, rangedText.getText());
-        assertEquals(0, rangedText.getRangeStart());
-        assertEquals(5000, rangedText.getRangeEnd());
+        assertEquals(rangeStart, rangedText.getRangeStart());
+        assertEquals(rangeEnd, rangedText.getRangeEnd());
         assertEquals(2, rangedText.getOutOfRangeWords().length);
         assertEquals(outOfRange[0], rangedText.getOutOfRangeWords()[0]);
         assertEquals(outOfRange[1], rangedText.getOutOfRangeWords()[1]);
     }
 
-    }
+}

@@ -12,6 +12,10 @@ public class DictionaryEntry5000 extends DictionaryEntry {
 
     @Override
     public int compareTo(DictionaryEntry o) {
+
+        if(this.getWordData() == null || o.getWordData() == null)
+            return this.getHeadword().compareTo(o.getHeadword());
+
         if (o instanceof DictionaryEntry5000) {
             DictionaryEntry5000 o5000 = (DictionaryEntry5000) o;
             int byHeadword = super.compareTo(o5000);
