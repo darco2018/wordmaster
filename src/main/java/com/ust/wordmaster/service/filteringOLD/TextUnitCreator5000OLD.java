@@ -112,7 +112,7 @@ public class TextUnitCreator5000OLD implements TextUnitsCreatorOLD {
             TextUnitOLD textUnit = new TextUnitOLD(str, words);
 
             // create FilteredTextUnit
-            int[] wordIndexes = getOutOfRangeWords(words, subsetDictionary);
+            int[] wordIndexes = isolateOutOfRangeWords(words, subsetDictionary);
             ParsedTextUnitOLD filteredTextUnit = new ParsedTextUnitOLD(textUnit, wordIndexes, new int[]{rangeStart, rangeEnd});
             parsedTextUnits.add(filteredTextUnit);
 
@@ -132,7 +132,7 @@ public class TextUnitCreator5000OLD implements TextUnitsCreatorOLD {
 
     }
 
-    private int[] getOutOfRangeWords(String[] words, NavigableSet<DictionaryEntryOLD> subsetDictionary) {
+    private int[] isolateOutOfRangeWords(String[] words, NavigableSet<DictionaryEntryOLD> subsetDictionary) {
 
         List<Integer> outOfRangeWordIndexes = new ArrayList<>();
 
