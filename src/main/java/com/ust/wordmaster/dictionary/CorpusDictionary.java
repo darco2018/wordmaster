@@ -1,4 +1,4 @@
-package com.ust.wordmaster.newdictionary;
+package com.ust.wordmaster.dictionary;
 
 import java.util.List;
 import java.util.Map;

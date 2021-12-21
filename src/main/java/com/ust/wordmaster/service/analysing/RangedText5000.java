@@ -1,4 +1,4 @@
-package com.ust.wordmaster.newdictionary;
+package com.ust.wordmaster.service.analysing;
 
 import lombok.ToString;
 
@@ -9,7 +9,7 @@ public class RangedText5000 implements RangedText {
 
     private final String text;
     private final int rangeStart;
-    private final int getRangeEnd;
+    private final int rangeEnd;
     private String[] outOfRangeWords;
 
     public RangedText5000(String text, int rangeStart, int rangeEnd) {
@@ -19,7 +19,7 @@ public class RangedText5000 implements RangedText {
         if (rangeStart < 0 || rangeStart >= rangeEnd)
             throw new IllegalArgumentException("Range start must be greater than 0 and less than range end.");
         this.rangeStart = rangeStart;
-        this.getRangeEnd = rangeEnd;
+        this.rangeEnd = rangeEnd;
     }
 
     @Override
@@ -34,7 +34,7 @@ public class RangedText5000 implements RangedText {
 
     @Override
     public int getRangeEnd() {
-        return this.getRangeEnd;
+        return this.rangeEnd;
     }
 
     @Override

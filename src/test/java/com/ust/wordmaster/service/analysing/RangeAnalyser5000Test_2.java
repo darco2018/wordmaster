@@ -1,5 +1,6 @@
-package com.ust.wordmaster.newdictionary;
+package com.ust.wordmaster.service.analysing;
 
+import com.ust.wordmaster.dictionary.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +19,7 @@ class RangeAnalyser5000Test_2 {
 
     @BeforeAll
     static void setUp() {
-        List<DictionaryEntry> entriesFromFile = CSVParser.parse(DICTIONARY_FILE);
+        List<DictionaryEntry> entriesFromFile = CorpusCSVFileParser.parse(DICTIONARY_FILE);
         corpusDictionary = new CorpusDictionary5000("Corpus Dictionary 5000 from file", entriesFromFile);
     }
 

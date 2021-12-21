@@ -1,4 +1,4 @@
-package com.ust.wordmaster.newdictionary;
+package com.ust.wordmaster.dictionary;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ class CorpusDictionary5000Test {
     // By default, both JUnit 4 and 5 create a new instance of the test class before running each test method.
     @BeforeAll
     static void setUp() {
-        ENTRIES = CSVParser.parse(DICTIONARY_FILE);
+        ENTRIES = CorpusCSVFileParser.parse(DICTIONARY_FILE);
         assert (5000 == ENTRIES.size());
 
         CORPUS = new CorpusDictionary5000("Dictionary", ENTRIES);

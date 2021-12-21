@@ -1,4 +1,4 @@
-package com.ust.wordmaster.newdictionary;
+package com.ust.wordmaster.service.analysing;
 
 public interface RangedText {
 

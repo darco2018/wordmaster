@@ -12,7 +12,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-class HTMLParserTest {
+class HTMLParserImplTest {
 
     public static final String BBC_HEADLINES_ATTRIBUTE = "data-bbc-title";
     private static final String BBC_PATHSTRING = "bbc.html";

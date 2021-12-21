@@ -1,4 +1,4 @@
-package com.ust.wordmaster.newdictionary;
+package com.ust.wordmaster.dictionary;
 
 public class DictionaryEntry5000 extends DictionaryEntry {
 

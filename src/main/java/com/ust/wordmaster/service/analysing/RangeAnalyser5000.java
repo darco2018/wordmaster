@@ -1,5 +1,8 @@
-package com.ust.wordmaster.newdictionary;
+package com.ust.wordmaster.service.analysing;
 
+import com.ust.wordmaster.dictionary.CorpusDictionary;
+import com.ust.wordmaster.dictionary.DictionaryEntry;
+import com.ust.wordmaster.dictionary.WordData5000;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

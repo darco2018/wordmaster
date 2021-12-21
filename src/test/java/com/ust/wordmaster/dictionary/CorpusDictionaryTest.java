@@ -1,8 +1,6 @@
-package com.ust.wordmaster.newdictionary;
+package com.ust.wordmaster.dictionary;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class CorpusDictionaryTest {
 

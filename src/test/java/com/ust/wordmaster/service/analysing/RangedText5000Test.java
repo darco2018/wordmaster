@@ -1,5 +1,7 @@
-package com.ust.wordmaster.newdictionary;
+package com.ust.wordmaster.service.analysing;
 
+import com.ust.wordmaster.service.analysing.RangedText;
+import com.ust.wordmaster.service.analysing.RangedText5000;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

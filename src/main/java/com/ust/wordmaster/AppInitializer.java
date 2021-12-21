@@ -1,14 +1,16 @@
 package com.ust.wordmaster;
 
-import com.ust.wordmaster.dictionaryOLD.CSVParserOLD;
-import com.ust.wordmaster.dictionaryOLD.CorpusDictionaryOLD;
-import com.ust.wordmaster.dictionaryOLD.CorpusDictionaryIntOLD;
-import com.ust.wordmaster.dictionaryOLD.DictionaryEntryOLD;
+
+import com.ust.wordmaster.dictionary.CorpusCSVFileParser;
+import com.ust.wordmaster.dictionary.CorpusDictionary;
+import com.ust.wordmaster.dictionary.CorpusDictionary5000;
+import com.ust.wordmaster.dictionary.DictionaryEntry;
+import com.ust.wordmaster.service.analysing.RangeAnalyser;
+import com.ust.wordmaster.service.analysing.RangeAnalyser5000;
+import com.ust.wordmaster.service.analysing.RangedText;
 import com.ust.wordmaster.service.fetching.HttpClient;
 import com.ust.wordmaster.service.fetching.HttpClientImpl;
-import com.ust.wordmaster.service.filteringOLD.ParsedTextUnitOLD;
-import com.ust.wordmaster.service.filteringOLD.TextUnitsCreatorOLD;
-import com.ust.wordmaster.service.filteringOLD.TextUnitCreator5000OLD;
+
 import com.ust.wordmaster.service.parsing.HTMLParser;
 import com.ust.wordmaster.service.parsing.HTMLParserImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -29,8 +31,8 @@ public class AppInitializer {
     public static void main(String[] args) {
 
         // create dictionary
-        List<DictionaryEntryOLD> entriesFromFile = CSVParserOLD.parse(DICTIONARY_FILE);
-        CorpusDictionaryIntOLD corpusDictionary = new CorpusDictionaryOLD("Corpus Dictionary from file", entriesFromFile);
+        List<DictionaryEntry> entriesFromFile = CorpusCSVFileParser.parse(DICTIONARY_FILE);
+        CorpusDictionary corpusDictionary = new CorpusDictionary5000("Corpus Dictionary from file", entriesFromFile);
 
         //fetch html from bbc
         log.info("-------- Loading Corpus Dictionary & fetching BBC html --------------");
@@ -47,18 +49,12 @@ public class AppInitializer {
         List<String> headlineStrings = htmlParser.parseHTML(bbcHomepageHtml, BBC_HEADLINES_ATTRIBUTE);
 
         log.info("-------- Filtering the string headlines for a range eg (1000 - 2000) --------------");
-        TextUnitsCreatorOLD textUnitCreator5000 = new TextUnitCreator5000OLD(corpusDictionary); // without the COrpusDictionary,
-        // getting a subset dictionary would not be possible
+        RangeAnalyser rangeAnalyser = new RangeAnalyser5000(corpusDictionary);
 
-        // this is a bulk operation that will call containsWord() lots of times
-        List<ParsedTextUnitOLD> filteredHeadlines = textUnitCreator5000.parseIntoTextUnits(headlineStrings, 1, 5000);
-        filteredHeadlines.stream().limit(3).forEach(System.out::println); // each FilteredHeadline has String[] words, int[] indexesOutOfRange, rangeInfo
-        List<String> outOfRangeWords = ((TextUnitCreator5000OLD) textUnitCreator5000).getWordsOutOfRangeStrings();
-        outOfRangeWords.forEach(System.out::println);
+        List<RangedText> rangedTextList = rangeAnalyser.findOutOfRangeWords(headlineStrings, 1, 5000);
+        rangedTextList.stream().limit(3).forEach(System.out::println);
 
-        // when new request comes, we cna still work with the same Filtering Service
-
-        log.info("-------- ?!!! --------------");
+        log.info("-------- Convert to DTO --------------");
         // HeadlinesDTO headlinesDTO = toHeadlinesDTOMapper.map(filteredWords);
     }
 }

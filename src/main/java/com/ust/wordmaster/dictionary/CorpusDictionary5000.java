@@ -1,10 +1,12 @@
-package com.ust.wordmaster.newdictionary;
+package com.ust.wordmaster.dictionary;
 
 import lombok.Getter;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Getter
+@Service
 public class CorpusDictionary5000 implements CorpusDictionary {
 
     private final String name;

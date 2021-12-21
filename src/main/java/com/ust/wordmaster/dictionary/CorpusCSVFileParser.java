@@ -1,4 +1,4 @@
-package com.ust.wordmaster.newdictionary;
+package com.ust.wordmaster.dictionary;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @Slf4j
-public class CSVParser {
+public class CorpusCSVFileParser {
 
     public static List<DictionaryEntry> parse(String filePath) {
 

@@ -10,13 +10,13 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 @SpringBootApplication
-public class WordMasterApp {
+public class App {
 
     public static final String BBCUrl = "https://www.bbc.com/";
 
     public static void main(String[] args) {
 
-        ApplicationContext context = SpringApplication.run(WordMasterApp.class, args);
+        ApplicationContext context = SpringApplication.run(App.class, args);
         HttpClient httpClient = context.getBean(HttpClient.class);
         String html = null;
         try {

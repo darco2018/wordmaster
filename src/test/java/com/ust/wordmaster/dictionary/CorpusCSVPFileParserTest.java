@@ -1,22 +1,19 @@
-package com.ust.wordmaster.newdictionary;
+package com.ust.wordmaster.dictionary;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class CSVParserTest {
+class CorpusCSVPFileParserTest {
 
     public static final String DICTIONARY_FILE = "dictionary5000.csv";
 
     @Test
     void returnsListOfDictionaryEntries() {
 
-        List<DictionaryEntry> entries = CSVParser.parse(DICTIONARY_FILE);
+        List<DictionaryEntry> entries = CorpusCSVFileParser.parse(DICTIONARY_FILE);
 
         assertNotNull(entries);
         assertTrue(entries.size() > 0);
