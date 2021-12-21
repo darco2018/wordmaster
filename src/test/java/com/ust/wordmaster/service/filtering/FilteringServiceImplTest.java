@@ -29,7 +29,7 @@ class FilteringServiceImplTest {
         List<DictionaryEntryOLD> entriesFromFile = CSVParserOLD.parse(DICTIONARY_FILE);
         CorpusDictionaryOLD corpusDictionary2 = new CorpusDictionaryOLD("Corpus Dictionary from file", entriesFromFile);
         TextUnitCreator5000OLD filteringService = new TextUnitCreator5000OLD(corpusDictionary2);
-
+    ////////////// PRIVATE METHOD ///////////////////
         Method method = TextUnitCreator5000OLD.class.getDeclaredMethod("getOutOfRangeWords", String[].class, int.class, int.class);
         method.setAccessible(true);
 
@@ -45,6 +45,8 @@ class FilteringServiceImplTest {
         System.out.println(Arrays.toString(notInRange));
         assertArrayEquals(new int[]{1}, notInRange);
     }
+
+
 
     // make you you don't test for words that appear more than once in the dictionary, eg in,feel, dance
     @Test

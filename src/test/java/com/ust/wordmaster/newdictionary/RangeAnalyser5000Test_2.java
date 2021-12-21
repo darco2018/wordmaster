@@ -3,11 +3,14 @@ package com.ust.wordmaster.newdictionary;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
-// test  for DIFFERENT ranges 0-5000 and  List<String> charSequences = List.of(inputText) containing a MULTIPLE items
+// test  1)for DIFFERENT ranges 0-5000 2) List<String> charSequences = List.of(inputText) containing a MULTIPLE items
+// 3) private methods
 class RangeAnalyser5000Test_2 {
 
     public static final String DICTIONARY_FILE = "dictionary5000.csv";
@@ -17,6 +20,37 @@ class RangeAnalyser5000Test_2 {
     static void setUp() {
         List<DictionaryEntry> entriesFromFile = CSVParser.parse(DICTIONARY_FILE);
         corpusDictionary = new CorpusDictionary5000("Corpus Dictionary 5000 from file", entriesFromFile);
+    }
+
+    // test private method
+    @Test
+    void findsOutOfRangeIndexes() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        Method method = RangeAnalyser5000.class.getDeclaredMethod("isolateOutOfRangeWords", String[].class, int.class, int.class);
+        method.setAccessible(true);
+        String inputText = "outofrangeword_0 dogs like aren't anotherNotInDictionary_4 she's ";
+        String[] words = inputText.split(" ");
+
+                                //invoke() returns Object
+        int[] notInRange = (int[]) method.invoke(rangeAnalyser5000, words, 1, 5000);
+
+        assertArrayEquals(new int[]{0,4}, notInRange);
+    }
+
+    // test private method
+    @Test
+    void convertsIndexesToWords() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        Method method = RangeAnalyser5000.class.getDeclaredMethod("convertIndexesToWords", int[].class, String[].class);
+        method.setAccessible(true);
+        String inputText = "outofrangeword_0 dogs like aren't anotherNotInDictionary_4 she's ";
+        String[] words = inputText.split(" ");
+        int[] indexesOutOfRange = {0,4};
+
+        //invoke() returns Object
+        String[] wordsNotInRange = (String[]) method.invoke(rangeAnalyser5000, indexesOutOfRange, words);
+
+        assertArrayEquals(new String[]{"outofrangeword_0", "anotherNotInDictionary_4"}, wordsNotInRange);
     }
 
     @Test
