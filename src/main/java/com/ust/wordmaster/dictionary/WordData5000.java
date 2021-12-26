@@ -77,6 +77,6 @@ public class WordData5000 implements WordData, Comparable<WordData5000> {
     @Override
     public int compareTo(WordData5000 o) {
         int byWord = this.word.compareTo(o.word);
-        return byWord == 0 ? ((Integer)this.rank).compareTo(o.rank) : byWord;
+        return byWord == 0 ? Integer.compare(this.rank, o.rank) : byWord;
     }
 }

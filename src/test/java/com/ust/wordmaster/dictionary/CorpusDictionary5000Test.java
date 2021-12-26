@@ -1,9 +1,12 @@
 package com.ust.wordmaster.dictionary;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.List;
 import java.util.Map;
 
@@ -113,6 +116,48 @@ class CorpusDictionary5000Test {
                () -> assertTrue(c.isHeadwordInRankRange("galaxy",  1,  3499))
         );
 
+    }
+
+    @Test
+    public void createsCorrectNumberOfWordsWithSingleDefinitionsAndMultipleDefinitions() throws IOException {
+
+        // assert
+        Map<String, List<DictionaryEntry>> dictionaryAsMap = CORPUS.asMap();
+
+
+        int headwordsWithMultipleDefinitions = 0;
+        int headwordsWithSingleDefinition = 0;
+        for (String headword : dictionaryAsMap.keySet()) {
+            if (dictionaryAsMap.get(headword).size() > 1) {
+                headwordsWithMultipleDefinitions++;
+            } else {
+                headwordsWithSingleDefinition++;
+            }
+        }
+        // assert
+        int expectedNoOfHeadwords = 4352;
+        int expectedNoOfHeadwordsWIthMultipleDefs = 604;
+        int expectedNoOfHEadwordsWithSingleDef = expectedNoOfHeadwords - expectedNoOfHeadwordsWIthMultipleDefs;
+        Assertions.assertThat(dictionaryAsMap.size()).isEqualTo(expectedNoOfHeadwords);
+        Assertions.assertThat(headwordsWithMultipleDefinitions).isEqualTo(expectedNoOfHeadwordsWIthMultipleDefs);
+        Assertions.assertThat(headwordsWithSingleDefinition).isEqualTo(expectedNoOfHEadwordsWithSingleDef);
+    }
+
+    @Test
+    public void givenMultipleDefinitionsOfWord_whenCreatingDictionary_allDefinitionsArePreserved() {
+
+        Map<String, List<DictionaryEntry>> dictionaryAsMap = CORPUS.asMap();
+
+        // assert
+        List<DictionaryEntry> danceDefintions = dictionaryAsMap.get("dance");
+        Assertions.assertThat(danceDefintions.size()).isEqualTo(2);
+        Assertions.assertThat(danceDefintions)
+                .extracting("headword")
+                .containsOnly("dance");
+        Assertions.assertThat(danceDefintions)
+                .extracting("wordData")
+                .extracting("partOfSpeech")
+                .containsOnly("n", "v");
     }
 
 

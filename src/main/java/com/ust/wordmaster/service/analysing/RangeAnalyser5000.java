@@ -67,7 +67,8 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             entry("an", "a"),
             entry("lying", "lie")
     );
-    private final CorpusDictionary corpusDictionary;
+
+    private CorpusDictionary corpusDictionary;
 
     public RangeAnalyser5000(CorpusDictionary corpusDictionary) {
         this.corpusDictionary = corpusDictionary;

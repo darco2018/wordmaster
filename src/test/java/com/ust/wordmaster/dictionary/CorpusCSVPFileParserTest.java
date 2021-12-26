@@ -49,4 +49,6 @@ class CorpusCSVPFileParserTest {
         Assertions.assertThat(   ((WordData5000)entry_1.getWordData()).getDispersion()).isEqualTo(0.98);
     }
 
+
+
 }
