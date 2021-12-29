@@ -4,6 +4,9 @@ import lombok.Getter;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Getter
 @Service
@@ -62,14 +65,12 @@ public class CorpusDictionary5000 implements CorpusDictionary {
         if (entries == null || entries.size() == 0)
             return null;
 
-        for (DictionaryEntry e : entries) {
-            String entryHeadword = e.getWordData().getWord();
-            String entryPartOfSpeech = e.getWordData().getPartOfSpeech();
-            if (entryHeadword.equalsIgnoreCase(headword) && entryPartOfSpeech.equalsIgnoreCase(partOfSpeech))
-                return e;
-        }
+        Predicate<DictionaryEntry> sameHeadword = entry -> entry.getWordData().getWord().equalsIgnoreCase(headword);
+        Predicate<DictionaryEntry> samePartOfSpeech = entry -> entry.getWordData().getPartOfSpeech().equalsIgnoreCase(partOfSpeech);
+        return this.dictionary.get(headword).stream()
+                .filter(sameHeadword.and(samePartOfSpeech))
+                .findFirst().orElse(null);
 
-        return null;
     }
 
     /**
@@ -82,12 +83,13 @@ public class CorpusDictionary5000 implements CorpusDictionary {
         if (entries == null || entries.size() == 0)
             return false;
 
-        for (DictionaryEntry e : entries) {
-            int rank = ((WordData5000) e.getWordData()).getRank();
-            if (rank >= rangeStart && rank <= rangeEnd)
-                return true;
-        }
+        Function<DictionaryEntry, Integer> getRank = e -> ((WordData5000) e.getWordData()).getRank();
+        return entries.stream()
+                .map(getRank)
+                .filter(rank -> (rank >= rangeStart && rank <= rangeEnd))
+                .collect(Collectors.toList())
+                .size() > 0 ? true : false;
 
-        return false;
+
     }
 }
