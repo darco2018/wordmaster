@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @Getter
 @Service
@@ -86,9 +85,7 @@ public class CorpusDictionary5000 implements CorpusDictionary {
         Function<DictionaryEntry, Integer> getRank = e -> ((WordData5000) e.getWordData()).getRank();
         return entries.stream()
                 .map(getRank)
-                .filter(rank -> (rank >= rangeStart && rank <= rangeEnd))
-                .collect(Collectors.toList())
-                .size() > 0 ? true : false;
+                .anyMatch(rank -> (rank >= rangeStart && rank <= rangeEnd));
 
 
     }

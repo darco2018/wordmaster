@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Map.entry;
 
@@ -134,14 +135,10 @@ public class RangeAnalyser5000 implements RangeAnalyser {
         validateRange(rangeStart, rangeEnd);
 
         List<DictionaryEntry> entries = this.corpusDictionary.getEntriesByHeadword(headword);
+        return entries.stream()
+                .map(entry -> ((WordData5000) entry.getWordData()).getRank())
+                .anyMatch(rank -> rank >= rangeStart && rank <= rangeEnd);
 
-        for (DictionaryEntry entry : entries) {
-            int rank = ((WordData5000) entry.getWordData()).getRank();
-            if (rank >= rangeStart && rank <= rangeEnd) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private boolean isInDictionary(final String headword, int rangeStart, int rangeEnd) {
@@ -177,12 +174,11 @@ public class RangeAnalyser5000 implements RangeAnalyser {
     }
 
     private String[] convertIndexesToWords(int[] wordIndexes, String[] words) {
-        List<String> outOfRangeStrings = new ArrayList<>();
-        for (int index : wordIndexes) {
-            outOfRangeStrings.add(words[index]);
-        }
 
-        return outOfRangeStrings.toArray(new String[0]);
+        return Arrays.stream(wordIndexes)
+                .mapToObj(i -> words[i])
+                .toArray(String[]::new);
+
     }
 
     private String[] splitOnSpaces(final String str) {
@@ -333,7 +329,6 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             if (!SHORT_FORMS.contains(word) && word.length() != 1) {
                 // *(&
                 word = removeShortFormSuffixesAndPossesive(word);
-
                 word = removeLeadingSpecialChars(word);
                 word = removeTrailingSpecialChars(word);
             }
