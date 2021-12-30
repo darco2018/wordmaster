@@ -13,11 +13,11 @@ import java.util.List;
 @RestController
 public class RangedController {
 
-    @GetMapping("range-string")
+    @GetMapping("rangestring")
     public String getRangedTexts() {
         log.info("----------> Contoller called - this will return ERROR as content-type returned is text, " +
                 "and not json as @RestController suggests");
-        return "Hello, ranged controller here";
+        return "Hello again, ranged controller here";
     }
 
     @GetMapping("range")
@@ -31,6 +31,8 @@ public class RangedController {
     @GetMapping("worddata")
     public WordData5000 getWordData() {
         WordData5000 wordData5000 = new WordData5000("dance",80,"v",12000,50.0);
+        WordData5000 wordData5000_2 = new WordData5000("dance",80,"v",12000,50.0);
+
         log.info("---------->Controller called");
         return wordData5000;
     }
