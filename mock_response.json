@@ -1,0 +1,40 @@
+{
+  "description": "BBC headlines filtered against a range of ranked most common English words",
+  "version": "1.0",
+  "wordsRankedStartIncl": 4000,
+  "wordsRankedEndIncl": 5000,
+  "dataSize": 3,
+  "data": [
+    {
+      "sequence": [
+        "Life",
+        "is",
+        "precarious"
+      ],
+      "filtered": [
+        2
+      ]
+    },
+    {
+      "sequence": [
+        "Oysters",
+        "are",
+        "great"
+      ],
+      "filtered": [
+        1
+      ]
+    },
+    {
+      "sequence": [
+        "Boys",
+        "splashed",
+        "mud"
+      ],
+      "filtered": [
+        1,
+        2
+      ]
+    }
+  ]
+}

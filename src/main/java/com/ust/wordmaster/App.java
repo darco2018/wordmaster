@@ -17,14 +17,14 @@ public class App {
     public static void main(String[] args) {
 
         ApplicationContext context = SpringApplication.run(App.class, args);
-        HttpClient httpClient = context.getBean(HttpClient.class);
+        /*HttpClient httpClient = context.getBean(HttpClient.class);
         String html = null;
         try {
             html = httpClient.fetchHtml(new URL(BBCUrl).toURI());
         } catch (URISyntaxException | MalformedURLException e) {
             e.printStackTrace();
         }
-        System.out.println(html);
+        System.out.println(html);*/
 
     }
 

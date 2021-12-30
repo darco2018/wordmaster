@@ -8,7 +8,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 @Getter
-@Service
+//@Service
 public class CorpusDictionary5000 implements CorpusDictionary {
 
     private final String name;

@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import static java.util.Map.entry;
 
 @Slf4j
-@Service
+//@Service
 public class RangeAnalyser5000 implements RangeAnalyser {
 
     private static final Set<String> SHORT_FORMS = Set.of("i'd", "he'd", "she'd", "we'd", "you'd", "they'd",
