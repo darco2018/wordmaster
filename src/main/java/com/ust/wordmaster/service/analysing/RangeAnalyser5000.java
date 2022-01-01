@@ -4,10 +4,8 @@ import com.ust.wordmaster.dictionary.CorpusDictionary;
 import com.ust.wordmaster.dictionary.DictionaryEntry;
 import com.ust.wordmaster.dictionary.WordData5000;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.Map.entry;
 
@@ -24,6 +22,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             '#', '$', '*', '(', ')', '{', '}', '[', ']', '…', '-'};
     private static final Map<String, String> BASE_FORMS = Map.ofEntries(
             entry("am", "be"),
+            entry("are", "be"),
             entry("is", "be"),
             entry("was", "be"),
             entry("were", "be"),
@@ -66,6 +65,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             entry("theatre", "theater"),
 
             entry("an", "a"),
+            entry("v", "vs"),
             entry("lying", "lie")
     );
 
@@ -95,7 +95,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             rangedText.setOutOfRangeWords(outOfRangeWords);
             rangedTextList.add(rangedText);
 
-            log.info(wordIndexes.length + " out of range words (" + Arrays.toString(wordIndexes) + ") in: " + str);
+            log.trace(wordIndexes.length + " out of range words (" + Arrays.toString(wordIndexes) + ") in: " + str);
         }
 
         return rangedTextList;
@@ -125,7 +125,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
                 info += " NOT";
             }
 
-            log.info(words[i] + " [i]=" + i + info + " in the given range.");
+            log.trace(words[i] + " [i]=" + i + info + " in the given range.");
         }
 
         return outOfRangeWordIndexes.stream().mapToInt(i -> i).toArray();
@@ -182,7 +182,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
     }
 
     private String[] splitOnSpaces(final String str) {
-        log.info("Splitting: " + str);
+        log.trace("Splitting: " + str);
 
         if (str == null || str.isBlank() || str.isEmpty())
             return new String[0];

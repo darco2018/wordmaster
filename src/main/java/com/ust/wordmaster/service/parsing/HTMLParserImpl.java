@@ -17,7 +17,7 @@ public class HTMLParserImpl implements HTMLParser {
     @Override
     public List<String> parseHTML(final String html, final String attributeName) {
 
-        log.info("Starting to parseHTML the html of " + html.length() + " characters with the attribute: " + attributeName);
+        log.info("Starting to parse the html of " + html.length() + " characters with the attribute: " + attributeName);
 
         Document doc = Jsoup.parse(html);
         Elements htmlElements = doc.getElementsByAttribute(attributeName); // selects HTML elements(eg <div>'s) containing this attribute

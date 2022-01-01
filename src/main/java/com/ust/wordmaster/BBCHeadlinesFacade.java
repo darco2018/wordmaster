@@ -32,13 +32,13 @@ public class BBCHeadlinesFacade {
     private String websiteURL;
     private String headlinesAttribute;
 
-    public BBCHeadlinesFacade(CorpusDictionary corpusDictionary){
+    public BBCHeadlinesFacade(CorpusDictionary corpusDictionary) {
         this.corpusDictionary = corpusDictionary;
     }
 
     public RangedTextResponseDTO fetchAndParseHeadlines(final String website, int rangeStart, int rangeEnd) {
 
-        switch (website.toLowerCase()){
+        switch (website.toLowerCase()) {
             case "bbc":
                 this.websiteURL = BBC_URL;
                 this.headlinesAttribute = BBC_HEADLINES_ATTRIBUTE;
@@ -50,7 +50,7 @@ public class BBCHeadlinesFacade {
                 this.headlinesAttribute = BBC_HEADLINES_ATTRIBUTE;
         }
 
-        log.info("-------- Fetching html from " +  this.websiteURL);
+        log.info("-------- Fetching html from " + this.websiteURL);
         HttpClient fetchingService = new HttpClientImpl(new RestTemplateBuilder());
         String websiteHTML = null;
         try {
@@ -69,12 +69,12 @@ public class BBCHeadlinesFacade {
     }
 
     private RangedTextResponseDTO analyseHeadlinesAgainstRange(CorpusDictionary corpusDictionary, List<String> headlineStrings, int rangeStart, int rangeEnd) {
-        log.info("-------- Analysing headlines against range ");
+        log.info("-------- Analysing headlines against range " + rangeStart + ", " + rangeEnd);
         RangeAnalyser rangeAnalyser = new RangeAnalyser5000(corpusDictionary);
         // get range info from User's get request
         // In case of a user's text, we don't really have to split the text into sentences(?!)
         List<RangedText> rangedTextList = rangeAnalyser.findOutOfRangeWords(headlineStrings, rangeStart, rangeEnd);
-        rangedTextList.stream().limit(4).forEach(System.out::println);
+        //rangedTextList.stream().limit(4).forEach(System.out::println);
 
         log.info("-------- Convert to DTO --------------");
 
