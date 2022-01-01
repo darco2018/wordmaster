@@ -1,17 +1,23 @@
 package com.ust.wordmaster.controller;
 
+import com.ust.wordmaster.BBCHeadlinesFacade;
 import com.ust.wordmaster.dictionary.WordData5000;
-import com.ust.wordmaster.service.analysing.RangedText5000;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @RestController
 public class RangedController {
+
+    private BBCHeadlinesFacade facade;
+
+    public RangedController(BBCHeadlinesFacade facade){
+        this.facade = facade;
+    }
 
     @GetMapping("rangestring")
     public String getRangedTexts() {
@@ -35,5 +41,21 @@ public class RangedController {
 
         log.info("---------->Controller called");
         return wordData5000;
+    }
+
+    @GetMapping("headlines")    // http://localhost:8080/headlines?website=bbc
+    public void getRangedHeadlines(@RequestParam String website) {
+
+        log.info("---------> headlines method called with website=" + website);
+
+        Objects.requireNonNullElse(website,"");
+        switch (website.toLowerCase()){
+            case "bbc":
+                this.facade.fetchAndParseHeadlines();
+            case "cnn":
+                this.facade.fetchAndParseHeadlines();
+            default:
+                this.facade.fetchAndParseHeadlines();
+        }
     }
 }

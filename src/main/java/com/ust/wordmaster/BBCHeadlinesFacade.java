@@ -1,20 +1,17 @@
 package com.ust.wordmaster;
 
 
-import com.ust.wordmaster.dictionary.CorpusCSVFileParser;
 import com.ust.wordmaster.dictionary.CorpusDictionary;
-import com.ust.wordmaster.dictionary.CorpusDictionary5000;
-import com.ust.wordmaster.dictionary.DictionaryEntry;
 import com.ust.wordmaster.service.analysing.RangeAnalyser;
 import com.ust.wordmaster.service.analysing.RangeAnalyser5000;
 import com.ust.wordmaster.service.analysing.RangedText;
 import com.ust.wordmaster.service.fetching.HttpClient;
 import com.ust.wordmaster.service.fetching.HttpClientImpl;
-
 import com.ust.wordmaster.service.parsing.HTMLParser;
 import com.ust.wordmaster.service.parsing.HTMLParserImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.stereotype.Service;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -22,17 +19,18 @@ import java.net.URL;
 import java.util.List;
 
 @Slf4j
-public class AppInitializer {
+@Service
+public class BBCHeadlinesFacade {
 
-    public static final String DICTIONARY_FILE = "dictionary5000.csv";
     public static final String BBC_URL = "https://www.bbc.com/";
     public static final String BBC_HEADLINES_ATTRIBUTE = "data-bbc-title";
+    private final CorpusDictionary corpusDictionary;
 
-    public static void main(String[] args) {
+    public BBCHeadlinesFacade(CorpusDictionary corpusDictionary){
+        this.corpusDictionary = corpusDictionary;
+    }
 
-        // create dictionary
-        List<DictionaryEntry> entriesFromFile = CorpusCSVFileParser.parse(DICTIONARY_FILE);
-        CorpusDictionary corpusDictionary = new CorpusDictionary5000("Corpus Dictionary from file", entriesFromFile);
+    public void fetchAndParseHeadlines() {
 
         //fetch html from bbc
         log.info("-------- Loading Corpus Dictionary & fetching BBC html --------------");
@@ -50,6 +48,10 @@ public class AppInitializer {
         // List<LineOfText> linesOfText = parser.parseTextIntoSentencesORLines(userSentText)
         List<String> headlineStrings = htmlParser.parseHTML(bbcHomepageHtml, BBC_HEADLINES_ATTRIBUTE);
 
+        analyseHeadlinesAgainstRange(corpusDictionary, headlineStrings);
+    }
+
+    private void analyseHeadlinesAgainstRange(CorpusDictionary corpusDictionary, List<String> headlineStrings) {
         log.info("-------- Filtering the string headlines for a range eg (1000 - 2000) --------------");
         RangeAnalyser rangeAnalyser = new RangeAnalyser5000(corpusDictionary);
         // get range info from User's get request
@@ -58,8 +60,11 @@ public class AppInitializer {
         rangedTextList.stream().limit(4).forEach(System.out::println);
 
         log.info("-------- Convert to DTO --------------");
+
         // HeadlinesDTO headlinesDTO = toHeadlinesDTOMapper.map(filteredWords);
         // RangedTextResponseDTO responseDTO = mapper.mapToDTO(List<RangedText> rangedTextList)
         // responseDTO is ready to be sent through controller
     }
+
+
 }
