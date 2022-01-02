@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.Map.entry;
 
@@ -69,10 +68,14 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             entry("lying", "lie")
     );
 
+
+    private IrregularVerbsConverter irregularVerbsConverter;
+
     private CorpusDictionary corpusDictionary;
 
     public RangeAnalyser5000(CorpusDictionary corpusDictionary) {
         this.corpusDictionary = corpusDictionary;
+        this.irregularVerbsConverter = new IrregularVerbsConverter();
     }
 
     @Override
@@ -145,6 +148,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
 
         String lowerCaseHeadword = headword.toLowerCase();
         lowerCaseHeadword = replaceWithBaseForm(lowerCaseHeadword);
+        lowerCaseHeadword = replacePastFormWithBaseForm(lowerCaseHeadword);
 
         boolean isInRange = isAnyEntryInRange(lowerCaseHeadword, rangeStart, rangeEnd);
 
@@ -339,6 +343,10 @@ public class RangeAnalyser5000 implements RangeAnalyser {
 
     private String replaceWithBaseForm(final String word) {
         return BASE_FORMS.getOrDefault(word.toLowerCase(), word);
+    }
+
+    private String replacePastFormWithBaseForm(final String word){
+        return irregularVerbsConverter.convertToBaseForm(word.toLowerCase());
     }
 
     private String removeShortFormSuffixesAndPossesive(String word) {
