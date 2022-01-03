@@ -1,0 +1,37 @@
+{
+  "vs": "1.0",
+  "description": "Headlines processed against 5000 dictionary to show words out of the requested range",
+  "dataSize": 68,
+  "source": "https://www.bbc.com/",
+  "rangeStart": 1,
+  "rangeEnd": 5000,
+  "headlines": [
+    {
+      "text": "Hospitals under pressure but Covid plans unchanged - PM",
+      "rangeStart": 1,
+      "rangeEnd": 5000,
+      "outOfRangeWords": [
+        "unchanged",
+        "-",
+        "PM"
+      ]
+    },
+    {
+      "text": "Sudan's prime minister resigns after mass protests",
+      "rangeStart": 1,
+      "rangeEnd": 5000,
+      "outOfRangeWords": [
+        "Sudan"
+      ]
+    },
+    {
+      "text": "Andrew accuser's deal with Epstein to be released",
+      "rangeStart": 1,
+      "rangeEnd": 5000,
+      "outOfRangeWords": [
+        "Andrew",
+        "Epstein"
+      ]
+    }
+  ]
+}
