@@ -17,15 +17,13 @@ public class RangedController {
     }
 
     @GetMapping("headlines")    // http://localhost:8080/headlines?website=bbc cnn rangeStart=1&rangeEnd=5000
-    public RangedTextResponseDTO getRangedHeadlines(@RequestParam(defaultValue = "bbc") String website,
-                                                    @RequestParam(defaultValue = "1") int rangeStart,
-                                                    @RequestParam(defaultValue = "5000") int rangeEnd) {
+    public RangedHeadlineDTO getRangedHeadlines(@RequestParam(defaultValue = "bbc") String website,
+                                                @RequestParam(defaultValue = "1") int rangeStart,
+                                                @RequestParam(defaultValue = "5000") int rangeEnd) {
 
-        log.info("---------> headlines method called with website=" + website + ", rangeStart=" + rangeStart + ", rangeEnd=" + rangeEnd);
+        log.info("---------> @GetMapping(\"headlines\") with website=" + website + ", rangeStart=" + rangeStart + ", rangeEnd=" + rangeEnd);
 
-        RangedTextResponseDTO dto = this.facade.fetchAndParseHeadlines(website.toLowerCase(), rangeStart, rangeEnd);
-
-        return dto;
+        return this.facade.processHeadlines(website, rangeStart, rangeEnd);
     }
 
 
@@ -40,8 +38,8 @@ public class RangedController {
 */
 
     /*@GetMapping("range")
-    public RangedTextResponseDTO getRangedTexts2() {
-        log.info("----------> Controller called with RangedTextResponseDTO");
+    public RangedHeadlineDTO getRangedTexts2() {
+        log.info("----------> Controller called with RangedHeadlineDTO");
         RangedText5000 rt1 = new RangedText5000("Fauci goes to fucking prison", 0, 5000);
         rt1.setOutOfRangeWords(new String[]{"Fauci", "fucking"});
         RangedText5000 rt2 = new RangedText5000("Lombardy wins again", 0, 5000);
@@ -49,7 +47,7 @@ public class RangedController {
         RangedText5000 rt3 = new RangedText5000("Perpedicular has been stupendous", 0, 5000);
         rt2.setOutOfRangeWords(new String[]{"Perpedicular", "stupendous"});
 
-        RangedTextResponseDTO reponseObj = new RangedTextResponseDTO(List.of(rt1,rt2,rt3));
+        RangedHeadlineDTO reponseObj = new RangedHeadlineDTO(List.of(rt1,rt2,rt3));
 
         return reponseObj;
         return null;

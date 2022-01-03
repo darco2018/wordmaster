@@ -50,6 +50,14 @@ class CorpusDictionary5000Test {
     }
 
     @Test
+    void givenCapitals_containsHeadword_returnsCorrectValues() {
+
+        assertTrue(CORPUS.containsHeadword("AIDS"));
+        assertTrue(CORPUS.containsHeadword("PM"));
+        assertFalse(CORPUS.containsHeadword("TV"));
+    }
+
+    @Test
     void containsEntry_returnsCorrectValues() {
         assertTrue(CORPUS.containsEntry("dance", "n"));
         assertTrue(CORPUS.containsEntry("dance", "v"));

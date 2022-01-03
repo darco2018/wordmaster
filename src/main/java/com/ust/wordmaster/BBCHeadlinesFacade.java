@@ -1,7 +1,7 @@
 package com.ust.wordmaster;
 
-
-import com.ust.wordmaster.controller.RangedTextResponseDTO;
+import com.ust.wordmaster.controller.PostProcessor;
+import com.ust.wordmaster.controller.RangedHeadlineDTO;
 import com.ust.wordmaster.dictionary.CorpusDictionary;
 import com.ust.wordmaster.service.analysing.RangeAnalyser;
 import com.ust.wordmaster.service.analysing.RangeAnalyser5000;
@@ -27,7 +27,12 @@ public class BBCHeadlinesFacade {
     public static final String BBC_HEADLINES_ATTRIBUTE = "data-bbc-title";
     public static final String CNN_URL = "https://edition.cnn.com/";
     public static final String CNN_HEADLINES_ATTRIBUTE = null;
+
     private final CorpusDictionary corpusDictionary;
+    // PostProcessor postProcessor;  static method .postprocess() hides dependency...
+    // HttpClient fetchingService also coupled
+    // HTMLParser htmlParser also coupled
+    // RangeAnalyser rangeAnalyser also coupled
 
     private String websiteURL;
     private String headlinesAttribute;
@@ -36,7 +41,7 @@ public class BBCHeadlinesFacade {
         this.corpusDictionary = corpusDictionary;
     }
 
-    public RangedTextResponseDTO fetchAndParseHeadlines(final String website, int rangeStart, int rangeEnd) {
+    public RangedHeadlineDTO processHeadlines(final String website, int rangeStart, int rangeEnd) {
 
         switch (website.toLowerCase()) {
             case "bbc":
@@ -51,10 +56,10 @@ public class BBCHeadlinesFacade {
         }
 
         log.info("-------- Fetching html from " + this.websiteURL);
-        HttpClient fetchingService = new HttpClientImpl(new RestTemplateBuilder());
+        HttpClient httpClient = new HttpClientImpl(new RestTemplateBuilder());
         String websiteHTML = null;
         try {
-            websiteHTML = fetchingService.fetchHtml(new URL(websiteURL).toURI());
+            websiteHTML = httpClient.fetchHtml(new URL(websiteURL).toURI());
         } catch (URISyntaxException | MalformedURLException e) {
             e.printStackTrace();
         }
@@ -65,10 +70,17 @@ public class BBCHeadlinesFacade {
         // List<LineOfText> linesOfText = parser.parseTextIntoSentencesORLines(userSentText)
         List<String> headlineStrings = htmlParser.parseHTML(websiteHTML, headlinesAttribute);
 
-        return analyseHeadlinesAgainstRange(corpusDictionary, headlineStrings, rangeStart, rangeEnd);
+        List<RangedText> rangedTextList = analyseHeadlinesAgainstRange(corpusDictionary, headlineStrings, rangeStart, rangeEnd);
+
+        log.info("-------- Postprocess and convert to DTO --------------");
+        rangedTextList = PostProcessor.postprocess(rangedTextList, website);
+        RangedHeadlineDTO responseDTO = buildRangedHeadlineDTO(rangeStart, rangeEnd, rangedTextList);
+
+        return responseDTO;
+
     }
 
-    private RangedTextResponseDTO analyseHeadlinesAgainstRange(CorpusDictionary corpusDictionary, List<String> headlineStrings, int rangeStart, int rangeEnd) {
+    private List<RangedText> analyseHeadlinesAgainstRange(CorpusDictionary corpusDictionary, List<String> headlineStrings, int rangeStart, int rangeEnd) {
         log.info("-------- Analysing headlines against range " + rangeStart + ", " + rangeEnd);
         RangeAnalyser rangeAnalyser = new RangeAnalyser5000(corpusDictionary);
         // get range info from User's get request
@@ -76,14 +88,22 @@ public class BBCHeadlinesFacade {
         List<RangedText> rangedTextList = rangeAnalyser.findOutOfRangeWords(headlineStrings, rangeStart, rangeEnd);
         //rangedTextList.stream().limit(4).forEach(System.out::println);
 
-        log.info("-------- Convert to DTO --------------");
+       /* log.info("-------- Postprocess and convert to DTO --------------");
+        rangedTextList = PostProcessor.postprocess(rangedTextList, website);
+        RangedHeadlineDTO responseDTO = buildRangedHeadlineDTO(rangeStart, rangeEnd, rangedTextList);
+*/
+        return rangedTextList;
+    }
 
-        RangedTextResponseDTO responseDTO = new RangedTextResponseDTO(rangedTextList);
-        return responseDTO.map();
-
-        // HeadlinesDTO headlinesDTO = toHeadlinesDTOMapper.map(filteredWords);
-        // RangedTextResponseDTO responseDTO = mapper.mapToDTO(List<RangedText> rangedTextList)
-        // responseDTO is ready to be sent through controller
+    private RangedHeadlineDTO buildRangedHeadlineDTO(int rangeStart, int rangeEnd, List<RangedText> rangedTextList) {
+        RangedHeadlineDTO responseDTO = new RangedHeadlineDTO();
+        responseDTO.setRangedTextList(rangedTextList);
+        responseDTO.setSource(websiteURL);
+        responseDTO.setRangeStart(rangeStart);
+        responseDTO.setRangeEnd(rangeEnd);
+        responseDTO.setDescription("Headlines processed against 5000 dictionary to show words out of the requested range");
+        responseDTO.setVersion("1.0");
+        return responseDTO;
     }
 
 

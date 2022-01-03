@@ -17,7 +17,7 @@ public class CorpusDictionary1 {
     @Getter
     private String dictionaryName;
 
-    @Getter  //  The map is sorted according to the natural ordering of its keys,
+    @Getter  //  The toRangedHeadlineDTO is sorted according to the natural ordering of its keys,
     private TreeSet<DictionaryEntry1> dictionary;
 
     public CorpusDictionary1(String name, Collection<DictionaryEntry1> entries) {

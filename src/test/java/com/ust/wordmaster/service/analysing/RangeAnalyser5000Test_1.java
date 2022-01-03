@@ -38,6 +38,14 @@ class RangeAnalyser5000Test_1 {
     }
 
     @Test
+    void givenCapitalsAnd0_5000Range_findOutOfRangeWords_findsThemInRange() {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        String inputText = "PM AIDS TV  outofrangeword AM anotherNotInDictionary";
+
+        actAndAssert(rangeAnalyser5000, inputText);
+    }
+
+    @Test
     void givenSNegationsAnd0_5000Range_findOutOfRangeWords_findsThemInRange() {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
         String inputText = "outofrangeword don't isn't aren't anotherNotInDictionary hasn't ";

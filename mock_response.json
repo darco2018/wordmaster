@@ -1,39 +1,36 @@
 {
-  "description": "BBC headlines filtered against a range of ranked most common English words",
-  "version": "1.0",
-  "wordsRankedStartIncl": 4000,
-  "wordsRankedEndIncl": 5000,
-  "dataSize": 3,
-  "data": [
+  "vs": "1.0",
+  "description": "Headlines processed against 5000 dictionary to show words out of the requested range",
+  "dataSize": 68,
+  "source": "https://www.bbc.com/",
+  "rangeStart": 1,
+  "rangeEnd": 5000,
+  "headlines": [
     {
-      "sequence": [
-        "Life",
-        "is",
-        "precarious"
-      ],
-      "filtered": [
-        2
+      "text": "Hospitals under pressure but Covid plans unchanged - PM",
+      "rangeStart": 1,
+      "rangeEnd": 5000,
+      "outOfRangeWords": [
+        "unchanged",
+        "-",
+        "PM"
       ]
     },
     {
-      "sequence": [
-        "Oysters",
-        "are",
-        "great"
-      ],
-      "filtered": [
-        1
+      "text": "Sudan's prime minister resigns after mass protests",
+      "rangeStart": 1,
+      "rangeEnd": 5000,
+      "outOfRangeWords": [
+        "Sudan"
       ]
     },
     {
-      "sequence": [
-        "Boys",
-        "splashed",
-        "mud"
-      ],
-      "filtered": [
-        1,
-        2
+      "text": "Andrew accuser's deal with Epstein to be released",
+      "rangeStart": 1,
+      "rangeEnd": 5000,
+      "outOfRangeWords": [
+        "Andrew",
+        "Epstein"
       ]
     }
   ]
