@@ -4,6 +4,7 @@ import com.ust.wordmaster.dictionary.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -182,6 +183,25 @@ class RangeAnalyser5000Test_1 {
         assertEquals(0, rangedText.getRangeStart());
         assertEquals(5000, rangedText.getRangeEnd());
         assertEquals(2, rangedText.getOutOfRangeWords().length );
+    }
+
+    @Test
+    void givenUnwantedChars_findOutOfRangeWords_doesntFindThemAsOutOfRange() {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        String notIn0_5000range = " abode notintherange ";
+        String toBeIgnored = " - * $ ";
+        String inputText = " go in " + toBeIgnored + notIn0_5000range;
+
+        List<String> charSequences = List.of(inputText);
+        List<RangedText> rangedTextList = rangeAnalyser5000.findOutOfRangeWords(charSequences, 0, 5000);
+
+        assertEquals(1, rangedTextList.size());
+
+        RangedText rangedText = rangedTextList.get(0);
+        assertEquals(inputText, rangedText.getText());
+        assertEquals(0, rangedText.getRangeStart());
+        assertEquals(5000, rangedText.getRangeEnd());
+        assertEquals(2, rangedText.getOutOfRangeWords().length ); // abode notintherang
     }
 
 

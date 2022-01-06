@@ -88,18 +88,18 @@ public class RangeAnalyser5000 implements RangeAnalyser {
         log.info("Filtering " + charSequences.size() + " charSequences; range " + rangeStart + "-" + rangeEnd);
         List<RangedText> rangedTextList = new ArrayList<>();
 
-        for (String str : charSequences) {
+        for (String sequence : charSequences) {
 
-            String[] words = splitOnSpaces(str);
+            String[] words = splitOnSpaces(sequence);
             words = cleanUp(words);
             int[] wordIndexes = isolateOutOfRangeWords(words, rangeStart, rangeEnd);
             String[] outOfRangeWords = convertIndexesToWords(wordIndexes, words);
 
-            RangedText rangedText = new RangedText5000(str, rangeStart, rangeEnd);
+            RangedText rangedText = new RangedText5000(sequence, rangeStart, rangeEnd);
             rangedText.setOutOfRangeWords(outOfRangeWords);
             rangedTextList.add(rangedText);
 
-            log.trace(wordIndexes.length + " out of range words (" + Arrays.toString(wordIndexes) + ") in: " + str);
+            log.trace(wordIndexes.length + " out of range words (" + Arrays.toString(wordIndexes) + ") in: " + sequence);
         }
 
         return rangedTextList;
@@ -192,7 +192,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
         if (str == null || str.isBlank() || str.isEmpty())
             return new String[0];
         else
-            return str.split(" ");
+            return str.split("\\s+");
 
     }
 
@@ -320,24 +320,30 @@ public class RangeAnalyser5000 implements RangeAnalyser {
      * @return indexes of
      */
 
-    private String[] cleanUp(final String[] words) {
+    private String[] cleanUp(final String[] tokens) {
 
         List<String> cleanedUpList = new ArrayList<>();
-        for (String word : words) {
+        for (String token : tokens) {
 
-            if (word == null || word.isEmpty() || word.isBlank())
+            if (token == null ||
+                    token.isEmpty() ||
+                    token.isBlank() ||
+                    (token.length() == 1 && !token.matches("a-zA-Z-'")))
+            {
                 continue;
-            else
-                word = word.trim();
+            }
+
+            token = token.trim();
+
 
             // don't clean up short forms or single chars
-            if (!SHORT_FORMS.contains(word) && word.length() != 1) {
+            if (!SHORT_FORMS.contains(token) && token.length() != 1) {
                 // *(&
-                word = removeShortFormSuffixesAndPossesive(word);
-                word = removeLeadingSpecialChars(word);
-                word = removeTrailingSpecialChars(word);
+                token = removeShortFormSuffixesAndPossesive(token);
+                token = removeLeadingSpecialChars(token);
+                token = removeTrailingSpecialChars(token);
             }
-            cleanedUpList.add(word);
+            cleanedUpList.add(token);
         }
         return cleanedUpList.toArray(new String[0]);
     }

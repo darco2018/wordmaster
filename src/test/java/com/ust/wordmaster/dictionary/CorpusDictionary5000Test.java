@@ -36,7 +36,7 @@ class CorpusDictionary5000Test {
     void getDictionaryAsMap_returnsCorrectNoOfHeadwords() {
         Map<String, List<DictionaryEntry>> dictionaryAsMap = CORPUS.asMap();
 
-        assertEquals(4352, dictionaryAsMap.size());
+        assertEquals(4350, dictionaryAsMap.size());
     }
 
     @Test
@@ -54,7 +54,7 @@ class CorpusDictionary5000Test {
 
         assertTrue(CORPUS.containsHeadword("AIDS"));
         assertTrue(CORPUS.containsHeadword("PM"));
-        assertFalse(CORPUS.containsHeadword("TV"));
+        assertTrue(CORPUS.containsHeadword("TV"));
     }
 
     @Test
@@ -143,8 +143,8 @@ class CorpusDictionary5000Test {
             }
         }
         // assert
-        int expectedNoOfHeadwords = 4352;
-        int expectedNoOfHeadwordsWIthMultipleDefs = 604;
+        int expectedNoOfHeadwords = 4350;
+        int expectedNoOfHeadwordsWIthMultipleDefs = 591;
         int expectedNoOfHEadwordsWithSingleDef = expectedNoOfHeadwords - expectedNoOfHeadwordsWIthMultipleDefs;
         Assertions.assertThat(dictionaryAsMap.size()).isEqualTo(expectedNoOfHeadwords);
         Assertions.assertThat(headwordsWithMultipleDefinitions).isEqualTo(expectedNoOfHeadwordsWIthMultipleDefs);
