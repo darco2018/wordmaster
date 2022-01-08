@@ -33,7 +33,7 @@ public class CorpusDictionary5000 implements CorpusDictionary {
         }
 
         listOfEntries.add(entry);
-        this.dictionary.put(headword.toLowerCase(), listOfEntries);
+        this.dictionary.put(headword, listOfEntries);
         noOfEntries++;
     }
 
@@ -44,8 +44,7 @@ public class CorpusDictionary5000 implements CorpusDictionary {
 
     @Override
     public boolean containsHeadword(String headword) {
-        boolean isIn = this.dictionary.get(headword.toLowerCase()) != null;
-        return isIn;
+        return this.dictionary.get(headword) != null;
     }
 
     @Override
