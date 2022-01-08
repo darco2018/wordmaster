@@ -1,14 +1,12 @@
 package com.ust.wordmaster.dictionary;
 
 import lombok.Getter;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 @Getter
-//@Service
 public class CorpusDictionary5000 implements CorpusDictionary {
 
     private final String name;
@@ -86,7 +84,11 @@ public class CorpusDictionary5000 implements CorpusDictionary {
         return entries.stream()
                 .map(getRank)
                 .anyMatch(rank -> (rank >= rangeStart && rank <= rangeEnd));
+    }
 
-
+    public void printHeadwordsAlphabetically(){
+        this.dictionary.keySet().stream()
+                //.filter(w->w.length()==2)
+                .sorted().forEach(System.out::println);
     }
 }
