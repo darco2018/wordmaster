@@ -168,10 +168,10 @@ class RangeAnalyser5000Test_1 {
     }
 
     @Test
-    void givenIrregularVerbsWhoseBaseFormIsInRange_findOutOfRangeWords_doesntFindThemAsOutOfRange() {
+    void givenIrregularVerbsWhoseBaseFormIsInRange_findOutOfRangeWords_findsThemInRange() {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
         String notIn0_5000range = "abode notintherange";
-        String inputText = "went gone smelt go " + notIn0_5000range;
+        String inputText = "went gone smelt taught forbidden " + notIn0_5000range;
 
         List<String> charSequences = List.of(inputText);
         List<RangedText> rangedTextList = rangeAnalyser5000.findOutOfRangeWords(charSequences, 0, 5000);
@@ -191,6 +191,24 @@ class RangeAnalyser5000Test_1 {
         String notIn0_5000range = " abode notintherange ";
         String toBeIgnored = " - * $ ";
         String inputText = " go in " + toBeIgnored + notIn0_5000range;
+
+        List<String> charSequences = List.of(inputText);
+        List<RangedText> rangedTextList = rangeAnalyser5000.findOutOfRangeWords(charSequences, 0, 5000);
+
+        assertEquals(1, rangedTextList.size());
+
+        RangedText rangedText = rangedTextList.get(0);
+        assertEquals(inputText, rangedText.getText());
+        assertEquals(0, rangedText.getRangeStart());
+        assertEquals(5000, rangedText.getRangeEnd());
+        assertEquals(2, rangedText.getOutOfRangeWords().length ); // abode notintherang
+    }
+
+    @Test
+    void givenTitleCaseWords_findOutOfRangeWords_findsThemInfRange() {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        String notIn0_5000range = " abode notintherange ";
+        String inputText = " Christmas Mr French " + notIn0_5000range;
 
         List<String> charSequences = List.of(inputText);
         List<RangedText> rangedTextList = rangeAnalyser5000.findOutOfRangeWords(charSequences, 0, 5000);

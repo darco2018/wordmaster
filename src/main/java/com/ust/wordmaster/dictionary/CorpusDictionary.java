@@ -19,5 +19,5 @@ public interface CorpusDictionary {
 
     int getNoOfEntries();
 
-
+    boolean isHeadwordInRankRange(String headword, int rangeStart, int rangeEnd);
 }

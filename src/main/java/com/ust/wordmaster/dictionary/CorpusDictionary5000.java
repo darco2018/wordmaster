@@ -74,7 +74,7 @@ public class CorpusDictionary5000 implements CorpusDictionary {
      * There can be a few entries for a given headword. The method will return
      * true if at least one of them has its rank in the given range.
      */
-    boolean isHeadwordInRankRange(String headword, int rangeStart, int rangeEnd) {
+    public boolean isHeadwordInRankRange(String headword, int rangeStart, int rangeEnd) {
 
         List<DictionaryEntry> entries = this.getEntriesByHeadword(headword);
         if (entries == null || entries.size() == 0)
