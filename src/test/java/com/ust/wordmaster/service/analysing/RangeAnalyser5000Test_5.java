@@ -72,34 +72,14 @@ public class RangeAnalyser5000Test_5 {
         Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_removeLeadingTrailingSpecialChars", String.class);
         method.setAccessible(true);
 
-        assertEquals("boy", (String) method.invoke(rangeAnalyser5000, "*boy"));
-        assertEquals("boy", (String) method.invoke(rangeAnalyser5000, "(boy)"));
-        assertEquals("boy", (String) method.invoke(rangeAnalyser5000, "[(boy"));
-        assertEquals("word", (String) method.invoke(rangeAnalyser5000, "word:"));
-        assertEquals("girl", (String) method.invoke(rangeAnalyser5000, "girl?!"));
-        assertEquals("girl", (String) method.invoke(rangeAnalyser5000, "[(girl)]"));
+        assertEquals("boy", method.invoke(rangeAnalyser5000, "*boy"));
+        assertEquals("boy", method.invoke(rangeAnalyser5000, "(boy)"));
+        assertEquals("boy", method.invoke(rangeAnalyser5000, "[(boy"));
+        assertEquals("word", method.invoke(rangeAnalyser5000, "word:"));
+        assertEquals("girl", method.invoke(rangeAnalyser5000, "girl?!"));
+        assertEquals("girl", method.invoke(rangeAnalyser5000, "[(girl)]"));
     }
-/*   method _isInDictAfterRemovingLeadingAndTrailingSpecialChars has been removed.
-Question: Is there a method that covers these cases equally well?!
-    @Test
-    void searchFindsAfterRemovingNonLetterChars() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
-        Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_isInDictAfterRemovingLeadingAndTrailingSpecialChars", String.class, int.class, int.class);
-        method.setAccessible(true);
 
-        assertTrue((boolean) method.invoke(rangeAnalyser5000, "(boy)", 0, 1000));
-        assertTrue((boolean) method.invoke(rangeAnalyser5000, "BOY?!", 0, 1000));
-        assertTrue((boolean) method.invoke(rangeAnalyser5000, "*Boy", 0, 1000));
-        assertTrue((boolean) method.invoke(rangeAnalyser5000, "[(boy)]", 0, 1000));
-        assertFalse((boolean) method.invoke(rangeAnalyser5000, "[(boy)]", 1000, 5000));
-
-        assertTrue((boolean) method.invoke(rangeAnalyser5000, "girl...", 0, 1000));
-        assertTrue((boolean) method.invoke(rangeAnalyser5000, "GIRL+", 0, 1000));
-        assertTrue((boolean) method.invoke(rangeAnalyser5000, "#Girl", 0, 1000));
-        assertTrue((boolean) method.invoke(rangeAnalyser5000, "@girl.", 0, 1000));
-        assertFalse((boolean) method.invoke(rangeAnalyser5000, "@girl.", 1000, 5000));
-
-    }*/
 
     @Test
     void returnsOutOfRangeStrings() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
@@ -140,6 +120,25 @@ Question: Is there a method that covers these cases equally well?!
                 .collect(Collectors.toList());
 
         assertEquals(expected.toString(), method.invoke(rangeAnalyser5000, input, 0, 1000).toString());
+
+    }
+
+    @Test
+    void givenIrregularVerbs_findsThemInRange() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_getOutOfRangeStrings", List.class, int.class, int.class);
+        method.setAccessible(true);
+
+        List<String> inRange = List.of("went", "GONE", "Drove", "DRIVEN", "broke");
+
+        List<String> outOfRange = List.of("", " ", "notinDictionary");
+        List<String> expected = List.of("notinDictionary");
+
+        List<String> input = Stream.concat(inRange.stream(), outOfRange.stream())
+                .collect(Collectors.toList());
+
+        assertEquals(expected.toString(), method.invoke(rangeAnalyser5000, input, 0, 5000).toString());
+        assertEquals(List.of("Went", "TOOK").toString(), method.invoke(rangeAnalyser5000, List.of("Went", "TOOK", "burst"), 2000, 5000).toString());
 
     }
 
@@ -212,6 +211,19 @@ Question: Is there a method that covers these cases equally well?!
         assertTrue((boolean) method.invoke(rangeAnalyser5000, "wasn't", 0, 5000));
         assertTrue((boolean) method.invoke(rangeAnalyser5000, "shan't", 0, 3000)); // 2217,shall
         assertFalse((boolean) method.invoke(rangeAnalyser5000, "shan't", 0, 2000));
+    }
+
+    @Test
+    void givenIrregularPastForm_searchFindsTokenAfterTransformationToBaseForm() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_isInDictWhenIrregularVerbMappedToBaseForm", String.class, int.class, int.class);
+        method.setAccessible(true);
+
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "went", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "BEEN", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "Drank", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "Took", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "Taken", 0, 5000));
     }
 
 

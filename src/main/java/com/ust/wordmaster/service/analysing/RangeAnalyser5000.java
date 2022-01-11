@@ -28,11 +28,11 @@ public class RangeAnalyser5000 implements RangeAnalyser {
     private static final Map<String, String> NEGATIONS = Map.ofEntries(
             entry("aren't", "n't"),
             entry("isn't", "n't"),
+            entry("wasn't", "n't"),
+            entry("weren't", "n't"),
             entry("don't", "n't"),
             entry("doesn't", "n't"),
             entry("didn't", "n't"),
-            entry("wasn't", "n't"),
-            entry("weren't", "n't"),
             entry("haven't", "have"),
             entry("hasn't", "have"),
             entry("hadn't", "have"),
@@ -215,6 +215,11 @@ public class RangeAnalyser5000 implements RangeAnalyser {
                 continue;
 
             // jesli sie nie udało, to może być PAST FORM of VERB
+
+            if (_isInDictWhenIrregularVerbMappedToBaseForm(token, rangeStart, rangeEnd))
+                continue;
+
+
             // albo S,ED, ER, EST , ED ing
 
             wordsOutsideRange.add(token);
@@ -359,7 +364,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
 
         String lowerCaseHeadword = headword.toLowerCase();
         lowerCaseHeadword = replaceWithBaseForm(lowerCaseHeadword);
-        lowerCaseHeadword = replacePastFormWithBaseForm(lowerCaseHeadword);
+        lowerCaseHeadword =  replacePastFormWithBaseForm(lowerCaseHeadword);
 
         boolean isInRange = isAnyEntryInRange(lowerCaseHeadword, rangeStart, rangeEnd);
 
@@ -563,6 +568,14 @@ public class RangeAnalyser5000 implements RangeAnalyser {
 
     private String replacePastFormWithBaseForm(final String word) {
         return irregularVerbsConverter.convertToBaseForm(word.toLowerCase());
+    }
+
+    private boolean _isInDictWhenIrregularVerbMappedToBaseForm(String word, int rangeStart, int rangeEnd) {
+        String found = irregularVerbsConverter.convertToBaseForm(word);
+        if (found != null) {
+            return _isInRange(found, rangeStart, rangeEnd, SearchOption.CASE_ALL);
+        }
+        return false;
     }
 
     private String removeShortFormSuffixesAndPossesive(String word) {
