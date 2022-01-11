@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -27,20 +26,20 @@ public class RangeAnalyser5000Test_5 {
     }
 
     @Test
-    void searchShortFormsInPredefinedSetFindsThemTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    void searchShortFormsInPredefinedSetFindsThem() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
-        Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_isShortFormInPredefinedSet", String.class, int.class, int.class);
+        Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_isShortFormInPredefinedSet", String.class, int.class);
         method.setAccessible(true);
 
-        assertTrue((boolean) method.invoke(rangeAnalyser5000, "he's", 0, 1000));
-        assertTrue((boolean) method.invoke(rangeAnalyser5000, "HE'S", 0, 1000));
-        assertTrue((boolean) method.invoke(rangeAnalyser5000, "He's", 0, 1000));
-        assertTrue((boolean) method.invoke(rangeAnalyser5000, "I'm", 0, 1000));
-        assertTrue((boolean) method.invoke(rangeAnalyser5000, "ain't", 0, 1000));
-        assertFalse((boolean) method.invoke(rangeAnalyser5000, "nonsens's", 0, 1000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "he's", 0));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "HE'S", 0));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "He's", 0));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "I'm", 0));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "ain't", 0));
+        assertFalse((boolean) method.invoke(rangeAnalyser5000, "nonsens's", 0));
 
-        assertFalse((boolean) method.invoke(rangeAnalyser5000, "he's", 1001, 2000));
-        assertFalse((boolean) method.invoke(rangeAnalyser5000, "I'm", 1001, 5000));
+        assertFalse((boolean) method.invoke(rangeAnalyser5000, "he's", 1001));
+        assertFalse((boolean) method.invoke(rangeAnalyser5000, "I'm", 1001));
 
     }
 
@@ -80,7 +79,8 @@ public class RangeAnalyser5000Test_5 {
         assertEquals("girl", (String) method.invoke(rangeAnalyser5000, "girl?!"));
         assertEquals("girl", (String) method.invoke(rangeAnalyser5000, "[(girl)]"));
     }
-
+/*   method _isInDictAfterRemovingLeadingAndTrailingSpecialChars has been removed.
+Question: Is there a method that covers these cases equally well?!
     @Test
     void searchFindsAfterRemovingNonLetterChars() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
@@ -99,7 +99,7 @@ public class RangeAnalyser5000Test_5 {
         assertTrue((boolean) method.invoke(rangeAnalyser5000, "@girl.", 0, 1000));
         assertFalse((boolean) method.invoke(rangeAnalyser5000, "@girl.", 1000, 5000));
 
-    }
+    }*/
 
     @Test
     void returnsOutOfRangeStrings() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
@@ -107,12 +107,13 @@ public class RangeAnalyser5000Test_5 {
         Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_getOutOfRangeStrings", List.class, int.class, int.class);
         method.setAccessible(true);
 
-        List<String> inRange = List.of( "LIKE", "Like", "like", "liKE", " like ",
-                                        "He's", "he's", "HE'S",
-                                        "boy's", "BOY'S", "Boy's",
-                                        "girl'd", "GIRL'd", "Girl'd",
-                                        "girl?!", "*girl", "GIRL?", "[(girl)]", "girl..."
-                );
+        List<String> inRange = List.of("LIKE", "Like", "like", "liKE", " like ",
+                "He's", "he's", "HE'S",
+                "boy's", "BOY'S", "Boy's",
+                "girl'd", "GIRL'd", "Girl'd",
+                "girl?!", "*girl", "GIRL?", "[(girl)]", "girl...",
+                "are", "IS", "an", "CHILDREN", "Feet", "worst"
+        );
 
         List<String> outOfRange = List.of("", " ", "notinDictionary");
         List<String> expected = List.of("notinDictionary");
@@ -120,8 +121,97 @@ public class RangeAnalyser5000Test_5 {
         List<String> input = Stream.concat(inRange.stream(), outOfRange.stream())
                 .collect(Collectors.toList());
 
-        assertEquals(expected.toString(),    method.invoke(rangeAnalyser5000, input, 0, 1000).toString());
+        assertEquals(expected.toString(), method.invoke(rangeAnalyser5000, input, 0, 1000).toString());
 
+    }
+
+    @Test
+    void givenNegations_findsThemInRange() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_getOutOfRangeStrings", List.class, int.class, int.class);
+        method.setAccessible(true);
+
+        List<String> inRange = List.of("don't", "Don't", "Hasn't", "WON'T", "ISN'T");
+
+        List<String> outOfRange = List.of("", " ", "shan't", "notinDictionary");
+        List<String> expected = List.of("shan't", "notinDictionary");
+
+        List<String> input = Stream.concat(inRange.stream(), outOfRange.stream())
+                .collect(Collectors.toList());
+
+        assertEquals(expected.toString(), method.invoke(rangeAnalyser5000, input, 0, 1000).toString());
+
+    }
+
+    @Test
+    void findsStringsWithLeadingAndTrailingSpecialChars() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_containsSpecialChars", String.class);
+        method.setAccessible(true);
+
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "(word"));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "[(word"));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "word)"));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "word))"));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "[(word)]"));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "word:"));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "word..."));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "word?!"));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "-"));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "*"));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "%@&"));
+
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "20bl"));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "5G"));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "100%"));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "5"));
+
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "he's:"));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "he's"));
+
+        assertFalse((boolean) method.invoke(rangeAnalyser5000, "w"));
+        assertFalse((boolean) method.invoke(rangeAnalyser5000, "word"));
+
+    }
+
+    @Test
+    void searchFindsTokenAfterTransformationToBaseForm() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_isInRangeWhenMappedToBaseForm", String.class, int.class, int.class);
+        method.setAccessible(true);
+
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "am", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "are", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "Are", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "IS", 0, 5000));
+
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "Children", 0, 5000));
+        assertFalse((boolean) method.invoke(rangeAnalyser5000, "Children", 1000, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "Feet", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "wolves", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "MICE", 0, 5000));
+
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "v", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "an", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "AN", 0, 5000));
+
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "theatre", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "worst", 0, 5000));
+    }
+
+
+    @Test
+    void givenNagations_searchFindsTokenAfterTransformationToVerb() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_isInDictWhenNegationMappedToBaseForm", String.class, int.class, int.class);
+        method.setAccessible(true);
+
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "isn't", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "Don't", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "HASN't", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "wasn't", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "shan't", 0, 3000)); // 2217,shall
+        assertFalse((boolean) method.invoke(rangeAnalyser5000, "shan't", 0, 2000));
     }
 
 

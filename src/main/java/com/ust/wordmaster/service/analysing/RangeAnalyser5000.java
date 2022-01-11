@@ -24,6 +24,27 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             "ain't", "gonna");
     private static final char[] UNWANTED_CHARS = new char[]{'/', '\\', '\'', '.', ',', ':', ';', '"', '?', '!', '@',
             '#', '$', '*', '(', ')', '{', '}', '[', ']', '…', '-'};
+
+    private static final Map<String, String> NEGATIONS = Map.ofEntries(
+            entry("aren't", "n't"),
+            entry("isn't", "n't"),
+            entry("don't", "n't"),
+            entry("doesn't", "n't"),
+            entry("didn't", "n't"),
+            entry("wasn't", "n't"),
+            entry("weren't", "n't"),
+            entry("haven't", "have"),
+            entry("hasn't", "have"),
+            entry("hadn't", "have"),
+            entry("won't", "will"),
+            entry("wouldn't", "would"),
+            entry("can't", "can"),
+            entry("couldn't", "could"),
+            entry("shan't", "shall"),
+            entry("shouldn't", "should")
+    );
+
+
     private static final Map<String, String> BASE_FORMS = Map.ofEntries(
             entry("am", "be"),
             entry("are", "be"),
@@ -32,22 +53,6 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             entry("were", "be"),
             entry("has", "have"),
             entry("had", "have"),
-
-            entry("aren't", "n't"),
-            entry("isn't", "n't"),
-            entry("don't", "n't"),
-            entry("doesn't", "n't"),
-            entry("wasn't", "n't"),
-            entry("weren't", "n't"),
-            entry("haven't", "n't"),
-            entry("hasn't", "n't"),
-            entry("hadn't", "n't"),
-            entry("won't", "n't"),
-            entry("wouldn't", "n't"),
-            entry("can't", "n't"),
-            entry("couldn't", "n't"),
-            entry("shan't", "n't"),
-            entry("shouldn't", "n't"),
 
             entry("children", "child"),
             entry("grandchildren", "grandchild"),
@@ -153,57 +158,90 @@ public class RangeAnalyser5000 implements RangeAnalyser {
      * <p>
      * If a word is not qualified as a word (blank, empty, trailing/leading special characters, numeric, etc.)
      * it will not be added just like regular words not found in the range.
-     *
-     * @wordsOutsideRangeIf words not found in the dictionary but
      */
     private List<String> _getOutOfRangeStrings(List<String> tokens, int rangeStart, int rangeEnd) {
         List<String> wordsOutsideRange = new ArrayList<>();
 
         for (String token : tokens) {
 
-            if (token == null) {
+            if (token == null || token.isEmpty() || token.isBlank()) {
                 continue; // skips adding the word to wordsOutsideRange
             } else {
                 token = token.trim();
             }
 
-            if (token.isEmpty() ||
-                    token.isBlank() ||
-                    _isInRange(token, rangeStart, rangeEnd, SearchOption.CASE_UNCHANGED) ||
-                    _isInRange(token, rangeStart, rangeEnd, SearchOption.CASE_ALL))
-                continue;
+           /* if (_isInRange(token, rangeStart, rangeEnd, SearchOption.CASE_UNCHANGED)
+                    || _isInRange(token, rangeStart, rangeEnd, SearchOption.CASE_ALL))
+                continue;*/
 
             // Now we know that without some TRANSFORMATION (other than a case change, the token is NOT in the dictionary)
             // All transformations must check in the dictionary/predefined set
 
-            // As an axiom, if the token is in the set, it is in range 0-1000
-            if (_isShortFormInPredefinedSet(token, rangeStart, rangeEnd))
+            //////////////
+
+            if (_containsSpecialChars(token)) {
+                // remove special characters or apply tests that include apostroph '
+                // cannot remove apostrophes in the middle
+                token = _removeLeadingTrailingSpecialChars(token);
+
+                if (_isInRange(token, rangeStart, rangeEnd, SearchOption.CASE_UNCHANGED) ||
+                        _isInRange(token, rangeStart, rangeEnd, SearchOption.CASE_ALL))
+                    continue;
+
+                if (token.contains("'")) {
+
+                    // if negation, it is mapped to the verb or n't:   shan't => shall   OR   doesn't => n't (rank 29)
+                    if (_isInDictWhenNegationMappedToBaseForm(token, rangeStart, rangeEnd)) {
+                        continue;
+                    }
+
+                    // As an axiom, if the token is in the set, it is in range 0-1000
+                    if (_isShortFormInPredefinedSet(token, rangeStart))
+                        continue;
+
+                    if (_isInDictAfterRemovingSuffixes_d_s_ll(token, rangeStart, rangeEnd)) // 'd , 's . 'll
+                        continue;
+                }
+
+            } else {
+                // wiemy że jest to clean word
+                if (_isInRange(token, rangeStart, rangeEnd, SearchOption.CASE_UNCHANGED) ||
+                        _isInRange(token, rangeStart, rangeEnd, SearchOption.CASE_ALL))
+                    continue;
+            }
+
+            // transform it into some kind of BASE FORM (irregular plural noun => singular; not => n't; v => vs)
+            if (_isInRangeWhenMappedToBaseForm(token, rangeStart, rangeEnd))
                 continue;
 
-            if (_isInDictAfterRemovingSuffixes_d_s_ll(token, rangeStart, rangeEnd)) // 'd , 's . 'll
-                continue;
-
-            if (_isInDictAfterRemovingLeadingAndTrailingSpecialChars(token, rangeStart, rangeEnd))
-                continue; //  word?! *word   [(word)]
+            // jesli sie nie udało, to może być PAST FORM of VERB
+            // albo S,ED, ER, EST , ED ing
 
             wordsOutsideRange.add(token);
         }
 
         return wordsOutsideRange;
 
-        /* SKIPPED TEST
-            if( containsDigit_OR_anythingBut'or(token) ){
-                continue; // skips adding the word to wordsOutsideRange
-            }
-*/
     }
 
-    private boolean _isInDictAfterRemovingLeadingAndTrailingSpecialChars(String token, int rangeStart, int rangeEnd) {
+    private boolean _isInDictWhenNegationMappedToBaseForm(String token, int rangeStart, int rangeEnd) {
+        String found = NEGATIONS.get(token.toLowerCase());
+        if (found != null) {
+            return _isInRange(found, rangeStart, rangeEnd, SearchOption.CASE_ALL);
+        }
+        return false;
+    }
 
+    private boolean _containsSpecialChars(String token) {
+        return token.matches("[^a-zA-Z]+.*|.+[^a-zA-Z]+.*");
+    }
+
+  /*  private boolean _isInDictAfterRemovingLeadingAndTrailingSpecialChars(String token, int rangeStart, int rangeEnd) {
+
+        // remove it later because it's in the calling method. It will result in 2 tests falling
         token = _removeLeadingTrailingSpecialChars(token);
-
         return _isInRange(token, rangeStart, rangeEnd, SearchOption.CASE_ALL);
-    }
+    }*/
 
     private boolean _isInDictAfterRemovingSuffixes_d_s_ll(String token, int rangeStart, int rangeEnd) {
 
@@ -219,13 +257,21 @@ public class RangeAnalyser5000 implements RangeAnalyser {
     }
 
     // As an axiom, if the token is in the set, it is in range 0-1000
-    private boolean _isShortFormInPredefinedSet(String token, int rangeStart, int rangeEnd) {
+    private boolean _isShortFormInPredefinedSet(String token, int rangeStart) {
         return SHORT_FORMS.contains(token.toLowerCase()) && rangeStart <= 1000;
+    }
+
+    private boolean _isInRangeWhenMappedToBaseForm(final String token, int rangeStart, int rangeEnd) {
+        String baseForm = BASE_FORMS.getOrDefault(token.toLowerCase(), null);
+        if (baseForm != null) {
+            return _isInRange(baseForm, rangeStart, rangeEnd, SearchOption.CASE_ALL);
+        }
+        return false;
     }
 
 
     private boolean _isInRange(String headword, int rangeStart, int rangeEnd, SearchOption searchOption) {
-        boolean isInDictionary = false;
+
         switch (searchOption) {
             case CASE_UNCHANGED:
                 return this.corpusDictionary.isHeadwordInRankRange(headword, rangeStart, rangeEnd);
@@ -583,19 +629,20 @@ public class RangeAnalyser5000 implements RangeAnalyser {
 
     private String _removeLeadingTrailingSpecialChars(String token) {
 
-        Pattern regex = Pattern.compile("[a-zA-Z]+");
+        Pattern regex = Pattern.compile("[a-zA-Z]+'*[a-zA-Z]"); // $(azaz'az)*
         Matcher matcher = regex.matcher(token);
 
         while (matcher.find()) {
             token = matcher.group();
+            break;
         }
 
         return token;
     }
 
 
-    public static enum SearchOption {
-        CASE_UNCHANGED, CASE_ALL;
+    public enum SearchOption {
+        CASE_UNCHANGED, CASE_ALL
     }
 
 
