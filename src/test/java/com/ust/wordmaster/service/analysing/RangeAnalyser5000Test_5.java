@@ -139,7 +139,96 @@ public class RangeAnalyser5000Test_5 {
 
         assertEquals(expected.toString(), method.invoke(rangeAnalyser5000, input, 0, 5000).toString());
         assertEquals(List.of("Went", "TOOK").toString(), method.invoke(rangeAnalyser5000, List.of("Went", "TOOK", "burst"), 2000, 5000).toString());
+    }
 
+    @Test
+    void given_S_suffix_findsThemInRange() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_getOutOfRangeStrings", List.class, int.class, int.class);
+        method.setAccessible(true);
+
+        List<String> inRange = List.of("books", "CATS", "Drives", "TAKES", "smiles",
+                "TAXES", "Watches", "cries", "Tries");
+
+        List<String> outOfRange = List.of("", " ", "notinDictionary");
+        List<String> expected = List.of("notinDictionary");
+
+        List<String> input = Stream.concat(inRange.stream(), outOfRange.stream())
+                .collect(Collectors.toList());
+
+        assertEquals(expected.toString(), method.invoke(rangeAnalyser5000, input, 0, 5000).toString());
+        assertEquals(List.of("takes", "Tries").toString(), method.invoke(rangeAnalyser5000, List.of("takes", "Tries", "Guarantees", "BALLOONS"), 3000, 5000).toString());
+    }
+
+    @Test
+    void given_ED_suffix_findsThemInRange() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_getOutOfRangeStrings", List.class, int.class, int.class);
+        method.setAccessible(true);
+
+        List<String> inRange = List.of("liked", "PLAYED", "Tried", "Cried", "Worked", "Placed");
+
+        List<String> outOfRange = List.of("", " ", "notinDictionary");
+        List<String> expected = List.of("notinDictionary");
+
+        List<String> input = Stream.concat(inRange.stream(), outOfRange.stream())
+                .collect(Collectors.toList());
+
+        assertEquals(expected.toString(), method.invoke(rangeAnalyser5000, input, 0, 5000).toString());
+        assertEquals(List.of("played", "Smiled").toString(), method.invoke(rangeAnalyser5000, List.of("played", "Smiled", "DIVORCED", "Eased"), 3000, 5000).toString());
+    }
+
+    @Test
+    void given_ING_suffix_findsThemInRange() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_getOutOfRangeStrings", List.class, int.class, int.class);
+        method.setAccessible(true);
+
+        List<String> inRange = List.of("Trying", "LIKING", "smiling", "SITTING");
+
+        List<String> outOfRange = List.of("", " ", "notinDictionary");
+        List<String> expected = List.of("notinDictionary");
+
+        List<String> input = Stream.concat(inRange.stream(), outOfRange.stream())
+                .collect(Collectors.toList());
+
+        assertEquals(expected.toString(), method.invoke(rangeAnalyser5000, input, 0, 5000).toString());
+        assertEquals(List.of("played", "Smiled").toString(), method.invoke(rangeAnalyser5000, List.of("played", "Smiled", "DIVORCING", "Easing"), 3000, 5000).toString());
+    }
+
+    @Test
+    void given_ER_suffix_findsThemInRange() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_getOutOfRangeStrings", List.class, int.class, int.class);
+        method.setAccessible(true);
+
+        List<String> inRange = List.of("smaller", "BIGGER", "Larger", "crazier");
+
+        List<String> outOfRange = List.of("", " ", "notinDictionary");
+        List<String> expected = List.of("notinDictionary");
+
+        List<String> input = Stream.concat(inRange.stream(), outOfRange.stream())
+                .collect(Collectors.toList());
+
+        assertEquals(expected.toString(), method.invoke(rangeAnalyser5000, input, 0, 5000).toString());
+        assertEquals(List.of("smaller", "BIGGER").toString(), method.invoke(rangeAnalyser5000, List.of("smaller", "BIGGER", "SEXIER", "Cuter"), 3000, 5000).toString());
+    }
+
+    @Test
+    void given_EST_suffix_findsThemInRange() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_getOutOfRangeStrings", List.class, int.class, int.class);
+        method.setAccessible(true);
+
+        List<String> inRange = List.of("smallest", "BIGGEST", "Largest", "craziest");
+        List<String> outOfRange = List.of("", " ", "notinDictionary");
+        List<String> expected = List.of("notinDictionary");
+
+        List<String> input = Stream.concat(inRange.stream(), outOfRange.stream())
+                .collect(Collectors.toList());
+
+        assertEquals(expected.toString(), method.invoke(rangeAnalyser5000, input, 0, 5000).toString());
+        assertEquals(List.of("smallest", "BIGGEST").toString(), method.invoke(rangeAnalyser5000, List.of("smallest", "BIGGEST", "SEXIEST", "Cutest"), 3000, 5000).toString());
     }
 
     @Test
@@ -225,6 +314,77 @@ public class RangeAnalyser5000Test_5 {
         assertTrue((boolean) method.invoke(rangeAnalyser5000, "Took", 0, 5000));
         assertTrue((boolean) method.invoke(rangeAnalyser5000, "Taken", 0, 5000));
     }
+
+    @Test
+    void given_S_suffix_searchFindsToken() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_isInDictAfterRemovingSuffix_S", String.class, int.class, int.class);
+        method.setAccessible(true);
+
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "books", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "Cats", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "Drinks", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "LIKES", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "JOBS", 0, 5000));
+
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "TAXES", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "Watches", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "flies", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "Cries", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "TRIES", 0, 5000));
+    }
+
+    @Test
+    void given_ED_suffix_searchFindsToken() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_isInDictAfterRemovingSuffix_ED", String.class, int.class, int.class);
+        method.setAccessible(true);
+
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "wanted", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "PLAYED", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "Kicked", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "Tried", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "CRIED", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "placed", 0, 5000));
+    }
+
+    @Test
+    void given_ING_suffix_searchFindsToken() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_isInDictAfterRemovingSuffix_ING", String.class, int.class, int.class);
+        method.setAccessible(true);
+
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "trying", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "LIKING", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "Smiling", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "Sitting", 0, 5000));
+    }
+
+    @Test
+    void given_ER_suffix_searchFindsToken() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_isInDictAfterRemovingSuffix_ER", String.class, int.class, int.class);
+        method.setAccessible(true);
+
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "smaller", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "BIGGER", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "Larger", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "crazier", 0, 5000));
+    }
+
+    @Test
+    void given_EST_suffix_searchFindsToken() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_isInDictAfterRemovingSuffix_ER", String.class, int.class, int.class);
+        method.setAccessible(true);
+
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "smaller", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "BIGGER", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "Larger", 0, 5000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "crazier", 0, 5000));
+    }
+
+
 
 
 }
