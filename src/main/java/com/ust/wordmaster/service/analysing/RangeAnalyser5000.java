@@ -1,15 +1,11 @@
 package com.ust.wordmaster.service.analysing;
 
 import com.ust.wordmaster.dictionary.CorpusDictionary;
-import com.ust.wordmaster.dictionary.DictionaryEntry;
-import com.ust.wordmaster.dictionary.WordData5000;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static java.util.Map.entry;
 
@@ -22,8 +18,6 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             "I'll", "he'll", "she'll", "it'll", "we'll", "you'll", "they'll",
             "there's", "there're", "there'd", "there'll",
             "ain't", "gonna");
-    private static final char[] UNWANTED_CHARS = new char[]{'/', '\\', '\'', '.', ',', ':', ';', '"', '?', '!', '@',
-            '#', '$', '*', '(', ')', '{', '}', '[', ']', '…', '-'};
 
     private static final Map<String, String> NEGATIONS = Map.ofEntries(
             entry("aren't", "n't"),
@@ -43,7 +37,6 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             entry("shan't", "shall"),
             entry("shouldn't", "should")
     );
-
 
     private static final Map<String, String> BASE_FORMS = Map.ofEntries(
             entry("am", "be"),
@@ -88,46 +81,9 @@ public class RangeAnalyser5000 implements RangeAnalyser {
         this.irregularVerbsConverter = new IrregularVerbsConverter();
     }
 
-    /*@Override
-    public List<RangedText> findOutOfRangeWords(List<String> charSequences, int rangeStart, int rangeEnd) {
-        validateRange(rangeStart, rangeEnd);
-        Objects.requireNonNull(charSequences, "List of charSequences cannot be null");
-
-        log.info("Filtering " + charSequences.size() + " charSequences; range " + rangeStart + "-" + rangeEnd);
-
-        List<RangedText> rangedTextList = new ArrayList<>();
-
-        for (String sequence : charSequences) {
-
-            // split to get tokens, possibly words
-            List<String> tokensInThisSequence = Arrays.asList(splitOnSpaces(sequence));
-            // can still include "" or " "
-            // do first check if in dictionary; remove tokens found in dictionary
-            tokensInThisSequence = removeIfNullBlankEmpty(Collections.unmodifiableList(tokensInThisSequence));
-            tokensInThisSequence = removeIfFoundCasePreserved(Collections.unmodifiableList(tokensInThisSequence));
-            tokensInThisSequence = removeIfFoundCaseModified(Collections.unmodifiableList(tokensInThisSequence));
-
-            tokensInThisSequence = processToDoFurtherCheckIfPresentInDictionary(Collections.unmodifiableList(tokensInThisSequence));
-
-            //-------------------------
-            int[] wordIndexes = isolateOutOfRangeWords(tokensInThisSequence.toArray(new String[0]), rangeStart, rangeEnd);
-            String[] outOfRangeWords = convertIndexesToWords(wordIndexes, tokensInThisSequence.toArray(new String[0]));
-            // ----------------------
-            RangedText rangedText = new RangedText5000(sequence, rangeStart, rangeEnd);
-            rangedText.setOutOfRangeWords(outOfRangeWords);
-            rangedTextList.add(rangedText);
-
-            log.trace(wordIndexes.length + " out of range words (" + Arrays.toString(wordIndexes) + ") in: " + sequence);
-        }
-
-        return rangedTextList;
-    }*/
-
-    /////////////////////// NEW VERSION //////////////////////////////////////////////////////
-
     @Override
     public List<RangedText> findOutOfRangeWords(List<String> charSequences, int rangeStart, int rangeEnd) {
-        validateRange(rangeStart, rangeEnd);
+        _validateRange(rangeStart, rangeEnd);
         Objects.requireNonNull(charSequences, "List of charSequences cannot be null");
 
         log.info("Filtering " + charSequences.size() + " charSequences; range " + rangeStart + "-" + rangeEnd);
@@ -136,7 +92,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
 
         for (String sequence : charSequences) {
 
-            List<String> tokens = Arrays.asList(splitOnSpaces(sequence));
+            List<String> tokens = Arrays.asList(_splitOnSpaces(sequence));
             List<String> outOfRange = _getOutOfRangeStrings(tokens, rangeStart, rangeEnd);
 
             RangedText rangedText = _getRangedText(rangeStart, rangeEnd, sequence, outOfRange);
@@ -151,7 +107,6 @@ public class RangeAnalyser5000 implements RangeAnalyser {
         rangedText.setOutOfRangeWords(outOfRange.toArray(new String[0]));
         return rangedText;
     }
-
 
     /**
      * Tries to find if the token is in the givewn range of the Corpus Dictionary.
@@ -184,8 +139,8 @@ public class RangeAnalyser5000 implements RangeAnalyser {
 
                 token = _removeLeadingTrailingSpecialChars(token);
 
-                String containsLetters= ".*[a-zA-Z]+.*";
-                if(!token.matches(containsLetters))
+                String containsLetters = ".*[a-zA-Z]+.*";
+                if (!token.matches(containsLetters))
                     continue;
 
                 if (_isInRange(token, rangeStart, rangeEnd, SearchOption.CASE_UNCHANGED) ||
@@ -246,13 +201,6 @@ public class RangeAnalyser5000 implements RangeAnalyser {
         return token.matches("[^a-zA-Z]+.*|.+[^a-zA-Z]+.*");
     }
 
-  /*  private boolean _isInDictAfterRemovingLeadingAndTrailingSpecialChars(String token, int rangeStart, int rangeEnd) {
-
-        // remove it later because it's in the calling method. It will result in 2 tests falling
-        token = _removeLeadingTrailingSpecialChars(token);
-        return _isInRange(token, rangeStart, rangeEnd, SearchOption.CASE_ALL);
-    }*/
-
     private boolean _isInDictAfterRemovingSuffixes_d_s_ll(String token, int rangeStart, int rangeEnd) {
 
         if (token.length() >= 3 && token.endsWith("'d") || token.endsWith("'D") || token.endsWith("'s") || token.endsWith("'S")) {
@@ -263,7 +211,8 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             token = token.substring(0, token.length() - 3);
         }
 
-        return _isInRange(token, rangeStart, rangeEnd, SearchOption.CASE_ALL);
+        return _isInRange(token, rangeStart, rangeEnd, SearchOption.CASE_ALL) ||
+                _isInRangeWhenMappedToBaseForm(token, rangeStart, rangeEnd);
     }
 
     // As an axiom, if the token is in the set, it is in range 0-1000
@@ -272,6 +221,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
     }
 
     private boolean _isInRangeWhenMappedToBaseForm(final String token, int rangeStart, int rangeEnd) {
+
         String baseForm = BASE_FORMS.getOrDefault(token.toLowerCase(), null);
         if (baseForm != null) {
             return _isInRange(baseForm, rangeStart, rangeEnd, SearchOption.CASE_ALL);
@@ -298,119 +248,15 @@ public class RangeAnalyser5000 implements RangeAnalyser {
 
     }
 
-   /* List<String> removeIfNullBlankEmpty(List<String> unmodifiableList) {
-        return unmodifiableList.stream()
-                .filter(Objects::nonNull)
-                .filter(Predicate.not(String::isBlank))
-                .filter(Predicate.not(String::isEmpty))
-                .collect(Collectors.toList());
-    }
-
-    List<String> removeIfFoundCaseModified(List<String> tokensList) {
-        List<String> notFound = new ArrayList<>();
-        for (String token : tokensList) {
-            boolean isInDictionary = this.corpusDictionary.containsHeadword(token.toLowerCase()) ||
-                    this.corpusDictionary.containsHeadword(token.toUpperCase()) ||
-                    token.length() > 1 && this.corpusDictionary.containsHeadword(token.substring(0, 1).toUpperCase() + token.substring(1));
-
-            if (!isInDictionary)
-                notFound.add(token);
-        }
-        return notFound;
-    }
-
-    List<String> removeIfFoundCasePreserved(List<String> tokensList) {
-        return tokensList.stream()
-                .filter(token -> !this.corpusDictionary.containsHeadword(token))
-                .collect(Collectors.toList());
-    }*/
-
-    private void validateRange(int rangeStart, int rangeEnd) {
+    private void _validateRange(int rangeStart, int rangeEnd) {
         if (rangeStart < 0 || rangeStart >= rangeEnd)
             throw new IllegalArgumentException("Range start must be greater than 0 and less than range end.");
     }
 
-    /*
-    *//**
-     * @return indexes of words that are not in the given range
-     *//*
-    private int[] isolateOutOfRangeWords(String[] words, int rangeStart, int rangeEnd) {
-
-        List<Integer> outOfRangeWordIndexes = new ArrayList<>();
-
-        for (int i = 0; i < words.length; i++) {
-            String info = " is";
-            String word = words[i];
-            if (word.isEmpty() || word.isBlank()) {
-                throw new IllegalArgumentException("The word cannot be blank or empty.");
-            }
-
-            if (!isInDictionary(word, rangeStart, rangeEnd)) {
-                outOfRangeWordIndexes.add(i);
-                info += " NOT";
-            }
-
-            log.trace(words[i] + " [i]=" + i + info + " in the given range.");
-        }
-
-        return outOfRangeWordIndexes.stream().mapToInt(i -> i).toArray();
-    }
-
-    private boolean isAnyEntryInRange(String headword, int rangeStart, int rangeEnd) {
-        validateRange(rangeStart, rangeEnd);
-
-        List<DictionaryEntry> entries = this.corpusDictionary.getEntriesByHeadword(headword);
-        return entries.stream()
-                .map(entry -> ((WordData5000) entry.getWordData()).getRank())
-                .anyMatch(rank -> rank >= rangeStart && rank <= rangeEnd);
-
-    }
-
-    private boolean isInDictionary(final String headword, int rangeStart, int rangeEnd) {
-
-        String lowerCaseHeadword = headword.toLowerCase();
-        lowerCaseHeadword = replaceWithBaseForm(lowerCaseHeadword);
-        lowerCaseHeadword = replacePastFormWithBaseForm(lowerCaseHeadword);
-
-        boolean isInRange = isAnyEntryInRange(lowerCaseHeadword, rangeStart, rangeEnd);
-
-        if (!isInRange) {
-            // SIMPLIFICATION: all short forms with 'd (would/had)  & 's (has/is)  & 'm (am) & 're (are)
-            // will be considered as present in range 0-100
-            isInRange = searchInShortForms(lowerCaseHeadword);
-
-            if (!isInRange)
-                isInRange = searchWithout_S_suffix(lowerCaseHeadword, rangeStart, rangeEnd);
-
-            if (!isInRange)
-                isInRange = searchWithout_ED_suffix(lowerCaseHeadword, rangeStart, rangeEnd);
-
-            if (!isInRange)
-                isInRange = searchWithout_ING_suffix(lowerCaseHeadword, rangeStart, rangeEnd);
-
-            if (!isInRange)
-                isInRange = searchWithout_EST_suffix(lowerCaseHeadword, rangeStart, rangeEnd);
-
-            if (!isInRange)
-                isInRange = searchWithout_ER_suffix(lowerCaseHeadword, rangeStart, rangeEnd);
-
-        }
-
-        return isInRange;
-    }
-
-    private String[] convertIndexesToWords(int[] wordIndexes, String[] words) {
-
-        return Arrays.stream(wordIndexes)
-                .mapToObj(i -> words[i])
-                .toArray(String[]::new);
-
-    }*/
-
     /**
      * Splits on (multiple) spaces
      */
-    String[] splitOnSpaces(final String charSequence) {
+    String[] _splitOnSpaces(final String charSequence) {
         log.trace("Splitting: " + charSequence);
 
         if (charSequence == null || charSequence.isBlank() || charSequence.isEmpty())
@@ -420,160 +266,6 @@ public class RangeAnalyser5000 implements RangeAnalyser {
 
     }
 
-    ///////////// search optimisation methods ////////////////
-    /*private boolean searchInShortForms(String key) {
-        return key.contains("'") && SHORT_FORMS.contains(key);
-    }
-
-    private boolean searchWithout_EST_suffix(String headword, int rangeStart, int rangeEnd) {
-        boolean isInRange = false;
-        if (headword.length() >= 4 && headword.endsWith("st")) {
-            String withoutST = headword.substring(0, headword.length() - 2);
-            isInRange = isAnyEntryInRange(withoutST, rangeStart, rangeEnd);
-
-            if (!isInRange && headword.length() >= 5 && headword.endsWith("est")) {
-                String withoutEST = headword.substring(0, headword.length() - 3);
-                isInRange = isAnyEntryInRange(withoutEST, rangeStart, rangeEnd);
-            }
-
-            if (!isInRange && headword.length() >= 7 && headword.endsWith("est")) { //big-gest
-                String withoutXEST = headword.substring(0, headword.length() - 4);
-                isInRange = isAnyEntryInRange(withoutXEST, rangeStart, rangeEnd);
-            }
-
-
-        }
-        return isInRange;
-    }
-
-    private boolean searchWithout_ER_suffix(String headword, int rangeStart, int rangeEnd) {
-        boolean isInRange = false;
-        if (headword.length() >= 5 && headword.endsWith("er")) {
-            String withoutER = headword.substring(0, headword.length() - 2);
-            isInRange = isAnyEntryInRange(withoutER, rangeStart, rangeEnd);
-
-            if (!isInRange) {
-                String withoutR = headword.substring(0, headword.length() - 1); //  large-r,
-                isInRange = isAnyEntryInRange(withoutR, rangeStart, rangeEnd);
-            }
-
-            if (!isInRange) {
-                String withoutXER = headword.substring(0, headword.length() - 3); //  big-ger,
-                isInRange = isAnyEntryInRange(withoutXER, rangeStart, rangeEnd);
-            }
-
-            if (!isInRange && headword.endsWith("ier")) {
-                String withoutIER = headword.substring(0, headword.length() - 3) + "y"; // crazy-> craz-ier big-ger,
-                isInRange = isAnyEntryInRange(withoutIER, rangeStart, rangeEnd);
-            }
-
-
-        }
-        return isInRange;
-    }
-
-    private boolean searchWithout_ING_suffix(String headword, int rangeStart, int rangeEnd) {
-        boolean isInRange = false;
-        if (headword.length() >= 4 && headword.endsWith("ing")) {
-            String withoutING = headword.substring(0, headword.length() - 3);
-            isInRange = isAnyEntryInRange(withoutING, rangeStart, rangeEnd);
-
-            if (!isInRange) {  // taking
-                withoutING += "e";
-                isInRange = isAnyEntryInRange(withoutING, rangeStart, rangeEnd);
-            }
-
-            if (!isInRange) {  // sitting
-                withoutING = headword.substring(0, headword.length() - 4); // ting
-                isInRange = isAnyEntryInRange(withoutING, rangeStart, rangeEnd);
-            }
-
-        }
-        return isInRange;
-    }
-
-    private boolean searchWithout_S_suffix(String headword, int rangeStart, int rangeEnd) {
-
-        boolean isInRange = false;
-        if (headword.length() >= 3 && headword.endsWith("s")) {
-            String withoutS = headword.substring(0, headword.length() - 1);
-            isInRange = isAnyEntryInRange(withoutS, rangeStart, rangeEnd);
-
-            // try if removing -ed helps
-            if (!isInRange && headword.endsWith("es")) {
-                String withoutES = headword.substring(0, headword.length() - 2);
-                isInRange = isAnyEntryInRange(withoutES, rangeStart, rangeEnd);
-            }
-
-            // try if removing -ies helps
-            if (!isInRange && headword.length() >= 4 && headword.endsWith("ies")) {
-                String withoutIES = headword.substring(0, headword.length() - 3) + "y";
-                isInRange = isAnyEntryInRange(withoutIES, rangeStart, rangeEnd);
-            }
-        }
-        return isInRange;
-    }
-
-    private boolean searchWithout_ED_suffix(String headword, int rangeStart, int rangeEnd) {
-        // try if removing -d helps
-        boolean isInRange = false;
-        if (headword.length() >= 4 && headword.endsWith("d")) {
-            String withoutD = headword.substring(0, headword.length() - 1);
-            isInRange = isAnyEntryInRange(withoutD, rangeStart, rangeEnd);
-
-            // try if removing -ed helps
-            if (!isInRange && headword.endsWith("ed")) {
-                String withoutED = headword.substring(0, headword.length() - 2);
-                isInRange = isAnyEntryInRange(withoutED, rangeStart, rangeEnd);
-            }
-            // try if removing -ied helps
-            if (!isInRange && headword.endsWith("ied")) {
-                String withoutIED = headword.substring(0, headword.length() - 3) + "y";
-                isInRange = isAnyEntryInRange(withoutIED, rangeStart, rangeEnd);
-            }
-        }
-        return isInRange;
-    }*/
-
-    /**
-     * Makes some cleanup operations to create valid words
-     * (trims, sremove blanks, empty strings, special characters glued to the words
-     * removes non-letter chars whose length is 1
-     */
-
-    /*List<String> processToDoFurtherCheckIfPresentInDictionary(final List<String> tokens) {
-
-        List<String> cleanedUpList = new ArrayList<>();
-        for (String token : tokens) {
-
-            token = token.trim();
-
-            // if a single char, only letters allowed; remove: - * etc.
-            if ((token.length() <= 1 && !token.matches("a-zA-Z")))
-                continue;
-
-
-            // don't clean up short forms or single chars
-            if (!SHORT_FORMS.contains(token) && token.length() > 1) {
-                // THESE METHODS TRANSFORM WORDS
-                // *(&
-                token = removeShortFormSuffixesAndPossesive(token); // 'd , 's . 'll
-                token = removeLeadingSpecialChars(token); // *word
-                token = removeTrailingSpecialChars(token); // word?
-            }
-            cleanedUpList.add(token);
-        }
-        return cleanedUpList;
-    }
-
-    private String replaceWithBaseForm(final String word) {
-        return BASE_FORMS.getOrDefault(word.toLowerCase(), word);
-    }
-
-    private String replacePastFormWithBaseForm(final String word) {
-        return irregularVerbsConverter.convertToBaseForm(word.toLowerCase());
-    }*/
-
     private boolean _isInDictWhenIrregularVerbMappedToBaseForm(String word, int rangeStart, int rangeEnd) {
         String found = irregularVerbsConverter.convertToBaseForm(word);
         if (found != null) {
@@ -582,80 +274,16 @@ public class RangeAnalyser5000 implements RangeAnalyser {
         return false;
     }
 
-    /*private String removeShortFormSuffixesAndPossesive(String word) {
-
-        if (word.length() >= 3 && word.endsWith("'d") || word.endsWith("'s")) {
-            return word.substring(0, word.length() - 2);
-        }
-
-        if (word.length() >= 4 && word.endsWith("'ll")) {
-            return word.substring(0, word.length() - 3);
-        }
-
-        return word;
-    }
-
-    private String removeTrailingSpecialChars(final String headword) {
-        String word = headword;
-        boolean letterHasBeenRemoved = true;
-        do {
-            if (word.isEmpty()) {
-                return headword; //  word-with-only-unwanted-chars is returned unchanged
-            }
-            char lastChar = word.charAt(word.length() - 1);
-
-            for (char unwantedChar : UNWANTED_CHARS) {
-                if (lastChar == unwantedChar) {
-                    word = word.substring(0, word.length() - 1);
-                    letterHasBeenRemoved = true;
-                    break; // get out of for, set new lastChar & repeat test
-                } else {
-                    letterHasBeenRemoved = false;
-                }
-            }
-        } while (letterHasBeenRemoved);
-
-        return word;
-    }
-
-    private String removeLeadingSpecialChars(final String headword) {
-
-        String word = headword;
-
-        boolean charHasBeenRemoved = true;
-        do {
-
-            if (word.isEmpty()) {
-                return headword; //  word-with-only-unwanted-chars is returned unchanged
-            }
-            char firstChar = word.charAt(0);
-
-            for (char unwanted : UNWANTED_CHARS) {
-                if (firstChar == unwanted) {
-                    word = word.substring(1);
-                    charHasBeenRemoved = true;
-                    break; // set new firstChar
-                } else {
-                    charHasBeenRemoved = false;
-                }
-            }
-        } while (charHasBeenRemoved);
-
-        return word;
-    }*/
-
     private String _removeLeadingTrailingSpecialChars(String token) {
-        Pattern regex = null;
-        if(token.endsWith("s'") || token.endsWith("S'")){ // $(books'   @#boys' => books, boys
-             regex = Pattern.compile("[a-zA-Z]+");
+        Pattern regex;
+        if (token.endsWith("s'") || token.endsWith("S'")) { // $(books'   @#boys' => books, boys
+            regex = Pattern.compile("[a-zA-Z]+");
         } else {
-            if(token.matches("[^a-zA-Z']*'[a-zA-Z]+'[^a-zA-Z']*")){
+            if (token.matches("[^a-zA-Z']*'[a-zA-Z]+'[^a-zA-Z']*")) {
                 regex = Pattern.compile("[a-zA-Z]+"); // 'stop'  ('stop') 'stop'?! => stop
             } else {
                 regex = Pattern.compile("[a-zA-Z]+'*[a-zA-Z]*"); // $(azaz'az)*
             }
-
-
         }
 
         Matcher matcher = regex.matcher(token);
@@ -664,6 +292,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             token = matcher.group();
             break;
         }
+
 
         return token;
     }

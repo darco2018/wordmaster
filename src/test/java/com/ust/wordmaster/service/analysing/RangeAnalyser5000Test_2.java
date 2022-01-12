@@ -476,7 +476,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
         List<String> charSequences = new ArrayList<>();
 
-        String stillFailing_0 = "children's notinDict2";
+        String stillFailing_0 = "children's people's mice's notinDict2";
         charSequences.add(stillFailing_0);
 
         List<RangedText> rangedTexts = (List <RangedText>) method.invoke(rangeAnalyser5000, charSequences, 0, 5000);
