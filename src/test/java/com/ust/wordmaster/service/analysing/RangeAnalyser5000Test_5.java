@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -384,7 +385,21 @@ public class RangeAnalyser5000Test_5 {
         assertTrue((boolean) method.invoke(rangeAnalyser5000, "crazier", 0, 5000));
     }
 
+    @Test
+    void createsRangedText() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_getRangedText", int.class, int.class, String.class, List.class);
+        method.setAccessible(true);
 
+        RangedText rangedText = (RangedText) method.invoke(rangeAnalyser5000, 0, 5000, "I like nonindictionary1 apples notindict2",
+                List.of("nonindictionary1", "notindict2"));
+
+        assertEquals(0, rangedText.getRangeStart());
+        assertEquals(5000, rangedText.getRangeEnd());
+        assertEquals("I like nonindictionary1 apples notindict2", rangedText.getText());
+        assertEquals(new ArrayList<>(List.of("nonindictionary1", "notindict2")).toString(), rangedText.getOutOfRangeWords().toString());
+
+    }
 
 
 }

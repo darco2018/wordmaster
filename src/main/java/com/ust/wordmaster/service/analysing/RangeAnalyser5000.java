@@ -132,20 +132,24 @@ public class RangeAnalyser5000 implements RangeAnalyser {
 
         log.info("Filtering " + charSequences.size() + " charSequences; range " + rangeStart + "-" + rangeEnd);
 
-        List<String> outOfRange = new ArrayList<>();
-
-        for (String sequence : charSequences) {
-            // split to get tokens, possibly words
-            List<String> tokens = Arrays.asList(splitOnSpaces(sequence));
-            // can still include "" or " "
-            outOfRange = _getOutOfRangeStrings(tokens, rangeStart, rangeEnd);
-
-        }
-
-        // use outOfRange to create List<RangedText> here
         List<RangedText> rangedTextList = new ArrayList<>();
 
+        for (String sequence : charSequences) {
+
+            List<String> tokens = Arrays.asList(splitOnSpaces(sequence));
+            List<String> outOfRange = _getOutOfRangeStrings(tokens, rangeStart, rangeEnd);
+
+            RangedText rangedText = _getRangedText(rangeStart, rangeEnd, sequence, outOfRange);
+            rangedTextList.add(rangedText);
+        }
+
         return rangedTextList;
+    }
+
+    private RangedText _getRangedText(int rangeStart, int rangeEnd, String sequence, List<String> outOfRange) {
+        RangedText rangedText = new RangedText5000(sequence, rangeStart, rangeEnd);
+        rangedText.setOutOfRangeWords(outOfRange.toArray(new String[0]));
+        return rangedText;
     }
 
 
