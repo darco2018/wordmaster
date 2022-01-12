@@ -30,12 +30,12 @@ class IrregularVerbsConverterTest {
 
         assertEquals("smell", converter.convertToBaseForm("smelled"));
         assertEquals("smell", converter.convertToBaseForm("smelt"));
-        assertEquals("smell", converter.convertToBaseForm("smell"));
+        assertEquals(null, converter.convertToBaseForm("smell"));
 
         assertEquals("tread", converter.convertToBaseForm("treaded"));
         assertEquals("tread", converter.convertToBaseForm("trod"));
         assertEquals("tread", converter.convertToBaseForm("trodden"));
-        assertEquals("tread", converter.convertToBaseForm("tread"));
+        assertEquals(null, converter.convertToBaseForm("tread"));
 
         assertEquals("can", converter.convertToBaseForm("could"));
     }

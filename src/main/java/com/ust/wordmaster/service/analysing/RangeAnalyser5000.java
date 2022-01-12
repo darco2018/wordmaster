@@ -88,7 +88,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
         this.irregularVerbsConverter = new IrregularVerbsConverter();
     }
 
-    @Override
+    /*@Override
     public List<RangedText> findOutOfRangeWords(List<String> charSequences, int rangeStart, int rangeEnd) {
         validateRange(rangeStart, rangeEnd);
         Objects.requireNonNull(charSequences, "List of charSequences cannot be null");
@@ -121,12 +121,12 @@ public class RangeAnalyser5000 implements RangeAnalyser {
         }
 
         return rangedTextList;
-    }
+    }*/
 
     /////////////////////// NEW VERSION //////////////////////////////////////////////////////
 
-    //@Override
-    public List<RangedText> _findOutOfRangeWords(List<String> charSequences, int rangeStart, int rangeEnd) {
+    @Override
+    public List<RangedText> findOutOfRangeWords(List<String> charSequences, int rangeStart, int rangeEnd) {
         validateRange(rangeStart, rangeEnd);
         Objects.requireNonNull(charSequences, "List of charSequences cannot be null");
 
@@ -298,7 +298,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
 
     }
 
-    List<String> removeIfNullBlankEmpty(List<String> unmodifiableList) {
+   /* List<String> removeIfNullBlankEmpty(List<String> unmodifiableList) {
         return unmodifiableList.stream()
                 .filter(Objects::nonNull)
                 .filter(Predicate.not(String::isBlank))
@@ -323,16 +323,17 @@ public class RangeAnalyser5000 implements RangeAnalyser {
         return tokensList.stream()
                 .filter(token -> !this.corpusDictionary.containsHeadword(token))
                 .collect(Collectors.toList());
-    }
+    }*/
 
     private void validateRange(int rangeStart, int rangeEnd) {
         if (rangeStart < 0 || rangeStart >= rangeEnd)
             throw new IllegalArgumentException("Range start must be greater than 0 and less than range end.");
     }
 
-    /**
+    /*
+    *//**
      * @return indexes of words that are not in the given range
-     */
+     *//*
     private int[] isolateOutOfRangeWords(String[] words, int rangeStart, int rangeEnd) {
 
         List<Integer> outOfRangeWordIndexes = new ArrayList<>();
@@ -404,7 +405,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
                 .mapToObj(i -> words[i])
                 .toArray(String[]::new);
 
-    }
+    }*/
 
     /**
      * Splits on (multiple) spaces
@@ -420,7 +421,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
     }
 
     ///////////// search optimisation methods ////////////////
-    private boolean searchInShortForms(String key) {
+    /*private boolean searchInShortForms(String key) {
         return key.contains("'") && SHORT_FORMS.contains(key);
     }
 
@@ -532,7 +533,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             }
         }
         return isInRange;
-    }
+    }*/
 
     /**
      * Makes some cleanup operations to create valid words
@@ -540,7 +541,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
      * removes non-letter chars whose length is 1
      */
 
-    List<String> processToDoFurtherCheckIfPresentInDictionary(final List<String> tokens) {
+    /*List<String> processToDoFurtherCheckIfPresentInDictionary(final List<String> tokens) {
 
         List<String> cleanedUpList = new ArrayList<>();
         for (String token : tokens) {
@@ -565,15 +566,13 @@ public class RangeAnalyser5000 implements RangeAnalyser {
         return cleanedUpList;
     }
 
-    ///////////// word preparation methods ////////////////
-
     private String replaceWithBaseForm(final String word) {
         return BASE_FORMS.getOrDefault(word.toLowerCase(), word);
     }
 
     private String replacePastFormWithBaseForm(final String word) {
         return irregularVerbsConverter.convertToBaseForm(word.toLowerCase());
-    }
+    }*/
 
     private boolean _isInDictWhenIrregularVerbMappedToBaseForm(String word, int rangeStart, int rangeEnd) {
         String found = irregularVerbsConverter.convertToBaseForm(word);
@@ -583,7 +582,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
         return false;
     }
 
-    private String removeShortFormSuffixesAndPossesive(String word) {
+    /*private String removeShortFormSuffixesAndPossesive(String word) {
 
         if (word.length() >= 3 && word.endsWith("'d") || word.endsWith("'s")) {
             return word.substring(0, word.length() - 2);
@@ -643,7 +642,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
         } while (charHasBeenRemoved);
 
         return word;
-    }
+    }*/
 
     private String _removeLeadingTrailingSpecialChars(String token) {
         Pattern regex = null;

@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 // 3) private methods
 class RangeAnalyser5000Test_2 {
 
-    public static final String DICTIONARY_FILE = "dictionary5000.csv";
+    /*public static final String DICTIONARY_FILE = "dictionary5000.csv";
     private static CorpusDictionary corpusDictionary;
 
     @BeforeAll
@@ -134,5 +134,5 @@ class RangeAnalyser5000Test_2 {
         assertEquals(outOfRange[0], rangedText.getOutOfRangeWords()[0]);
         assertEquals(outOfRange[1], rangedText.getOutOfRangeWords()[1]);
     }
-
+*/
 }

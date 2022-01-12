@@ -72,7 +72,7 @@ class RangeAnalyser5000Test_1 {
     @Test
     void givenRegularPluralAndPossesivesAnd0_5000Range_findOutOfRangeWords_findsThemInRange() {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
-        String inputText = "boy's boys outofrangeword cats  cat's cats' anotherNotInDictionary children's animals ";
+        String inputText = "boy's boys outofrangeword cats cat's cats' anotherNotInDictionary children's animals ";
 
         actAndAssert(rangeAnalyser5000, inputText);
     }
@@ -129,6 +129,7 @@ class RangeAnalyser5000Test_1 {
         assertEquals(0, rangedText.getRangeStart());
         assertEquals(5000, rangedText.getRangeEnd());
         assertEquals(2, rangedText.getOutOfRangeWords().length);
+
         assertEquals("outofrangeword", rangedText.getOutOfRangeWords()[0]);
         assertEquals("anotherNotInDictionary", rangedText.getOutOfRangeWords()[1]);
     }

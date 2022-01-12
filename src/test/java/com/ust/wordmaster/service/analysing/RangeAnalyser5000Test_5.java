@@ -410,7 +410,7 @@ public class RangeAnalyser5000Test_5 {
     @Test
     void givenListOfSequences_searchInDict_findsOutOfRangeWords() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
-        Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_findOutOfRangeWords", List.class, int.class, int.class );
+        Method method = rangeAnalyser5000.getClass().getDeclaredMethod("findOutOfRangeWords", List.class, int.class, int.class );
         method.setAccessible(true);
 
         List<String> charSequences = new ArrayList<>();
@@ -427,6 +427,8 @@ public class RangeAnalyser5000Test_5 {
         String er_suffix_9 = "notindictionary1  larger BIGGER  Crazier";
         String er_suffix_10 = "notindictionary1  largest BIGGEST Craziest ";
         String varia_11 = " a    AN  v Vs  _ -  *** notinDict2";
+        String emptyString_12 = "";
+        String blankString_13 = " ";
 
         charSequences.add(shortFormsInPredSet_0);
         charSequences.add(d_s_llSuffixes_1);
@@ -440,6 +442,8 @@ public class RangeAnalyser5000Test_5 {
         charSequences.add(er_suffix_9);
         charSequences.add(er_suffix_10);
         charSequences.add(varia_11);
+        charSequences.add(emptyString_12);
+        charSequences.add(blankString_13);
 
         List<RangedText> rangedTexts = (List <RangedText>) method.invoke(rangeAnalyser5000, charSequences, 0, 5000);
 
@@ -458,20 +462,22 @@ public class RangeAnalyser5000Test_5 {
         assertEquals(new ArrayList<>(List.of("notindictionary1")).toString(), Arrays.toString(rangedTexts.get(9).getOutOfRangeWords()));
         assertEquals(new ArrayList<>(List.of("notindictionary1")).toString(), Arrays.toString(rangedTexts.get(10).getOutOfRangeWords()));
         assertEquals(new ArrayList<>(List.of("notinDict2")).toString(), Arrays.toString(rangedTexts.get(11).getOutOfRangeWords()));
+        assertEquals("[]", Arrays.toString(rangedTexts.get(12).getOutOfRangeWords()));
+        assertEquals("[]", Arrays.toString(rangedTexts.get(13).getOutOfRangeWords()));
 
     }
 
     //todo remove
-    @Disabled
+
     @Test
     void stillFailing_searchInDict_findsOutOfRangeWords() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
-        Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_findOutOfRangeWords", List.class, int.class, int.class );
+        Method method = rangeAnalyser5000.getClass().getDeclaredMethod("findOutOfRangeWords", List.class, int.class, int.class );
         method.setAccessible(true);
 
         List<String> charSequences = new ArrayList<>();
 
-        String stillFailing_0 = "'stop' notinDict2";
+        String stillFailing_0 = "children's notinDict2";
         charSequences.add(stillFailing_0);
 
         List<RangedText> rangedTexts = (List <RangedText>) method.invoke(rangeAnalyser5000, charSequences, 0, 5000);

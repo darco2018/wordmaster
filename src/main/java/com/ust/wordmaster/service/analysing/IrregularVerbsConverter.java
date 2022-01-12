@@ -58,7 +58,7 @@ public class IrregularVerbsConverter {
     }
 
     public String convertToBaseForm(String word) {
-        return conversionMap.getOrDefault(word.toLowerCase(), null);
+        return word != null ? conversionMap.getOrDefault(word.toLowerCase(), null) : null;
     }
 
     static class IrregularVerb implements Comparable<IrregularVerb> {

@@ -5,6 +5,7 @@ import com.ust.wordmaster.dictionary.CorpusDictionary;
 import com.ust.wordmaster.dictionary.CorpusDictionary5000;
 import com.ust.wordmaster.dictionary.DictionaryEntry;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -13,9 +14,10 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Disabled
 class RangeAnalyser5000Test_3 {
 
-    public static final String DICTIONARY_FILE = "dictionary5000.csv";
+   /* public static final String DICTIONARY_FILE = "dictionary5000.csv";
     private static CorpusDictionary corpusDictionary;
 
     @BeforeAll
@@ -74,5 +76,5 @@ class RangeAnalyser5000Test_3 {
         assertEquals(Arrays.toString(shouldBePreserved), Arrays.toString(actual.toArray()));
     }
 
-
+*/
 }

@@ -20,21 +20,21 @@ import static org.mockito.BDDMockito.given;
 // MockitoAnnotations#initMocks(Object) is not necessary. Mocks are initialized before each test method.
 public class RangeAnalyser5000_MockitoTest {
 
-    @Mock
+    /*@Mock
     private CorpusDictionary mockedCorpus;
 
-    /* mocks will NOT be initialized at that point. if you had a constructor that took an X
+    *//* mocks will NOT be initialized at that point. if you had a constructor that took an X
     and you would write new A(x) here, x would be null, since
-    the @Mock annotation would not have been processed yet*/
+    the @Mock annotation would not have been processed yet*//*
     @InjectMocks
     private RangeAnalyser rangeAnalyser = new RangeAnalyser5000(this.mockedCorpus);
 
-    /* ALTERNATIVE
+    *//* ALTERNATIVE
     private RangeAnalyser5000 rangeAnalyser;
     @BeforeEach
     void setUp() {
         rangeAnalyser= new RangeAnalyser5000(this.mockedCorpus);
-    }*/
+    }*//*
 
 
     @org.junit.jupiter.api.Test
@@ -84,13 +84,13 @@ public class RangeAnalyser5000_MockitoTest {
         Assertions.assertThat(outOfRangeWords_3).containsExactly("fff");
     }
 
-    /*@Test
+    *//*@Test
     public void givenRangeLimits_whenWordsOutOfRangePresentInHeadlines_findsTheirIndexes() {
 
 
-    }*/
+    }*//*
 
-    /*@Test
+    *//*@Test
     public void givenRangeLimits_whenNoWordsOutOfRangePresentInHeadline_returnsEmptyArray() {
 
 
