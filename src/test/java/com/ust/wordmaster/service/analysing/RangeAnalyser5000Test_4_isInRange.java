@@ -25,7 +25,7 @@ class RangeAnalyser5000Test_4_isInRange {
     }
 
     @Test
-    void givenSearchOptionCaseUnchanged_findsCorrectly() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    void givenSearchOptionCaseUnchanged_whenSearchInDictionary_findsCorrectly() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
         Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_isInRange", String.class, int.class, int.class, RangeAnalyser5000.SearchOption.class);
         method.setAccessible(true);
@@ -70,7 +70,7 @@ class RangeAnalyser5000Test_4_isInRange {
     }
 
     @Test
-    void givenSearchOptionAllCases_findsCorrectly() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    void givenSearchOptionAllCases__whenSearchInDictionary_findsCorrectly() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
         Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_isInRange", String.class, int.class, int.class, RangeAnalyser5000.SearchOption.class);
         method.setAccessible(true);

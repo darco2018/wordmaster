@@ -4,11 +4,13 @@ import com.ust.wordmaster.dictionary.CorpusCSVFileParser;
 import com.ust.wordmaster.dictionary.CorpusDictionary5000;
 import com.ust.wordmaster.dictionary.DictionaryEntry;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -27,7 +29,7 @@ public class RangeAnalyser5000Test_5 {
     }
 
     @Test
-    void searchShortFormsInPredefinedSetFindsThem() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    void givenShortForms_searchInPredefinedSet_FindsThem() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
         Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_isShortFormInPredefinedSet", String.class, int.class);
         method.setAccessible(true);
@@ -45,7 +47,7 @@ public class RangeAnalyser5000Test_5 {
     }
 
     @Test
-    void searchShortFormsFindsThem() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    void givenSuffixesD_S_LL_searchFindsThem() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
         Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_isInDictAfterRemovingSuffixes_d_s_ll", String.class, int.class, int.class);
         method.setAccessible(true);
@@ -68,7 +70,7 @@ public class RangeAnalyser5000Test_5 {
     }
 
     @Test
-    void removesNonLetterChars() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    void removesLeadingTrailingNonLetterChars() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
         Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_removeLeadingTrailingSpecialChars", String.class);
         method.setAccessible(true);
@@ -79,11 +81,15 @@ public class RangeAnalyser5000Test_5 {
         assertEquals("word", method.invoke(rangeAnalyser5000, "word:"));
         assertEquals("girl", method.invoke(rangeAnalyser5000, "girl?!"));
         assertEquals("girl", method.invoke(rangeAnalyser5000, "[(girl)]"));
+        assertEquals("he's", method.invoke(rangeAnalyser5000, "he's"));
+        assertEquals("I'm", method.invoke(rangeAnalyser5000, "I'm"));
+        assertEquals("THEY'RE", method.invoke(rangeAnalyser5000, "THEY'RE"));
+        assertEquals("books", method.invoke(rangeAnalyser5000, "books'"));
     }
 
 
     @Test
-    void returnsOutOfRangeStrings() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    void givenListOfTokens_searchInDictionary_findsOutOfRangeStrings() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
         Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_getOutOfRangeStrings", List.class, int.class, int.class);
         method.setAccessible(true);
@@ -107,7 +113,7 @@ public class RangeAnalyser5000Test_5 {
     }
 
     @Test
-    void givenNegations_findsThemInRange() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    void givenNegations_searchInDictionary_findsThemInRange() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
         Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_getOutOfRangeStrings", List.class, int.class, int.class);
         method.setAccessible(true);
@@ -125,7 +131,7 @@ public class RangeAnalyser5000Test_5 {
     }
 
     @Test
-    void givenIrregularVerbs_findsThemInRange() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    void givenIrregularVerbs_searchInDictionary_findsThemInRange() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
         Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_getOutOfRangeStrings", List.class, int.class, int.class);
         method.setAccessible(true);
@@ -143,7 +149,7 @@ public class RangeAnalyser5000Test_5 {
     }
 
     @Test
-    void given_S_suffix_findsThemInRange() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    void given_S_suffix_searchInDictionary_findsThemInRange() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
         Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_getOutOfRangeStrings", List.class, int.class, int.class);
         method.setAccessible(true);
@@ -162,7 +168,7 @@ public class RangeAnalyser5000Test_5 {
     }
 
     @Test
-    void given_ED_suffix_findsThemInRange() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    void given_ED_suffix_searchInDictionary_findsThemInRange() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
         Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_getOutOfRangeStrings", List.class, int.class, int.class);
         method.setAccessible(true);
@@ -180,7 +186,7 @@ public class RangeAnalyser5000Test_5 {
     }
 
     @Test
-    void given_ING_suffix_findsThemInRange() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    void given_ING_suffix_searchInDictionary_findsThemInRange() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
         Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_getOutOfRangeStrings", List.class, int.class, int.class);
         method.setAccessible(true);
@@ -198,7 +204,7 @@ public class RangeAnalyser5000Test_5 {
     }
 
     @Test
-    void given_ER_suffix_findsThemInRange() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    void given_ER_suffix_searchInDictionary_findsThemInRange() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
         Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_getOutOfRangeStrings", List.class, int.class, int.class);
         method.setAccessible(true);
@@ -216,7 +222,7 @@ public class RangeAnalyser5000Test_5 {
     }
 
     @Test
-    void given_EST_suffix_findsThemInRange() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    void given_EST_suffix_searchInDictionary_findsThemInRange() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
         Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_getOutOfRangeStrings", List.class, int.class, int.class);
         method.setAccessible(true);
@@ -304,7 +310,7 @@ public class RangeAnalyser5000Test_5 {
     }
 
     @Test
-    void givenIrregularPastForm_searchFindsTokenAfterTransformationToBaseForm() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    void givenIrregularPastForm__searchInDictionary_findsTokenAfterTransformationToBaseForm() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
         Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_isInDictWhenIrregularVerbMappedToBaseForm", String.class, int.class, int.class);
         method.setAccessible(true);
@@ -317,7 +323,7 @@ public class RangeAnalyser5000Test_5 {
     }
 
     @Test
-    void given_S_suffix_searchFindsToken() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    void given_S_suffix_whenSuffixRemoved_searchFindsToken() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
         Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_isInDictAfterRemovingSuffix_S", String.class, int.class, int.class);
         method.setAccessible(true);
@@ -397,9 +403,82 @@ public class RangeAnalyser5000Test_5 {
         assertEquals(0, rangedText.getRangeStart());
         assertEquals(5000, rangedText.getRangeEnd());
         assertEquals("I like nonindictionary1 apples notindict2", rangedText.getText());
-        assertEquals(new ArrayList<>(List.of("nonindictionary1", "notindict2")).toString(), rangedText.getOutOfRangeWords().toString());
+        assertEquals(new ArrayList<>(List.of("nonindictionary1", "notindict2")).toString(), Arrays.toString(rangedText.getOutOfRangeWords()));
 
     }
 
+    @Test
+    void givenListOfSequences_searchInDict_findsOutOfRangeWords() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_findOutOfRangeWords", List.class, int.class, int.class );
+        method.setAccessible(true);
+
+        List<String> charSequences = new ArrayList<>();
+
+        String shortFormsInPredSet_0 = "He's I'm THEY'RE notindictionary1 The boys' books' notinDict2"; // in predefined set
+        String d_s_llSuffixes_1 = "Cat's notindictionary1 MOTHER's People'd Crowd'll notinDict2"; // in predefined set
+        String traiLeadChars_2 = "([boy]) *cat plan: notindictionary1 end... red@ really?! \"drink\" notinDict2 #woman 'stop' 'stop'?! (('stop'))";
+        String plurals_3 = "Pens CHILDREN notindictionary1 Feet girls notinDict2 NEWSPAPERS wolves";
+        String negations_4 = "isn't AREN'T Won't hadn't notindictionary1 HASN'T shan't notinDict2 weren't";
+        String irregularVerbs_5 = "went GONE notindictionary1 Drank Taken notinDict2 BEEN was were";
+        String s_Suffix_6 = "TAXES watches flies notindictionary1 Cries BOXES notinDict2 plays";
+        String ed_Suffix_7 = "placed Liked notindictionary1 TRIED played notinDict2";
+        String ing_suffix_8 = "notindictionary1 smiling  Working TRYING";
+        String er_suffix_9 = "notindictionary1  larger BIGGER  Crazier";
+        String er_suffix_10 = "notindictionary1  largest BIGGEST Craziest ";
+        String varia_11 = " a    AN  v Vs  _ -  *** notinDict2";
+
+        charSequences.add(shortFormsInPredSet_0);
+        charSequences.add(d_s_llSuffixes_1);
+        charSequences.add(traiLeadChars_2);
+        charSequences.add(plurals_3);
+        charSequences.add(negations_4);
+        charSequences.add(irregularVerbs_5);
+        charSequences.add(s_Suffix_6);
+        charSequences.add(ed_Suffix_7);
+        charSequences.add(ing_suffix_8);
+        charSequences.add(er_suffix_9);
+        charSequences.add(er_suffix_10);
+        charSequences.add(varia_11);
+
+        List<RangedText> rangedTexts = (List <RangedText>) method.invoke(rangeAnalyser5000, charSequences, 0, 5000);
+
+        assertEquals(0, rangedTexts.get(0).getRangeStart());
+        assertEquals(5000, rangedTexts.get(0).getRangeEnd());
+
+        assertEquals(new ArrayList<>(List.of("notindictionary1", "notinDict2")).toString(), Arrays.toString(rangedTexts.get(0).getOutOfRangeWords()));
+        assertEquals(new ArrayList<>(List.of("notindictionary1", "notinDict2")).toString(), Arrays.toString(rangedTexts.get(1).getOutOfRangeWords()));
+        assertEquals(new ArrayList<>(List.of("notindictionary1", "notinDict2")).toString(), Arrays.toString(rangedTexts.get(2).getOutOfRangeWords()));
+        assertEquals(new ArrayList<>(List.of("notindictionary1", "notinDict2")).toString(), Arrays.toString(rangedTexts.get(3).getOutOfRangeWords()));
+        assertEquals(new ArrayList<>(List.of("notindictionary1", "notinDict2")).toString(), Arrays.toString(rangedTexts.get(4).getOutOfRangeWords()));
+        assertEquals(new ArrayList<>(List.of("notindictionary1", "notinDict2")).toString(), Arrays.toString(rangedTexts.get(5).getOutOfRangeWords()));
+        assertEquals(new ArrayList<>(List.of("notindictionary1", "notinDict2")).toString(), Arrays.toString(rangedTexts.get(6).getOutOfRangeWords()));
+        assertEquals(new ArrayList<>(List.of("notindictionary1", "notinDict2")).toString(), Arrays.toString(rangedTexts.get(7).getOutOfRangeWords()));
+        assertEquals(new ArrayList<>(List.of("notindictionary1")).toString(), Arrays.toString(rangedTexts.get(8).getOutOfRangeWords()));
+        assertEquals(new ArrayList<>(List.of("notindictionary1")).toString(), Arrays.toString(rangedTexts.get(9).getOutOfRangeWords()));
+        assertEquals(new ArrayList<>(List.of("notindictionary1")).toString(), Arrays.toString(rangedTexts.get(10).getOutOfRangeWords()));
+        assertEquals(new ArrayList<>(List.of("notinDict2")).toString(), Arrays.toString(rangedTexts.get(11).getOutOfRangeWords()));
+
+    }
+
+    //todo remove
+    @Disabled
+    @Test
+    void stillFailing_searchInDict_findsOutOfRangeWords() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+        Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_findOutOfRangeWords", List.class, int.class, int.class );
+        method.setAccessible(true);
+
+        List<String> charSequences = new ArrayList<>();
+
+        String stillFailing_0 = "'stop' notinDict2";
+        charSequences.add(stillFailing_0);
+
+        List<RangedText> rangedTexts = (List <RangedText>) method.invoke(rangeAnalyser5000, charSequences, 0, 5000);
+
+        assertEquals(0, rangedTexts.get(0).getRangeStart());
+        assertEquals(5000, rangedTexts.get(0).getRangeEnd());
+        assertEquals(new ArrayList<>(List.of("notinDict2")).toString(), Arrays.toString(rangedTexts.get(0).getOutOfRangeWords()));
+    }
 
 }

@@ -168,6 +168,8 @@ public class RangeAnalyser5000 implements RangeAnalyser {
 
         for (String token : tokens) {
 
+            String originalToken = token;
+
             if (token == null || token.isEmpty() || token.isBlank()) {
                 continue; // skips adding the word to wordsOutsideRange
             } else {
@@ -181,6 +183,10 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             if (_containsSpecialChars(token)) {
 
                 token = _removeLeadingTrailingSpecialChars(token);
+
+                String containsLetters= ".*[a-zA-Z]+.*";
+                if(!token.matches(containsLetters))
+                    continue;
 
                 if (_isInRange(token, rangeStart, rangeEnd, SearchOption.CASE_UNCHANGED) ||
                         _isInRange(token, rangeStart, rangeEnd, SearchOption.CASE_ALL))
@@ -221,7 +227,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             if (_isInDictAfterRemovingSuffix_EST(token, rangeStart, rangeEnd))
                 continue;
 
-            wordsOutsideRange.add(token);
+            wordsOutsideRange.add(originalToken);
         }
 
         return wordsOutsideRange;
@@ -640,8 +646,19 @@ public class RangeAnalyser5000 implements RangeAnalyser {
     }
 
     private String _removeLeadingTrailingSpecialChars(String token) {
+        Pattern regex = null;
+        if(token.endsWith("s'") || token.endsWith("S'")){ // $(books'   @#boys' => books, boys
+             regex = Pattern.compile("[a-zA-Z]+");
+        } else {
+            if(token.matches("[^a-zA-Z']*'[a-zA-Z]+'[^a-zA-Z']*")){
+                regex = Pattern.compile("[a-zA-Z]+"); // 'stop'  ('stop') 'stop'?! => stop
+            } else {
+                regex = Pattern.compile("[a-zA-Z]+'*[a-zA-Z]*"); // $(azaz'az)*
+            }
 
-        Pattern regex = Pattern.compile("[a-zA-Z]+'*[a-zA-Z]"); // $(azaz'az)*
+
+        }
+
         Matcher matcher = regex.matcher(token);
 
         while (matcher.find()) {
