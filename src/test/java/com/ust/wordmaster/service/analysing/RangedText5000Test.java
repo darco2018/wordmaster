@@ -1,7 +1,5 @@
 package com.ust.wordmaster.service.analysing;
 
-import com.ust.wordmaster.service.analysing.RangedText;
-import com.ust.wordmaster.service.analysing.RangedText5000;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -10,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class RangedText5000Test {
 
-    private static String text = "I like stupendous ravioli and music";
-    private static int rangeStart = 0;
-    private static int rangeEnd = 5000;
-    private static String[] outOfRangeWords = new String[]{"stupendous", "ravioli"};
+    private static final String text = "I like stupendous ravioli and music";
+    private static final int rangeStart = 0;
+    private static final int rangeEnd = 5000;
+    private static final String[] outOfRangeWords = new String[]{"stupendous", "ravioli"};
     private static RangedText rangedText;
 
     @BeforeAll

@@ -18,7 +18,7 @@ import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class) // Initializes mocks annotated with @Mock, so that explicit usage of
 // MockitoAnnotations#initMocks(Object) is not necessary. Mocks are initialized before each test method.
-public class RangeAnalyser5000_MockitoTest {
+ class RangeAnalyser5000_MockitoTest {
 
     /*@Mock
     private CorpusDictionary mockedCorpus;

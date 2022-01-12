@@ -2,15 +2,13 @@ package com.ust.wordmaster.service.analysing;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 class IrregularVerbsConverterTest {
@@ -30,21 +28,21 @@ class IrregularVerbsConverterTest {
 
         assertEquals("smell", converter.convertToBaseForm("smelled"));
         assertEquals("smell", converter.convertToBaseForm("smelt"));
-        assertEquals(null, converter.convertToBaseForm("smell"));
+        assertNull(converter.convertToBaseForm("smell"));
 
         assertEquals("tread", converter.convertToBaseForm("treaded"));
         assertEquals("tread", converter.convertToBaseForm("trod"));
         assertEquals("tread", converter.convertToBaseForm("trodden"));
-        assertEquals(null, converter.convertToBaseForm("tread"));
+        assertNull(converter.convertToBaseForm("tread"));
 
         assertEquals("can", converter.convertToBaseForm("could"));
     }
+    @Test
+    public void whenWordIsNotIrregularVerbFrom_returnsNull() {
 
-    public void whenWordIsNotIrregularVerbFrom_returnsWord() {
-
-        assertEquals("play", converter.convertToBaseForm("play"));
-        assertEquals("book", converter.convertToBaseForm("book"));
-        assertEquals("nonsense", converter.convertToBaseForm("nonsense"));
+        assertNull( converter.convertToBaseForm("play"));
+        assertNull( converter.convertToBaseForm("book"));
+        assertNull(converter.convertToBaseForm("nonsense"));
 
     }
 

@@ -13,7 +13,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class RangeAnalyser5000Test_4_isInRange {
+class RangeAnalyser5000Test_1_isInRange {
 
     public static final String DICTIONARY_FILE = "dictionary5000.csv";
     private static CorpusDictionary5000 corpusDictionary; // tests specific for CorpusDictionary5000
