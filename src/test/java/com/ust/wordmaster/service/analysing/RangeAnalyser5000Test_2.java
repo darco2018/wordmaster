@@ -86,7 +86,6 @@ import static org.junit.jupiter.api.Assertions.*;
         assertEquals("books", method.invoke(rangeAnalyser5000, "books'"));
     }
 
-
     @Test
     void givenListOfTokens_searchInDictionary_findsOutOfRangeStrings() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
@@ -289,10 +288,7 @@ import static org.junit.jupiter.api.Assertions.*;
         assertTrue((boolean) method.invoke(rangeAnalyser5000, "an", 0, 5000));
         assertTrue((boolean) method.invoke(rangeAnalyser5000, "AN", 0, 5000));
 
-        assertTrue((boolean) method.invoke(rangeAnalyser5000, "theatre", 0, 5000));
-        assertTrue((boolean) method.invoke(rangeAnalyser5000, "worst", 0, 5000));
     }
-
 
     @Test
     void givenNagations_searchFindsTokenAfterTransformationToVerb() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
@@ -406,6 +402,23 @@ import static org.junit.jupiter.api.Assertions.*;
 
     }
 
+     @Test
+     void given_BritishSpelling_searchFindsToken() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
+         Method method = rangeAnalyser5000.getClass().getDeclaredMethod("_isInDictAsAmericanSpelling", String.class, int.class, int.class);
+         method.setAccessible(true);
+
+         assertTrue((boolean) method.invoke(rangeAnalyser5000, "apologise", 0, 5000));
+         assertTrue((boolean) method.invoke(rangeAnalyser5000, "analyse", 0, 5000));
+         assertTrue((boolean) method.invoke(rangeAnalyser5000, "colour", 0, 5000));
+         assertTrue((boolean) method.invoke(rangeAnalyser5000, "centre", 0, 5000));
+         assertTrue((boolean) method.invoke(rangeAnalyser5000, "catalogue", 0, 5000));
+         assertTrue((boolean) method.invoke(rangeAnalyser5000, "defence", 0, 5000));
+         assertTrue((boolean) method.invoke(rangeAnalyser5000, "enrol", 0, 5000));
+
+
+     }
+
     @Test
     void givenListOfSequences_searchInDict_findsOutOfRangeWords() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
@@ -415,7 +428,7 @@ import static org.junit.jupiter.api.Assertions.*;
         List<String> charSequences = new ArrayList<>();
 
         String shortFormsInPredSet_0 = "He's I'm THEY'RE notindictionary1 The boys' books' notinDict2"; // in predefined set
-        String d_s_llSuffixes_1 = "Cat's notindictionary1 MOTHER's People'd Crowd'll notinDict2"; // in predefined set
+        String d_s_llSuffixes_1 = "Cat's notindictionary1 MOTHER's People'd Crowd'll notinDict2 children's people's mice's"; // in predefined set
         String traiLeadChars_2 = "([boy]) *cat plan: notindictionary1 end... red@ really?! \"drink\" notinDict2 #woman 'stop' 'stop'?! (('stop'))";
         String plurals_3 = "Pens CHILDREN notindictionary1 Feet girls notinDict2 NEWSPAPERS wolves";
         String negations_4 = "isn't AREN'T Won't hadn't notindictionary1 HASN'T shan't notinDict2 weren't";
@@ -428,6 +441,7 @@ import static org.junit.jupiter.api.Assertions.*;
         String varia_11 = " a  am AM PM aids AIDS Aids  AN  v Vs  _ -  *** notinDict2";
         String emptyString_12 = "";
         String blankString_13 = " ";
+        String britishSpelling_14 = "apologise analyse colour centre catalogue defence notinDict2 enrol";
 
         charSequences.add(shortFormsInPredSet_0);
         charSequences.add(d_s_llSuffixes_1);
@@ -443,6 +457,7 @@ import static org.junit.jupiter.api.Assertions.*;
         charSequences.add(varia_11);
         charSequences.add(emptyString_12);
         charSequences.add(blankString_13);
+        charSequences.add(britishSpelling_14);
 
         List<RangedText> rangedTexts = (List <RangedText>) method.invoke(rangeAnalyser5000, charSequences, 0, 5000);
 
@@ -463,6 +478,7 @@ import static org.junit.jupiter.api.Assertions.*;
         assertEquals(new ArrayList<>(List.of("notinDict2")).toString(), Arrays.toString(rangedTexts.get(11).getOutOfRangeWords()));
         assertEquals("[]", Arrays.toString(rangedTexts.get(12).getOutOfRangeWords()));
         assertEquals("[]", Arrays.toString(rangedTexts.get(13).getOutOfRangeWords()));
+        assertEquals(new ArrayList<>(List.of("notinDict2")).toString(), Arrays.toString(rangedTexts.get(14).getOutOfRangeWords()));
 
     }
 

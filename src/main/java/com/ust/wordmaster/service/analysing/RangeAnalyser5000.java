@@ -63,9 +63,6 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             entry("worse", "bad"),
             entry("worst", "bad"),
 
-            entry("metre", "meter"),
-            entry("theatre", "theater"),
-
             entry("an", "a"),
             entry("v", "vs"),
             entry("lying", "lie")
@@ -182,11 +179,54 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             if (_isInDictAfterRemovingSuffix_EST(token, rangeStart, rangeEnd))
                 continue;
 
+            if (_isInDictAsAmericanSpelling(token, rangeStart, rangeEnd))
+                continue;
+
             wordsOutsideRange.add(originalToken);
         }
 
         return wordsOutsideRange;
 
+    }
+
+    private boolean _isInDictAsAmericanSpelling(String token, int rangeStart, int rangeEnd) {
+
+        if(token.length() >= 5 && token.endsWith("ise") || token.endsWith("ISE") ){
+            String americanSpelling = token.substring(0, token.length() - 3) + "ize";
+            return _isInRange(americanSpelling, rangeStart, rangeEnd, SearchOption.CASE_ALL);
+        }
+
+        if(token.length() >= 5 && token.endsWith("lyse") || token.endsWith("LYSE") ){
+            String americanSpelling = token.substring(0, token.length() - 4) + "lyze";
+            return _isInRange(americanSpelling, rangeStart, rangeEnd, SearchOption.CASE_ALL);
+        }
+
+        if(token.length() >= 5 && token.endsWith("our") || token.endsWith("OUR") ){
+            String americanSpelling = token.substring(0, token.length() - 3) + "or";
+            return _isInRange(americanSpelling, rangeStart, rangeEnd, SearchOption.CASE_ALL);
+        }
+
+        if(token.length() >= 5 && token.endsWith("tre") || token.endsWith("TRE") ){
+            String americanSpelling = token.substring(0, token.length() - 3) + "ter";
+            return _isInRange(americanSpelling, rangeStart, rangeEnd, SearchOption.CASE_ALL);
+        }
+
+        if(token.length() >= 7 && token.endsWith("logue") || token.endsWith("LOGUE") ){
+            String americanSpelling = token.substring(0, token.length() - 5) + "log";
+            return _isInRange(americanSpelling, rangeStart, rangeEnd, SearchOption.CASE_ALL);
+        }
+
+        if(token.length() >= 5 && token.endsWith("ence") || token.endsWith("ENCE") ){
+            String americanSpelling = token.substring(0, token.length() - 4) + "ense";
+            return _isInRange(americanSpelling, rangeStart, rangeEnd, SearchOption.CASE_ALL);
+        }
+
+        if(token.length() >= 4 && token.endsWith("l") || token.endsWith("L") ){
+            String americanSpelling = token.substring(0, token.length() - 1) + "ll";
+            return _isInRange(americanSpelling, rangeStart, rangeEnd, SearchOption.CASE_ALL);
+        }
+
+        return false;
     }
 
     private boolean _isInDictWhenNegationMappedToBaseForm(String token, int rangeStart, int rangeEnd) {
