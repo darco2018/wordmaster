@@ -34,7 +34,6 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             entry("wouldn't", "would"),
             entry("can't", "can"),
             entry("couldn't", "could"),
-            entry("shan't", "shall"),
             entry("shouldn't", "should")
     );
 
@@ -182,11 +181,26 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             if (_isInDictAsAmericanSpelling(token, rangeStart, rangeEnd))
                 continue;
 
-            wordsOutsideRange.add(originalToken);
+            //convert to method if more exceptions
+            if(token.matches("shan") || token.matches("shan't")){
+                wordsOutsideRange.add("shan't");
+            } else {
+                wordsOutsideRange.add(_preserveOnlyLettersDigits(originalToken));
+            }
+
         }
 
         return wordsOutsideRange;
 
+    }
+
+    private String _preserveOnlyLettersDigits(String token) {
+        String onlyLettersDigits = "[a-zA-Z1-9]+";
+        Matcher matcher = Pattern.compile(onlyLettersDigits).matcher(token);
+        while (matcher.find()) {
+            return matcher.group();
+        }
+        return token;
     }
 
     private boolean _isInDictAsAmericanSpelling(String token, int rangeStart, int rangeEnd) {
@@ -226,6 +240,8 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             return _isInRange(americanSpelling, rangeStart, rangeEnd, SearchOption.CASE_ALL);
         }
 
+        if(token.equalsIgnoreCase("programme"))
+            return _isInRange("program", rangeStart, rangeEnd, SearchOption.CASE_ALL);
         return false;
     }
 
@@ -319,8 +335,9 @@ public class RangeAnalyser5000 implements RangeAnalyser {
         if (token.endsWith("s'") || token.endsWith("S'")) { // $(books'   @#boys' => books, boys
             regex = Pattern.compile("[a-zA-Z]+");
         } else {
-            if (token.matches("[^a-zA-Z']*'[a-zA-Z]+'[^a-zA-Z']*")) {
-                regex = Pattern.compile("[a-zA-Z]+"); // 'stop'  ('stop') 'stop'?! => stop
+            String oneOfTwoQuotes = "[^a-zA-Z']*'*[a-zA-Z]+'*[^a-zA-Z']*"; // 'stop' stop'  ('stop') 'stop'!! => stop
+            if (token.matches(oneOfTwoQuotes)) {
+                regex = Pattern.compile("[a-zA-Z]+");
             } else {
                 regex = Pattern.compile("[a-zA-Z]+'*[a-zA-Z]*"); // $(azaz'az)*
             }
