@@ -3,7 +3,6 @@ package com.ust.wordmaster.controller;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.ust.wordmaster.service.analysing.RangedText;
 import lombok.Getter;
 
 import java.util.List;
@@ -26,7 +25,7 @@ public class RangedHeadlineDTO {
 
     // these result from processing
     @JsonProperty("headlines")
-    private List<RangedText> rangedTextList;
+    private List<RangedTextDTO> rangedTextDTOList;
     @JsonProperty("dataSize")
     private int size;
 
@@ -55,10 +54,10 @@ public class RangedHeadlineDTO {
         this.rangeEnd = rangeEnd;
     }
 
-    public void setRangedTextList(List<RangedText> rangedTextList) {
-        Objects.requireNonNull(rangedTextList, "List of ranged texts cannot be null");
-        this.rangedTextList = rangedTextList;
-        this.size = this.rangedTextList.size();
+    public void setRangedTextList(List<RangedTextDTO> rangedTextDTOList) {
+        Objects.requireNonNull(rangedTextDTOList, "List of ranged texts cannot be null");
+        this.rangedTextDTOList = rangedTextDTOList;
+        this.size = this.rangedTextDTOList.size();
     }
 
 }

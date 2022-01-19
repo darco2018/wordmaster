@@ -2,6 +2,7 @@ package com.ust.wordmaster;
 
 import com.ust.wordmaster.controller.PostProcessor;
 import com.ust.wordmaster.controller.RangedHeadlineDTO;
+import com.ust.wordmaster.controller.RangedTextDTO;
 import com.ust.wordmaster.dictionary.CorpusDictionary;
 import com.ust.wordmaster.service.analysing.RangeAnalyser;
 import com.ust.wordmaster.service.analysing.RangeAnalyser5000;
@@ -18,6 +19,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -96,13 +98,20 @@ public class BBCHeadlinesFacade {
     }
 
     private RangedHeadlineDTO buildRangedHeadlineDTO(int rangeStart, int rangeEnd, List<RangedText> rangedTextList) {
+
         RangedHeadlineDTO responseDTO = new RangedHeadlineDTO();
-        responseDTO.setRangedTextList(rangedTextList);
         responseDTO.setSource(websiteURL);
         responseDTO.setRangeStart(rangeStart);
         responseDTO.setRangeEnd(rangeEnd);
         responseDTO.setDescription("Headlines processed against 5000 dictionary to show words out of the requested range");
         responseDTO.setVersion("1.0");
+
+        List<RangedTextDTO> rangedTextDTOList = rangedTextList.stream()
+                .map(text -> new RangedTextDTO(text.getText(), text.getOutOfRangeWords()))
+                .collect(Collectors.toList());
+
+        responseDTO.setRangedTextList(rangedTextDTOList);
+
         return responseDTO;
     }
 
