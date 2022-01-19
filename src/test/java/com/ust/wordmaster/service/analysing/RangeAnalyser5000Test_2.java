@@ -4,7 +4,6 @@ import com.ust.wordmaster.dictionary.CorpusCSVFileParser;
 import com.ust.wordmaster.dictionary.CorpusDictionary5000;
 import com.ust.wordmaster.dictionary.DictionaryEntry;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
@@ -439,7 +438,8 @@ class RangeAnalyser5000Test_2 {
         String varia_11 = " a  am AM PM aids AIDS Aids  AN  v Vs  _ -  *** notinDict2";
         String emptyString_12 = "";
         String blankString_13 = " ";
-        String britishSpelling_14 = "apologise analyse colour centre catalogue defence notinDict2 enrol programme";
+        String britishSpelling_14 = "apologise apologised apologising apologises analyse  centre catalogue defence notinDict2 enrol programme " +
+                "colour colours coloures colourer colourest coloured colouring";
         String apostrophes_15 = "'People notinDict2 'like' wine'";
         String notFoundInDictWithNonLetterChars_16 = "quiz: splendor's 5G shan't";
 
@@ -486,7 +486,7 @@ class RangeAnalyser5000Test_2 {
     }
 
     //todo remove
-    @Disabled
+    //@Disabled
     @Test
     void stillFailing_searchInDict_findsOutOfRangeWords() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         RangeAnalyser5000 rangeAnalyser5000 = new RangeAnalyser5000(corpusDictionary);
@@ -494,7 +494,7 @@ class RangeAnalyser5000Test_2 {
         method.setAccessible(true);
 
         List<String> charSequences = new ArrayList<>();
-        String stillFailing_0 = "notinDict2";
+        String stillFailing_0 = "coloures colourer colourest  coloured colour colouring colours notinDict2";
 
 
         charSequences.add(stillFailing_0);
