@@ -2,6 +2,7 @@ package com.ust.wordmaster.service.analysing;
 
 import com.ust.wordmaster.dictionary.CorpusDictionary;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -10,7 +11,7 @@ import java.util.regex.Pattern;
 import static java.util.Map.entry;
 
 @Slf4j
-//@Service
+@Service
 public class RangeAnalyser5000 implements RangeAnalyser {
 
     private static final Set<String> SHORT_FORMS = Set.of("i'd", "he'd", "she'd", "we'd", "you'd", "they'd",

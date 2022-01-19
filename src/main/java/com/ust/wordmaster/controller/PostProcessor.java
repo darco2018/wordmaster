@@ -2,28 +2,38 @@ package com.ust.wordmaster.controller;
 
 import com.ust.wordmaster.service.analysing.RangedText;
 import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+@Service
 @NoArgsConstructor
 public class PostProcessor {
 
-    public static List<RangedText> postprocess(List<RangedText> list, String website) {
+    public void postprocess(List<RangedText> list, String website) {
 
         if (website.equalsIgnoreCase("bbc"))
             skipFirstHeadlineBBC(list);
 
         skipNumbersInOutOfRangeWords(list);
         removeTitleCaseWords(list);
-
-        return list;
     }
 
     private static void removeTitleCaseWords(List<RangedText> list) {
         // not implemented
+        list = list.stream()
+                .map(text -> {
+                    text.setOutOfRangeWords(Arrays.stream(text.getOutOfRangeWords())
+                            .filter(word -> Character.isLowerCase(word.charAt(0)))
+                            .collect(Collectors.toList()).toArray(new String[0]));
+
+                    return text;
+                }).collect(Collectors.toList());
 
     }
 

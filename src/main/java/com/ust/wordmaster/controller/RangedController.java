@@ -1,6 +1,6 @@
 package com.ust.wordmaster.controller;
 
-import com.ust.wordmaster.BBCHeadlinesFacade;
+import com.ust.wordmaster.HeadlinesFacade;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class RangedController {
 
-    private final BBCHeadlinesFacade facade;
+    private final HeadlinesFacade facade;
 
-    public RangedController(BBCHeadlinesFacade facade) {
+    public RangedController(HeadlinesFacade facade) {
         this.facade = facade;
     }
 
