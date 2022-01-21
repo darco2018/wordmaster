@@ -186,7 +186,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
                 continue;
 
             //extract into method if more exceptions
-            if(token.matches("shan") || token.matches("shan't")){
+            if (token.matches("shan") || token.matches("shan't")) {
                 wordsOutsideRange.add("shan't");
             } else {
                 wordsOutsideRange.add(_preserveOnlyLettersDigits(originalToken));
@@ -209,42 +209,42 @@ public class RangeAnalyser5000 implements RangeAnalyser {
 
     private boolean _isInDictAsAmericanSpelling(String token, int rangeStart, int rangeEnd) {
 
-        if(token.length() >= 5 && token.endsWith("ise") || token.endsWith("ISE") ){
+        if (token.length() >= 5 && token.endsWith("ise") || token.endsWith("ISE")) {
             String americanSpelling = token.substring(0, token.length() - 3) + "ize";
             return _isInRange(americanSpelling, rangeStart, rangeEnd, SearchOption.CASE_ALL);
         }
 
-        if(token.length() >= 5 && token.endsWith("lyse") || token.endsWith("LYSE") ){
+        if (token.length() >= 5 && token.endsWith("lyse") || token.endsWith("LYSE")) {
             String americanSpelling = token.substring(0, token.length() - 4) + "lyze";
             return _isInRange(americanSpelling, rangeStart, rangeEnd, SearchOption.CASE_ALL);
         }
 
-        if(token.length() >= 5 && token.endsWith("our") || token.endsWith("OUR") ){
+        if (token.length() >= 5 && token.endsWith("our") || token.endsWith("OUR")) {
             String americanSpelling = token.substring(0, token.length() - 3) + "or";
             return _isInRange(americanSpelling, rangeStart, rangeEnd, SearchOption.CASE_ALL);
         }
 
-        if(token.length() >= 5 && token.endsWith("tre") || token.endsWith("TRE") ){
+        if (token.length() >= 5 && token.endsWith("tre") || token.endsWith("TRE")) {
             String americanSpelling = token.substring(0, token.length() - 3) + "ter";
             return _isInRange(americanSpelling, rangeStart, rangeEnd, SearchOption.CASE_ALL);
         }
 
-        if(token.length() >= 7 && token.endsWith("logue") || token.endsWith("LOGUE") ){
+        if (token.length() >= 7 && token.endsWith("logue") || token.endsWith("LOGUE")) {
             String americanSpelling = token.substring(0, token.length() - 5) + "log";
             return _isInRange(americanSpelling, rangeStart, rangeEnd, SearchOption.CASE_ALL);
         }
 
-        if(token.length() >= 5 && token.endsWith("ence") || token.endsWith("ENCE") ){
+        if (token.length() >= 5 && token.endsWith("ence") || token.endsWith("ENCE")) {
             String americanSpelling = token.substring(0, token.length() - 4) + "ense";
             return _isInRange(americanSpelling, rangeStart, rangeEnd, SearchOption.CASE_ALL);
         }
 
-        if(token.length() >= 4 && token.endsWith("l") || token.endsWith("L") ){
+        if (token.length() >= 4 && token.endsWith("l") || token.endsWith("L")) {
             String americanSpelling = token.substring(0, token.length() - 1) + "ll";
             return _isInRange(americanSpelling, rangeStart, rangeEnd, SearchOption.CASE_ALL);
         }
 
-        if(token.equalsIgnoreCase("programme"))
+        if (token.equalsIgnoreCase("programme"))
             return _isInRange("program", rangeStart, rangeEnd, SearchOption.CASE_ALL);
         return false;
     }
@@ -298,14 +298,14 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             case CASE_UNCHANGED:
                 return this.corpusDictionary.isHeadwordInRankRange(headword, rangeStart, rangeEnd);
             case CASE_ALL:
+            default:
                 String titleCase = headword.length() > 1 ? headword.substring(0, 1).toUpperCase() +
                         headword.toLowerCase().substring(1) : headword;
                 return this.corpusDictionary.isHeadwordInRankRange(headword, rangeStart, rangeEnd) ||
                         this.corpusDictionary.isHeadwordInRankRange(headword.toLowerCase(), rangeStart, rangeEnd) ||
                         this.corpusDictionary.isHeadwordInRankRange(headword.toUpperCase(), rangeStart, rangeEnd) ||
                         this.corpusDictionary.isHeadwordInRankRange(titleCase, rangeStart, rangeEnd);
-            default:
-                return this.corpusDictionary.containsHeadword(headword);
+
         }
 
     }
@@ -366,7 +366,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
         if (token.length() >= 3 && (token.endsWith("s") || token.endsWith("S"))) {
             String withoutS = token.substring(0, token.length() - 1);
             isInRange = _isInRange(withoutS, rangeStart, rangeEnd, SearchOption.CASE_ALL);
-            if(!isInRange){
+            if (!isInRange) {
                 isInRange = _isInDictAsAmericanSpelling(withoutS, rangeStart, rangeEnd);
             }
 
@@ -375,7 +375,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             if (!isInRange && (token.endsWith("es") || token.endsWith("ES"))) {
                 String withoutES = token.substring(0, token.length() - 2);
                 isInRange = _isInRange(withoutES, rangeStart, rangeEnd, SearchOption.CASE_ALL);
-                if(!isInRange){
+                if (!isInRange) {
                     isInRange = _isInDictAsAmericanSpelling(withoutES, rangeStart, rangeEnd);
                 }
             }
@@ -384,7 +384,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             if (!isInRange && token.length() >= 4 && (token.endsWith("ies") || token.endsWith("IES"))) {
                 String withoutIES = token.substring(0, token.length() - 3) + "y";
                 isInRange = _isInRange(withoutIES, rangeStart, rangeEnd, SearchOption.CASE_ALL);
-                if(!isInRange){
+                if (!isInRange) {
                     isInRange = _isInDictAsAmericanSpelling(withoutIES, rangeStart, rangeEnd);
                 }
             }
@@ -398,7 +398,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
         if (token.length() >= 4 && (token.endsWith("d") || token.endsWith("D"))) {
             String withoutD = token.substring(0, token.length() - 1);
             isInRange = _isInRange(withoutD, rangeStart, rangeEnd, SearchOption.CASE_ALL);
-            if(!isInRange){
+            if (!isInRange) {
                 isInRange = _isInDictAsAmericanSpelling(withoutD, rangeStart, rangeEnd);
             }
 
@@ -406,7 +406,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             if (!isInRange && (token.endsWith("ed") || token.endsWith("ED"))) {
                 String withoutED = token.substring(0, token.length() - 2);
                 isInRange = _isInRange(withoutED, rangeStart, rangeEnd, SearchOption.CASE_ALL);
-                if(!isInRange){
+                if (!isInRange) {
                     isInRange = _isInDictAsAmericanSpelling(withoutED, rangeStart, rangeEnd);
                 }
             }
@@ -414,7 +414,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             if (!isInRange && (token.endsWith("ied") || token.endsWith("IED"))) {
                 String withoutIED = token.substring(0, token.length() - 3) + "y";
                 isInRange = _isInRange(withoutIED, rangeStart, rangeEnd, SearchOption.CASE_ALL);
-                if(!isInRange){
+                if (!isInRange) {
                     isInRange = _isInDictAsAmericanSpelling(withoutIED, rangeStart, rangeEnd);
                 }
             }
@@ -427,14 +427,14 @@ public class RangeAnalyser5000 implements RangeAnalyser {
         if (token.length() >= 4 && (token.endsWith("ing") || token.endsWith("ING"))) {
             String withoutING = token.substring(0, token.length() - 3);
             isInRange = _isInRange(withoutING, rangeStart, rangeEnd, SearchOption.CASE_ALL);
-            if(!isInRange){
+            if (!isInRange) {
                 isInRange = _isInDictAsAmericanSpelling(withoutING, rangeStart, rangeEnd);
             }
 
             if (!isInRange) {  // taking
                 withoutING += "e";
                 isInRange = _isInRange(withoutING, rangeStart, rangeEnd, SearchOption.CASE_ALL);
-                if(!isInRange){
+                if (!isInRange) {
                     isInRange = _isInDictAsAmericanSpelling(withoutING, rangeStart, rangeEnd);
                 }
             }
@@ -442,7 +442,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             if (!isInRange) {  // sitting
                 withoutING = token.substring(0, token.length() - 4); // ting
                 isInRange = _isInRange(withoutING, rangeStart, rangeEnd, SearchOption.CASE_ALL);
-                if(!isInRange){
+                if (!isInRange) {
                     isInRange = _isInDictAsAmericanSpelling(withoutING, rangeStart, rangeEnd);
                 }
             }
@@ -456,14 +456,14 @@ public class RangeAnalyser5000 implements RangeAnalyser {
         if (token.length() >= 5 && (token.endsWith("er") || token.endsWith("ER"))) {
             String withoutER = token.substring(0, token.length() - 2);
             isInRange = _isInRange(withoutER, rangeStart, rangeEnd, SearchOption.CASE_ALL);
-            if(!isInRange){
+            if (!isInRange) {
                 isInRange = _isInDictAsAmericanSpelling(withoutER, rangeStart, rangeEnd);
             }
 
             if (!isInRange) {
                 String withoutR = token.substring(0, token.length() - 1); //  large-r,
                 isInRange = _isInRange(withoutR, rangeStart, rangeEnd, SearchOption.CASE_ALL);
-                if(!isInRange){
+                if (!isInRange) {
                     isInRange = _isInDictAsAmericanSpelling(withoutR, rangeStart, rangeEnd);
                 }
             }
@@ -471,7 +471,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             if (!isInRange) {
                 String withoutXER = token.substring(0, token.length() - 3); //  big-ger,
                 isInRange = _isInRange(withoutXER, rangeStart, rangeEnd, SearchOption.CASE_ALL);
-                if(!isInRange){
+                if (!isInRange) {
                     isInRange = _isInDictAsAmericanSpelling(withoutXER, rangeStart, rangeEnd);
                 }
             }
@@ -479,7 +479,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             if (!isInRange && (token.endsWith("ier") || token.endsWith("IER"))) {
                 String withoutIER = token.substring(0, token.length() - 3) + "y"; // crazy-> craz-ier big-ger,
                 isInRange = _isInRange(withoutIER, rangeStart, rangeEnd, SearchOption.CASE_ALL);
-                if(!isInRange){
+                if (!isInRange) {
                     isInRange = _isInDictAsAmericanSpelling(withoutIER, rangeStart, rangeEnd);
                 }
             }
@@ -492,7 +492,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
         if (token.length() >= 4 && (token.endsWith("st") || token.endsWith("ST"))) {
             String withoutST = token.substring(0, token.length() - 2);
             isInRange = _isInRange(withoutST, rangeStart, rangeEnd, SearchOption.CASE_ALL);
-            if(!isInRange){
+            if (!isInRange) {
                 isInRange = _isInDictAsAmericanSpelling(withoutST, rangeStart, rangeEnd);
             }
 
@@ -500,7 +500,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             if (!isInRange && token.length() >= 5 && (token.endsWith("est") || token.endsWith("EST"))) {
                 String withoutEST = token.substring(0, token.length() - 3);
                 isInRange = _isInRange(withoutEST, rangeStart, rangeEnd, SearchOption.CASE_ALL);
-                if(!isInRange){
+                if (!isInRange) {
                     isInRange = _isInDictAsAmericanSpelling(withoutEST, rangeStart, rangeEnd);
                 }
             }
@@ -508,7 +508,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             if (!isInRange && token.length() >= 7 && (token.endsWith("est") || token.endsWith("EST"))) {  //big-gest
                 String withoutXEST = token.substring(0, token.length() - 4);
                 isInRange = _isInRange(withoutXEST, rangeStart, rangeEnd, SearchOption.CASE_ALL);
-                if(!isInRange){
+                if (!isInRange) {
                     isInRange = _isInDictAsAmericanSpelling(withoutXEST, rangeStart, rangeEnd);
                 }
             }
@@ -516,7 +516,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             if (!isInRange && token.length() >= 6 && (token.endsWith("iest") || token.endsWith("IEST"))) {
                 String withoutIEST = token.substring(0, token.length() - 4) + "y"; // craz-iest dr-iest
                 isInRange = _isInRange(withoutIEST, rangeStart, rangeEnd, SearchOption.CASE_ALL);
-                if(!isInRange){
+                if (!isInRange) {
                     isInRange = _isInDictAsAmericanSpelling(withoutIEST, rangeStart, rangeEnd);
                 }
             }
