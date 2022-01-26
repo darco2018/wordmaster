@@ -14,7 +14,7 @@
 	<name>Word Master</name>
 	<description>App for learning vocabulary</description>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
