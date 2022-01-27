@@ -67,8 +67,8 @@ class IrregularVerbsConverterTest {
                 (List<IrregularVerbsConverter.IrregularVerb>) method.invoke(converter);
 
         assertEquals(176, irregularVerbs.size());
-        assertTrue(irregularVerbs.get(0).getBase().equalsIgnoreCase("abide"));
-        assertTrue(irregularVerbs.get(irregularVerbs.size() - 2).getBase().equalsIgnoreCase("wring"));
-        assertTrue(irregularVerbs.get(irregularVerbs.size() - 1).getBase().equalsIgnoreCase("write"));
+        assertTrue(irregularVerbs.get(0).base().equalsIgnoreCase("abide"));
+        assertTrue(irregularVerbs.get(irregularVerbs.size() - 2).base().equalsIgnoreCase("wring"));
+        assertTrue(irregularVerbs.get(irregularVerbs.size() - 1).base().equalsIgnoreCase("write"));
     }
 }

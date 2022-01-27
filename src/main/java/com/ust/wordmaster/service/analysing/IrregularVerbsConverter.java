@@ -19,11 +19,11 @@ public class IrregularVerbsConverter {
         Map<String, String> baseFormPastForms = new HashMap<>();
 
         irregularVerbList.forEach(verb -> {
-            Arrays.stream(verb.getPastSimple().split("/"))
-                    .forEach(pastSimple -> baseFormPastForms.put(pastSimple, verb.getBase()));
+            Arrays.stream(verb.pastSimple().split("/"))
+                    .forEach(pastSimple -> baseFormPastForms.put(pastSimple, verb.base()));
 
-            Arrays.stream(verb.getPastParticiple().split("/"))
-                    .forEach(pastParticiple -> baseFormPastForms.put(pastParticiple, verb.getBase()));
+            Arrays.stream(verb.pastParticiple().split("/"))
+                    .forEach(pastParticiple -> baseFormPastForms.put(pastParticiple, verb.base()));
         });
 
         return baseFormPastForms;
@@ -39,7 +39,7 @@ public class IrregularVerbsConverter {
         List<IrregularVerb> irregularVerbList = new ArrayList<>(200);
 
         Objects.requireNonNull(lines).stream()
-                .map(String::trim)
+                .map(String::strip)
                 .map(line -> line.split("\\s+"))
                 .forEach(arr -> {
                     if (arr.length == 3 || arr.length == 6) {
@@ -61,37 +61,11 @@ public class IrregularVerbsConverter {
         return word != null ? conversionMap.getOrDefault(word.toLowerCase(), null) : null;
     }
 
-    static class IrregularVerb implements Comparable<IrregularVerb> {
-        private final String base;
-        private final String pastSimple;
-        private final String pastParticiple;
-
-        public IrregularVerb(String base, String pastSimple, String pastParticiple) {
-            this.base = base;
-            this.pastSimple = pastSimple;
-            this.pastParticiple = pastParticiple;
-        }
-
-        public String getBase() {
-            return base;
-        }
-
-        public String getPastSimple() {
-            return pastSimple;
-        }
-
-        public String getPastParticiple() {
-            return pastParticiple;
-        }
-
-        @Override
-        public String toString() {
-            return base + " " + pastSimple + " " + pastParticiple;
-        }
+    record IrregularVerb(String base, String pastSimple,
+                         String pastParticiple) implements Comparable<IrregularVerb> {
 
         @Override
         public int compareTo(IrregularVerb o) {
-
             return this.base.compareTo(o.base);
         }
     }

@@ -11,19 +11,18 @@ public class DictionaryEntry5000 extends DictionaryEntry {
     }
 
     @Override
-    public int compareTo(DictionaryEntry o) {
+    public int compareTo(DictionaryEntry entry) {
 
-        if(this.getWordData() == null || o.getWordData() == null)
-            return this.getHeadword().compareTo(o.getHeadword());
+        if (this.getWordData() == null || entry.getWordData() == null)
+            return this.getHeadword().compareTo(entry.getHeadword());
 
-        if (o instanceof DictionaryEntry5000) {
-            DictionaryEntry5000 o5000 = (DictionaryEntry5000) o;
-            int byHeadword = super.compareTo(o5000);
-            return byHeadword == 0?
-                    (this.getWordData().getPartOfSpeech().compareTo(o5000.getWordData().getPartOfSpeech())) :
+        if (entry instanceof DictionaryEntry5000 entry5000) {
+            int byHeadword = super.compareTo(entry5000);
+            return byHeadword == 0 ?
+                    (this.getWordData().getPartOfSpeech().compareTo(entry5000.getWordData().getPartOfSpeech())) :
                     byHeadword;
         } else {
-            return super.compareTo(o);
+            return super.compareTo(entry);
         }
 
     }

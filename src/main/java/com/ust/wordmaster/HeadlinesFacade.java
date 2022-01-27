@@ -72,7 +72,7 @@ public class HeadlinesFacade {
         List<RangedText> rangedTextList = this.rangeAnalyser.findOutOfRangeWords(headlineStrings, rangeStart, rangeEnd);
 
         log.info("-------- Postprocessing and converting to DTO --------------");
-        postProcessor.postprocess(rangedTextList, website);
+        postProcessor.postProcess(rangedTextList, website);
 
         return buildRangedHeadlineDTO(rangeStart, rangeEnd, rangedTextList);
 

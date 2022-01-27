@@ -125,7 +125,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
             if (token == null || token.isEmpty() || token.isBlank()) {
                 continue; // skips adding the word to wordsOutsideRange
             } else {
-                token = token.trim();
+                token = token.strip();
             }
 
             if (_isInRange(token, rangeStart, rangeEnd, SearchOption.CASE_UNCHANGED) ||
@@ -324,7 +324,7 @@ public class RangeAnalyser5000 implements RangeAnalyser {
         if (charSequence == null || charSequence.isBlank() || charSequence.isEmpty())
             return new String[0];
         else
-            return charSequence.trim().split("\\s+");
+            return charSequence.strip().split("\\s+");
 
     }
 
