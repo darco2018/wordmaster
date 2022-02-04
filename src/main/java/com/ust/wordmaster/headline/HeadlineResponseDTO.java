@@ -30,6 +30,7 @@ public class HeadlineResponseDTO {
     // these result from processing
     @JsonProperty("headlines")
     private List<RangedTextJSON> rangedTextJSONList;
+
     @JsonProperty("dataSize")
     private int size;
 

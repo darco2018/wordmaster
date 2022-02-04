@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.time.OffsetDateTime;
 import java.util.Set;
 
@@ -21,6 +22,7 @@ public class User {
     private Long id;
 
     @Column(nullable = false,  unique = true)
+    @Size(min = 5, max = 100)
     private String email;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
