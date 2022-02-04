@@ -19,7 +19,7 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reservation_generator")
     @SequenceGenerator(name = "reservation_generator",
             sequenceName = "reservation_seq",
-            initialValue = 1,
+            initialValue = 10,
             allocationSize = 1)
     @Column(name = "reservation_id", nullable = false, updatable = false)
     private Long id;
