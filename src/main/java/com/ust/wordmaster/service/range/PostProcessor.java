@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
 @Service
@@ -16,12 +17,17 @@ public class PostProcessor {
      * Removes BBC's first nonsense 'headline': "id-cta-sign-in"
      */
     private static void skipFirstHeadlineBBC(List<RangedText> list) {
-        list.remove(0);
+        if (list.size() > 0) {
+            list.remove(0);
+        }
+
     }
 
-    private static void removeItemsFromOutOfRangeWords(List<RangedText> list) {
+    private static List<RangedText> removeItemsFromOutOfRangeWords(List<RangedText> list) {
 
-        for (RangedText rangedText : list) {
+        List<RangedText> rangedTexts = new ArrayList<>(list);
+
+        for (RangedText rangedText : rangedTexts) {
             List<String> noNumericsList = new ArrayList<>();
 
             for (String word : rangedText.getOutOfRangeWords()) {
@@ -29,8 +35,11 @@ public class PostProcessor {
                     noNumericsList.add(word);
                 }
             }
+
             rangedText.setOutOfRangeWords(noNumericsList.toArray(new String[0]));
         }
+
+        return rangedTexts;
     }
 
     private static boolean isTitleCase(final String word) {
@@ -51,13 +60,15 @@ public class PostProcessor {
         return (strNum.contains(",")) || strNum.contains(" £") || strNum.contains("$") || pattern.matcher(strNum).matches();
     }
 
-    public void postProcess(List<RangedText> list, String website) {
+    public List<RangedText> postProcess(final List<RangedText> list, final String website) {
+
+        List<RangedText> rangedTexts = new ArrayList<>(list);
 
         if (website.equalsIgnoreCase("bbc")) {
-            skipFirstHeadlineBBC(list);
+            skipFirstHeadlineBBC(rangedTexts);
         }
 
-        removeItemsFromOutOfRangeWords(list);
+        return removeItemsFromOutOfRangeWords(rangedTexts);
     }
 
 }

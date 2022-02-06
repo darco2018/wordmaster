@@ -15,7 +15,7 @@ public class HeadlineFacadeTest_WithServer {
 
     @Test
     void testFacade() {
-        HeadlineResponseDTO response = this.facade.processHeadlines("bbc", 0, 5000);
+        HeadlineResponseDTO response = this.facade.processHeadlinesFromServer("bbc", 0, 5000);
 
         assertTrue(response.getRangedTextJSONList().size() > 10);
         assertEquals(0, response.getRangeStart());
