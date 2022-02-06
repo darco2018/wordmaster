@@ -35,7 +35,7 @@ public class HeadlineControllerTest_WithServer {
 
         HeadlineResponseDTO headlineResponseDTO = new HeadlineResponseDTO();
         headlineResponseDTO.setRangedTexts(List.of(rangedText));
-        given(facade.processHeadlines("bbc", 1, 5000)).willReturn(headlineResponseDTO);
+        given(facade.processHeadlinesFromServer("bbc", 1, 5000)).willReturn(headlineResponseDTO);
 
         ResponseEntity<HeadlineResponseDTO> headlineResponse = restTemplate.getForEntity("/headlines?website=bbc&rangeStart=1&rangeEnd=5000", HeadlineResponseDTO.class);
 

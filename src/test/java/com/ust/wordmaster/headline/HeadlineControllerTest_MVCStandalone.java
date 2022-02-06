@@ -49,7 +49,7 @@ class HeadlineControllerTest_MVCStandalone {
 
         HeadlineResponseDTO headlineResponseDTO = new HeadlineResponseDTO();
         headlineResponseDTO.setRangedTexts(List.of(rangedText));
-        given(facade.processHeadlines("bbc", 1, 5000)).willReturn(headlineResponseDTO);
+        given(facade.processHeadlinesFromServer("bbc", 1, 5000)).willReturn(headlineResponseDTO);
 
        //MockHttpServletResponse response =  the same assertions as below possible on the response object as well
                 mvc.perform(get("/headlines").contentType(MediaType.APPLICATION_JSON))
@@ -68,7 +68,7 @@ class HeadlineControllerTest_MVCStandalone {
 
         HeadlineResponseDTO headlineResponseDTO = new HeadlineResponseDTO();
         headlineResponseDTO.setRangedTexts(List.of(rangedText));
-        given(facade.processHeadlines("bbc", 1, 2000)).willReturn(headlineResponseDTO);
+        given(facade.processHeadlinesFromServer("bbc", 1, 2000)).willReturn(headlineResponseDTO);
 
         //MockHttpServletResponse response =  the same assertions as below possible on the response object as well
         mvc.perform(get("/headlines?website=bbc&rangeStart=1&rangeEnd=2000").contentType(MediaType.APPLICATION_JSON))

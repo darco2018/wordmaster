@@ -22,7 +22,7 @@ public class HeadlineController {
 
         log.info("---------> @GetMapping(\"headlines\") with website=" + website + ", rangeStart=" + rangeStart + ", rangeEnd=" + rangeEnd);
 
-        return this.facade.processHeadlines(website, rangeStart, rangeEnd);
+        return this.facade.processHeadlinesFromServer(website, rangeStart, rangeEnd);
     }
 
 
