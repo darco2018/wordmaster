@@ -1,8 +1,13 @@
-package com.ust.wordmaster.headline;
+package com.ust.wordmaster.headline_facade;
 
+import com.ust.wordmaster.headline.HeadlineFacade;
+import com.ust.wordmaster.service.range.RangedText;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.nio.file.Paths;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -14,12 +19,10 @@ public class HeadlineFacadeTest_WithServer {
     private HeadlineFacade facade;
 
     @Test
-    void testFacade() {
-        HeadlineResponseDTO response = this.facade.processHeadlinesFromServer("bbc", 0, 5000);
+    void givenWebsiteName_shouldReturnParsedAndProcessedHeadlines() {
 
-        assertTrue(response.getRangedTextJSONList().size() > 10);
-        assertEquals(0, response.getRangeStart());
-        assertEquals(5000, response.getRangeEnd());
-        assertEquals("https://www.bbc.com/", response.getSource());
+        List<RangedText> rangedTexts = facade.processHeadlinesFromServer( 0, 5000, "bbc");
+
+        assertTrue(rangedTexts.size() > 50);
     }
 }

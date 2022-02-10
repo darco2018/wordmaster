@@ -1,8 +1,8 @@
 package com.ust.wordmaster;
 
 
-import com.ust.wordmaster.headline.HeadlineResponseDTO;
-import com.ust.wordmaster.headline.RangedTextJSON;
+import com.ust.wordmaster.headline.HeadlineDTO;
+import com.ust.wordmaster.headline.RangedTextDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,19 +28,19 @@ class WordMasterApplicationTests {
 
 	@Test
 	void getHeadlines() {
-		ResponseEntity<HeadlineResponseDTO> response = restTemplate.getForEntity("/headlines?website=bbc&rangeStart=1&rangeEnd=5000", HeadlineResponseDTO.class);
+		ResponseEntity<HeadlineDTO> response = restTemplate.getForEntity("/headlines?website=bbc&rangeStart=1&rangeEnd=5000", HeadlineDTO.class);
 
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-		HeadlineResponseDTO body = response.getBody();
+		HeadlineDTO body = response.getBody();
 		assert body != null;
-		List<RangedTextJSON> rangedTexts = body.getRangedTextJSONList();
+		List<RangedTextDTO> rangedTexts = body.getRangedTextDTOS();
 
 		assertThat(body).isNotNull();
 		assertEquals(1, body.getRangeStart());
 		assertEquals(5000, body.getRangeEnd());
 		assertTrue(rangedTexts.size() > 30);
-		assertTrue(body.getSource().equalsIgnoreCase("https://www.bbc.com/"));
+		assertTrue(body.getSource().equalsIgnoreCase("bbc"));
 
 	}
 
