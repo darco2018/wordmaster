@@ -1,9 +1,6 @@
 package com.ust.wordmaster.exercise;
 
-import com.ust.wordmaster.headline.HeadlineDTO;
 import com.ust.wordmaster.headline.HeadlineFacade;
-import com.ust.wordmaster.headline.HeadlineMapper;
-import com.ust.wordmaster.headline.RangedTextDTO;
 import com.ust.wordmaster.service.range.RangedText;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,19 +21,19 @@ public class ExerciseMakerTest {
     private List<RangedText> rangedTexts;
 
     @BeforeEach
-    void setUp(){
-        rangedTexts= facade.processHeadlinesFromHtmlFile( 1, 5000, "bbc",
+    void setUp() {
+        rangedTexts = facade.processHeadlinesFromHtmlFile(1, 5000, "bbc",
                 Paths.get("bbc.html"));
     }
 
     @Test
-    void givenRangedTexts_shouldRemoveThoseWithoutOutOfRangeWords(){
+    void givenRangedTexts_shouldRemoveThoseWithoutOutOfRangeWords() {
 
         ExerciseMaker exerciseMaker = new ExerciseMaker();
         List<RangedText> withWordsOutOfRangeOnly = exerciseMaker.removeIfNoOutOfRangeWords(rangedTexts);
 
-        withWordsOutOfRangeOnly.stream().forEach(rangedText -> System.out.println(rangedText ));
+        withWordsOutOfRangeOnly.stream().forEach(rangedText -> System.out.println(rangedText));
 
-        assertEquals(28, withWordsOutOfRangeOnly.size());
+        assertEquals(26, withWordsOutOfRangeOnly.size());
     }
 }

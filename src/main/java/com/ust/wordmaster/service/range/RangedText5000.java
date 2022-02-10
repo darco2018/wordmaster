@@ -52,4 +52,19 @@ public class RangedText5000 implements RangedText {
         Objects.requireNonNull(outOfRangeWords, "Out of range words cannot be null");
         this.outOfRangeWords = outOfRangeWords;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        RangedText5000 that = (RangedText5000) o;
+        return text.equals(that.text);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(text);
+    }
 }

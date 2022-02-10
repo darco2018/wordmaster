@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @NoArgsConstructor
@@ -23,7 +23,7 @@ public class PostProcessor {
 
     }
 
-    private static List<RangedText> removeItemsFromOutOfRangeWords(List<RangedText> list) {
+    private static List<RangedText> applyMultipleRemovalRulesForOutOfRangeWords(List<RangedText> list) {
 
         List<RangedText> rangedTexts = new ArrayList<>(list);
 
@@ -47,7 +47,7 @@ public class PostProcessor {
     }
 
     private static boolean isCurrentlyCommon(String str) {
-        Set<String> common = Set.of("covid", "omicron", "delta", "covid-19");
+        Set<String> common = Set.of("covid", "omicron", "delta", "covid-19", "coronavirus");
         return common.contains(str.toLowerCase());
     }
 
@@ -68,7 +68,14 @@ public class PostProcessor {
             skipFirstHeadlineBBC(rangedTexts);
         }
 
-        return removeItemsFromOutOfRangeWords(rangedTexts);
+        rangedTexts = removeDuplicates(rangedTexts);
+
+        return applyMultipleRemovalRulesForOutOfRangeWords(rangedTexts);
+    }
+
+    private List<RangedText> removeDuplicates(List<RangedText> rangedTexts) {
+        return new ArrayList<>(rangedTexts.stream()
+                .collect(Collectors.toSet()));
     }
 
 }
