@@ -36,21 +36,19 @@ public class HeadlineFacade {
         this.postProcessor = postProcessor;
     }
 
-    public HeadlineResponseDTO processHeadlinesFromHtmlFile(final String websiteName, int rangeStart, int rangeEnd, final Path htmlFile) {
+    public List<RangedText> processHeadlinesFromHtmlFile(final int rangeStart,final int rangeEnd, final String websiteName, final Path htmlFile) {
 
-        List<RangedText> rangedTexts = getRangedTexts(websiteName, rangeStart, rangeEnd, htmlFile);
-        return buildRangedHeadlineDTO(rangeStart, rangeEnd, rangedTexts);
+        return getRangedTexts(rangeStart, rangeEnd, websiteName, htmlFile);
     }
 
-    public HeadlineResponseDTO processHeadlinesFromServer(final String websiteName, int rangeStart, int rangeEnd) {
+    public List<RangedText> processHeadlinesFromServer(final int rangeStart, final int rangeEnd, final String websiteName) {
 
-        List<RangedText> rangedTexts = getRangedTexts(websiteName, rangeStart, rangeEnd, null);
-        return buildRangedHeadlineDTO(rangeStart, rangeEnd, rangedTexts);
+        return getRangedTexts(rangeStart, rangeEnd, websiteName,null);
     }
 
-    private List<RangedText> getRangedTexts(String websiteName, int rangeStart, int rangeEnd, Path htmlFile) {
+    private List<RangedText> getRangedTexts(final int rangeStart, final int rangeEnd,final String websiteName,final Path htmlFile) {
 
-      setWebsiteSpecificData(websiteName);
+        setWebsiteSpecificData(websiteName);
 
         String html = "";
         if (htmlFile != null) {
@@ -68,14 +66,14 @@ public class HeadlineFacade {
         log.info("-------- Parsing HTML page into a list of headlines with headlines attr " + this.headlinesAttribute);
         List<String> headlines = this.htmlParser.parseHTML(html, this.headlinesAttribute);
 
-        log.info("-------- Processing headlines for words out of range(" + rangeStart + ", " + rangeEnd +")");
+        log.info("-------- Processing headlines for words out of range(" + rangeStart + ", " + rangeEnd + ")");
         List<RangedText> rangedTexts = this.rangeAnalyser.findOutOfRangeWords(headlines, rangeStart, rangeEnd);
 
         log.info("-------- Postprocessing and converting to DTO --------------");
         return postProcessor.postProcess(rangedTexts, websiteName);
     }
 
-    private void setWebsiteSpecificData(String websiteName) {
+    private void setWebsiteSpecificData(final String websiteName) {
 
         final String BBC_URL = "https://www.bbc.com/";
         final String BBC_HEADLINES_ATTRIBUTE = "data-bbc-title";
@@ -95,7 +93,7 @@ public class HeadlineFacade {
         }
     }
 
-    private String fetchHTMLFromWebsite(String url) {
+    private String fetchHTMLFromWebsite(final String url) {
 
         try {
             return this.httpClient.fetchHtml(new URL(url).toURI());
@@ -103,21 +101,6 @@ public class HeadlineFacade {
             e.printStackTrace();
         }
         return "";
-    }
-
-
-    private HeadlineResponseDTO buildRangedHeadlineDTO(int rangeStart, int rangeEnd, List<RangedText> rangedTextList) {
-
-        HeadlineResponseDTO responseDTO = new HeadlineResponseDTO();
-        responseDTO.setSource(websiteURL);
-        responseDTO.setRangeStart(rangeStart);
-        responseDTO.setRangeEnd(rangeEnd);
-        responseDTO.setDescription("Headlines processed against 5000 dictionary to show words out of the requested range");
-        responseDTO.setVersion("1.0");
-
-        responseDTO.setRangedTexts(rangedTextList); // it should set it in setRangedTextList(rangedTextJSONList);
-
-        return responseDTO;
     }
 
 

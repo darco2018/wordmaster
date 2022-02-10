@@ -3,23 +3,24 @@ package com.ust.wordmaster.headline;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.ust.wordmaster.service.range.RangedText;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @Getter
+@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonPropertyOrder({"version", "description", "size", "source", "rangeStart", "rangeEnd", "rangedTextList"})
-public class HeadlineResponseDTO {
+public class HeadlineDTO {
 
     // these are arbitrarily added at the very end
     @JsonProperty("vs")
     private String version;
+    @JsonProperty("desc")
     private String description;
 
     // these come from controller
@@ -29,12 +30,10 @@ public class HeadlineResponseDTO {
 
     // these result from processing
     @JsonProperty("headlines")
-    private List<RangedTextJSON> rangedTextJSONList;
-    @JsonProperty("dataSize")
-    private int size;
+    private List<RangedTextDTO> rangedTextDTOS;
 
-    public HeadlineResponseDTO() {
-    }
+    @JsonProperty("noOfHeadlines")
+    private int size;
 
     /////////// SETTERS /////////////////////////////////////
 
@@ -58,15 +57,12 @@ public class HeadlineResponseDTO {
         this.rangeEnd = rangeEnd;
     }
 
-
-    public void setRangedTexts(List<RangedText> rangedTexts) {
-        Objects.requireNonNull(rangedTexts, "List of ranged texts cannot be null");
-
-        List<RangedTextJSON> rangedTextJSONList = rangedTexts.stream()
-                .map(text -> new RangedTextJSON(text.getText(), text.getOutOfRangeWords()))
-                .collect(Collectors.toList());
-
-        this.rangedTextJSONList = rangedTextJSONList;
-        this.size = this.rangedTextJSONList.size();
+    public void setRangedTextDTOS(List<RangedTextDTO> rangedTextDTOS) {
+        this.rangedTextDTOS = rangedTextDTOS;
     }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
 }

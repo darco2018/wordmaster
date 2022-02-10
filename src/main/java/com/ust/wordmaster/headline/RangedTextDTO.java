@@ -10,7 +10,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class RangedTextJSON {
+public class RangedTextDTO {
 
     private final String text;
     @JsonProperty("out")
