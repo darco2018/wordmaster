@@ -409,6 +409,14 @@ public class RangeAnalyser5000 implements RangeAnalyser {
                 if (!isInRange) {
                     isInRange = _isInDictAsAmericanSpelling(withoutED, rangeStart, rangeEnd);
                 }
+                if (!isInRange) {  // ban-ned
+                    String withoutXED = token.substring(0, token.length() - 3); // ban-ned
+                    isInRange = _isInRange(withoutXED, rangeStart, rangeEnd, SearchOption.CASE_ALL);
+                    if (!isInRange) {
+                        isInRange = _isInDictAsAmericanSpelling(withoutXED, rangeStart, rangeEnd);
+                    }
+                }
+
             }
             // try if removing -ied helps
             if (!isInRange && (token.endsWith("ied") || token.endsWith("IED"))) {

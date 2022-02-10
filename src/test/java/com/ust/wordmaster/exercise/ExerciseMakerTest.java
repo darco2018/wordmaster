@@ -35,6 +35,8 @@ public class ExerciseMakerTest {
         ExerciseMaker exerciseMaker = new ExerciseMaker();
         List<RangedText> withWordsOutOfRangeOnly = exerciseMaker.removeIfNoOutOfRangeWords(rangedTexts);
 
-        assertEquals(29, withWordsOutOfRangeOnly.size());
+        withWordsOutOfRangeOnly.stream().forEach(rangedText -> System.out.println(rangedText ));
+
+        assertEquals(28, withWordsOutOfRangeOnly.size());
     }
 }
