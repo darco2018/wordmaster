@@ -1,4 +1,4 @@
-package com.ust.wordmaster.exercise;
+package com.ust.wordmaster.headline_exercise;
 
 import com.ust.wordmaster.headline.HeadlineFacade;
 import com.ust.wordmaster.service.range.RangedText;
