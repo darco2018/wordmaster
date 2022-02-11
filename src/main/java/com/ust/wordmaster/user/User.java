@@ -1,6 +1,6 @@
 package com.ust.wordmaster.user;
 
-import com.ust.wordmaster.reservation.Reservation;
+import com.ust.wordmaster.headline_exercise.HeadlineExercise;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,12 +21,12 @@ public class User {
     @Column(nullable = false, updatable = false)
     private Long id;
 
-    @Column(nullable = false,  unique = true)
+    @Column(nullable = false, unique = true)
     @Size(min = 5, max = 100)
     private String email;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
-    private Set<Reservation> userReservations;
+    private Set<HeadlineExercise> headlineExercises;
 
     @Column(nullable = false, updatable = false)
     private OffsetDateTime dateCreated;
@@ -35,13 +35,13 @@ public class User {
     private OffsetDateTime dateUpdated;
 
     @PrePersist
-    void setDateCreated(){
+    void setDateCreated() {
         this.dateCreated = OffsetDateTime.now();
         this.dateUpdated = this.dateCreated;
     }
 
     @PreUpdate
-    void setDateUpdated(){
+    void setDateUpdated() {
         this.dateUpdated = OffsetDateTime.now();
     }
 
