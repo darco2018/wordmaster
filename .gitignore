@@ -1,6 +1,7 @@
 LEARN.txt
 INFO.txt
 zzREMOVED/
+**/src/main/**/temp/
 
 HELP.md
 target/
