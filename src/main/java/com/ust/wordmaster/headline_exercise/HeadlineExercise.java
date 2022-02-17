@@ -30,14 +30,13 @@ public class HeadlineExercise {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
-    private String content;
-
     /*
     The <?> lives in the <?>. #[lion, jungle]
     Do people <?> apples? #[eat]
     Never play with <?> and <?>!!! #[spiders, insects]
     */
+    @Column(nullable = false)
+    private String content;
 
     @Column(nullable = false, updatable = false)
     private OffsetDateTime dateCreated;
