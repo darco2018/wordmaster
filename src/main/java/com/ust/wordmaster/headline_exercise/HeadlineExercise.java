@@ -23,21 +23,23 @@ public class HeadlineExercise {
     @Column(name = "headline_exercise_id", nullable = false, updatable = false)
     private Long id;
 
+    /*the owning side is usually defined on the ‘many' side of the relationship.
+    It's usually the side which owns the foreign key.*/
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    //HeadlineExercise entity will have a foreign key column named user_id referring to the primary attribute id of our User entity.
     private User user;
 
     @Column(nullable = false)
     private String title;
-
-    @Column(nullable = false)
-    private String content;
 
     /*
     The <?> lives in the <?>. #[lion, jungle]
     Do people <?> apples? #[eat]
     Never play with <?> and <?>!!! #[spiders, insects]
     */
+    @Column(nullable = false)
+    private String content;
 
     @Column(nullable = false, updatable = false)
     private OffsetDateTime dateCreated;

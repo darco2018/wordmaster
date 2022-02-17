@@ -25,7 +25,14 @@ public class User {
     @Size(min = 5, max = 100)
     private String email;
 
+    /*Once we have defined the owning side of the relationship (HeadlineExercise), Hibernate already has all the information it needs
+    to map that relationship in our database. To make this association bidirectional, all we'll have to do is to define
+     the referencing side(User).
+     Defining the direction of the relationship between entities has no impact on the database mapping. It only defines
+     the directions in which we use that relationship in our domain model.*/
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
+    /*the value of mappedBy is the name of the association-mapping attribute on the owning side. With this, we have
+    now established a bidirectional association between our User and HeadlineExercise entities.*/
     private Set<HeadlineExercise> headlineExercises;
 
     @Column(nullable = false, updatable = false)
