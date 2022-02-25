@@ -1,8 +1,7 @@
 package com.ust.wordmaster.user;
 
 import com.ust.wordmaster.headline_exercise.HeadlineExercise;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -12,7 +11,14 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
+/*When you provide your own constructor then Lombok doesn't create constructor with all args that @Builder is using.
+So you should just add annotation @AllArgsConstructor */
+@Builder
+@AllArgsConstructor
+@EqualsAndHashCode
 public class User {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_generator")
@@ -52,5 +58,8 @@ public class User {
         this.dateUpdated = OffsetDateTime.now();
     }
 
-
 }
+
+
+
+
