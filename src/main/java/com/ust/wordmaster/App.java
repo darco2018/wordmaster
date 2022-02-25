@@ -20,6 +20,7 @@ public class App {
     public static void main(String[] args) {
 
         ApplicationContext context = SpringApplication.run(App.class, args);
+        System.out.println("456678899");
     }
 
     @Bean
@@ -28,9 +29,17 @@ public class App {
         return new CorpusDictionary5000("Corpus Dictionary from file", entriesFromFile);
     }
 
+    /*
+    If uncommented, @WebMvcTest will start failing with this message:
+    Field userRepository in com.ust.wordmaster.user.UserCommandLineRunner required a bean of type
+    'com.ust.wordmaster.user.UserRepository' that could not be found.
+    I added @Component to UserCommandLineRunner to compensate for commenting off the bean creation here
+
     @Bean
     UserCommandLineRunner userCommandLineRunner(){
         return new UserCommandLineRunner();
     }
+    */
+
 
 }
