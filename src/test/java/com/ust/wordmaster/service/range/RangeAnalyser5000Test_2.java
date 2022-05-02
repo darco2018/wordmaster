@@ -55,6 +55,7 @@ class RangeAnalyser5000Test_2 {
         assertTrue((boolean) method.invoke(rangeAnalyser5000, "boy's", 0, 1000));
         assertTrue((boolean) method.invoke(rangeAnalyser5000, "BOY'S", 0, 1000));
         assertTrue((boolean) method.invoke(rangeAnalyser5000, "Boy's", 0, 1000));
+        assertTrue((boolean) method.invoke(rangeAnalyser5000, "Country's", 0, 1000));
         assertFalse((boolean) method.invoke(rangeAnalyser5000, "boy's", 1000, 5000));
 
         assertTrue((boolean) method.invoke(rangeAnalyser5000, "girl'd", 0, 1000));
@@ -95,6 +96,7 @@ class RangeAnalyser5000Test_2 {
         List<String> inRange = List.of("LIKE", "Like", "like", "liKE", " like ",
                 "He's", "he's", "HE'S",
                 "boy's", "BOY'S", "Boy's",
+                "Country's",
                 "girl'd", "GIRL'd", "Girl'd",
                 "girl?!", "*girl", "GIRL?", "[(girl)]", "girl...",
                 "are", "IS", "an", "CHILDREN", "Feet", "worst"
