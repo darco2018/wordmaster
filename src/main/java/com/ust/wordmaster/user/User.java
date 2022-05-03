@@ -17,6 +17,7 @@ So you should just add annotation @AllArgsConstructor */
 @Builder
 @AllArgsConstructor
 @EqualsAndHashCode
+@ToString
 public class User {
 
 
