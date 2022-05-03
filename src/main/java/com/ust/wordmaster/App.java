@@ -4,7 +4,6 @@ import com.ust.wordmaster.dictionary.CorpusCSVFileParser;
 import com.ust.wordmaster.dictionary.CorpusDictionary;
 import com.ust.wordmaster.dictionary.CorpusDictionary5000;
 import com.ust.wordmaster.dictionary.DictionaryEntry;
-import com.ust.wordmaster.user.UserCommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
