@@ -13,20 +13,20 @@ import java.time.OffsetDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "headline_exercise")
+//@Table(name = "HeadlineExercise")
 @Entity
 public class HeadlineExercise {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "headline_exercise_generator")
-    @SequenceGenerator(name = "headline_exercise_generator", sequenceName = "headline_exercise_seq", initialValue = 10, allocationSize = 1)
-    @Column(name = "headline_exercise_id", nullable = false, updatable = false)
+    @SequenceGenerator(name = "headline_exercise_generator", sequenceName = "HeadlineExerciseSeq", initialValue = 10, allocationSize = 1)
+    @Column(name = "headlineExerciseID", nullable = false, updatable = false)
     private Long id;
 
     /*the owning side is usually defined on the ‘many' side of the relationship.
     It's usually the side which owns the foreign key.*/
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "userID")
     //HeadlineExercise entity will have a foreign key column named user_id referring to the primary attribute id of our User entity.
     private User user;
 
@@ -45,17 +45,17 @@ public class HeadlineExercise {
     private OffsetDateTime dateCreated;
 
     @Column(nullable = false)
-    private OffsetDateTime lastUpdated;
+    private OffsetDateTime dateUpdated;
 
     @PrePersist
     void onPersist() {
         this.dateCreated = OffsetDateTime.now();
-        this.lastUpdated = this.dateCreated;
+        this.dateUpdated = this.dateCreated;
     }
 
     @PreUpdate
     void onUpdate() {
-        this.lastUpdated = OffsetDateTime.now();
+        this.dateUpdated = OffsetDateTime.now();
     }
 
 }

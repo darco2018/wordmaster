@@ -18,14 +18,15 @@ So you should just add annotation @AllArgsConstructor */
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
+@Table(name = "AppUser")
 public class User {
 
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_generator")
     // GenerationType.SEQUENCE because it is very efficient and allows Hibernate to decide when to perform the insert statement
-    @SequenceGenerator(name = "user_generator", sequenceName = "user_seq", initialValue = 100, allocationSize = 5)
-    @Column(nullable = false, updatable = false)
+    @SequenceGenerator(name = "user_generator", sequenceName = "AppUserSeq", initialValue = 100, allocationSize = 1)
+    @Column(name = "userID", nullable = false, updatable = false)
     private Long id;
 
     @Column(nullable = false, unique = true)

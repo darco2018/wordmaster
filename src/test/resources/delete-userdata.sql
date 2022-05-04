@@ -1,1 +1,1 @@
-DELETE FROM user;
+DELETE FROM AppUser;
