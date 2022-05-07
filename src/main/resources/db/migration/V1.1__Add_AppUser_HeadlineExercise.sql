@@ -25,8 +25,3 @@ CREATE TABLE IF NOT EXISTS HeadlineExerciseSeq (
 )   ENGINE=INNODB;
 
 INSERT INTO HeadlineExerciseSeq values ( 10 );
-
---ALTER TABLE HeadlineExercise
- --     ADD CONSTRAINT FK_AppUser_in_HeadlineExercise
- --     FOREIGN KEY (userID)
-  --    REFERENCES AppUser (userID);
