@@ -1,0 +1,47 @@
+version: '3.8'
+services:
+  wordmaster:
+    container_name: wordmaster_mysql_app
+    depends_on:
+      - mysql5
+    image: word_mysql_img
+    build:
+      context: .
+      dockerfile: docker/prod/Dockerfile
+    ports:
+      - 8000:8000
+      - 8080:8080
+    environment:
+      - SERVER_PORT=8080
+      - MYSQL_URL=jdbc:mysql://mysql5/db_wordmaster
+    volumes:
+      - ./:/app
+    command: ./mvnw spring-boot:run -Dspring-boot.run.profiles=prod -Dspring.profiles.active=prod -Dspring-boot.run.jvmArguments="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000"
+
+  mysql5:
+    image: mysql:5.7.38
+    container_name: mysql_5
+    restart: unless-stopped
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+      - MYSQL_USER=springuser
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=db_wordmaster
+    volumes:
+      - word_mysql_data:/var/lib/mysql
+      - word_mysql_config:/etc/mysql/conf.d
+volumes:
+  word_mysql_data:
+  word_mysql_config:
+
+# remove --build if you dont want to create a new image
+# docker-compose -f docker-compose.prod.yml up (--build)
+
+# CTRL c -> just stop or
+#  docker-compose stop/restart/start SERVICE
+
+# stop and remove containers
+# docker-compose -f docker-compose.prod.yml down

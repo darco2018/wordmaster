@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  wordmaster:
+    container_name: wordmaster_h2app
+    image: word_h2_img
+    build:
+      context: .
+      dockerfile: docker/dev/Dockerfile
+    ports:
+      - 8000:8000
+      - 8080:8080
+    volumes:
+      - ./:/app
+    command: ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev -Dspring.profiles.active=dev -Dspring-boot.run.jvmArguments="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000"
+
+# remove --build if you dont want to create a new image
+# docker-compose -f docker-compose.dev.yml up (--build)
+
+# CTRL c -> just stop or
+#  docker-compose stop/restart/start SERVICE
+
+# stop and remove containers
+# docker-compose -f docker-compose.dev.yml down
