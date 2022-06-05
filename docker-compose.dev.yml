@@ -6,6 +6,7 @@ services:
     build:
       context: .
       dockerfile: docker/dev/Dockerfile
+    # port 8000 for debugging
     ports:
       - 8000:8000
       - 8080:8080
@@ -16,8 +17,4 @@ services:
 # remove --build if you dont want to create a new image
 # docker-compose -f docker-compose.dev.yml up (--build)
 
-# CTRL c -> just stop or
-#  docker-compose stop/restart/start SERVICE
 
-# stop and remove containers
-# docker-compose -f docker-compose.dev.yml down
